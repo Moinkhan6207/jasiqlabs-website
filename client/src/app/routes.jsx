@@ -10,6 +10,13 @@ import CookiePolicy from "../pages/legal/CookiePolicy";
 import RealWorkStudioPage from "../pages/RealWorkStudioPage";
 import TechWorksStudioPage from "../pages/TechWorksStudioPage";
 import ProductsPage from "../pages/ProductsPage";
+import RwsLayout from "../pages/realworkstudio/RwsLayout";
+import RwsHome from "../pages/realworkstudio/RwsHome";
+import Programs from "../pages/realworkstudio/Programs";
+import InternshipModel from "../pages/realworkstudio/InternshipModel";
+import StudentJourney from "../pages/realworkstudio/StudentJourney";
+import Faqs from "../pages/realworkstudio/Faqs";
+import Apply from "../pages/realworkstudio/Apply";
 
 export const routes = [
   {
@@ -25,10 +32,20 @@ export const routes = [
       { path: "legal/refund-cancellation", element: <RefundCancellation /> }, 
       { path: "legal/disclaimer", element: <Disclaimer /> },
       { path: "legal/cookie-policy", element: <CookiePolicy /> },
-      { path: "realworkstudio", element: <RealWorkStudioPage /> },
+      {
+        path: "realworkstudio",
+        element: <RwsLayout />,
+        children: [
+          { index: true, element: <RwsHome /> },
+          { path: "programs", element: <Programs /> },
+          { path: "internship-model", element: <InternshipModel /> },
+          { path: "student-journey", element: <StudentJourney /> },
+          { path: "faqs", element: <Faqs /> },
+          { path: "apply", element: <Apply /> },
+        ]
+      },
       { path: "techWorksstudiopage", element: <TechWorksStudioPage /> },
       { path: "productspage", element: <ProductsPage /> },
-
     ]
   }
 ];

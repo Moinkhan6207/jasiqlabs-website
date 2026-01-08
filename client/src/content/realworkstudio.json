@@ -1,0 +1,225 @@
+{
+  "home": {
+    "hero": {
+      "title": "Learn real skills through guided training and internships.",
+      "subtitle": "For students, freshers, and career switchers who want practical experience.",
+      "ctaText": "Explore Programs",
+      "ctaLink": "/realworkstudio/programs"
+    },
+    "whatIs": [
+      "Industry-focused training designed around real work.",
+      "Mentor-led learning with step-by-step guidance.",
+      "Hands-on projects instead of theory-only courses."
+    ],
+    "whoShouldJoin": [
+      "College students",
+      "Fresh graduates",
+      "Career switchers"
+    ],
+    "differentiators": [
+      "Real-world project exposure",
+      "Guided mentorship",
+      "GitHub and portfolio focused learning",
+      "Practical and structured approach"
+    ],
+    "trackPreview": [
+      {
+        "id": "mern",
+        "title": "MERN Stack",
+        "description": "Full-stack web development using modern JavaScript."
+      },
+      {
+        "id": "python",
+        "title": "Python",
+        "description": "Python tracks for AIML, Generative AI, and Data Analysis."
+      }
+    ],
+    "trust": [
+      "Industry mentors",
+      "Structured learning model",
+      "Clear and honest outcomes"
+    ]
+  },
+  "programs": {
+    "title": "Programs at RealWorkStudio",
+    "description": "Choose a learning path based on your interest and career goals.",
+    "list": [
+      {
+        "id": "mern",
+        "title": "MERN Stack",
+        "for": "Students interested in web development",
+        "whatYouLearn": [
+          "Frontend development using React",
+          "Backend APIs using Node.js",
+          "Database basics and deployment"
+        ],
+        "skillsYouGain": [
+          "Full-stack development",
+          "Git and GitHub",
+          "Project structuring"
+        ],
+        "commitment": "8–12 hours per week"
+      },
+      {
+        "id": "python",
+        "title": "Python",
+        "for": "Students interested in Python and data",
+        "whatYouLearn": [
+          "Python fundamentals",
+          "Applied AIML / GenAI / Data Analysis",
+          "Problem solving using real datasets"
+        ],
+        "skillsYouGain": [
+          "Python programming",
+          "Data handling",
+          "Analytical thinking"
+        ],
+        "commitment": "6–10 hours per week"
+      },
+      {
+        "id": "data-analytics",
+        "title": "Data Analytics",
+        "for": "Students who love numbers and storytelling with data",
+        "whatYouLearn": [
+          "SQL for database management",
+          "Data Visualization using PowerBI / Tableau",
+          "Python libraries (Pandas, NumPy) for analysis"
+        ],
+        "skillsYouGain": [
+          "Business Intelligence",
+          "Data Cleaning",
+          "Visual Storytelling"
+        ],
+        "commitment": "6–10 hours per week"
+      },
+      {
+        "id": "machine-learning",
+        "title": "Machine Learning",
+        "for": "Students interested in algorithms and prediction",
+        "whatYouLearn": [
+          "Supervised & Unsupervised Learning algorithms",
+          "Model building using Scikit-learn",
+          "Feature engineering and model evaluation"
+        ],
+        "skillsYouGain": [
+          "Predictive Modeling",
+          "Algorithm Optimization",
+          "Data Pattern Recognition"
+        ],
+        "commitment": "8–12 hours per week"
+      },
+      {
+        "id": "gen-ai",
+        "title": "Generative AI",
+        "for": "Innovators wanting to build smart AI apps (LLMs)",
+        "whatYouLearn": [
+          "Working with LLMs (ChatGPT/Gemini APIs)",
+          "Building apps with LangChain & RAG",
+          "Prompt Engineering best practices"
+        ],
+        "skillsYouGain": [
+          "AI Application Development",
+          "Vector Databases",
+          "API Integration"
+        ],
+        "commitment": "8–12 hours per week"
+      },
+      {
+        "id": "java-backend",
+        "title": "Java Backend Developer",
+        "for": "Students targeting enterprise-level backend jobs",
+        "whatYouLearn": [
+          "Core Java & OOPs concepts",
+          "Spring Boot Framework & Microservices",
+          "REST API development & Hibernate"
+        ],
+        "skillsYouGain": [
+          "Enterprise App Development",
+          "Server-side Logic",
+          "System Architecture"
+        ],
+        "commitment": "10–15 hours per week"
+      },
+      {
+        "id": "data-scientist",
+        "title": "Data Scientist",
+        "for": "Aspiring data experts combining math and coding",
+        "whatYouLearn": [
+          "Advanced Statistics & Mathematics",
+          "Deep Learning (TensorFlow / PyTorch)",
+          "End-to-end ML pipeline deployment"
+        ],
+        "skillsYouGain": [
+          "Statistical Analysis",
+          "Neural Networks",
+          "Big Data Handling"
+        ],
+        "commitment": "12–15 hours per week"
+      }
+    ]
+  },
+  "internshipModel": {
+    "steps": [
+      "Join training",
+      "Learn with mentor guidance",
+      "Work on real tasks",
+      "Gain internship experience",
+      "Earn certificate based on criteria"
+    ],
+    "trainingVsInternship": [
+  {
+    "training": "Focus on learning syntax & concepts (Theory + Basics)",
+    "internship": "Focus on building real features & logic (Application)"
+  },
+  {
+    "training": "Working on small dummy assignments",
+    "internship": "Contributing to live production-grade projects"
+  },
+  {
+    "training": "Mentor guides you step-by-step",
+    "internship": "You solve problems independently (Industry style)"
+  },
+  {
+    "training": "Code runs on your local laptop",
+    "internship": "Code is deployed to live servers for users"
+  },
+  {
+    "training": "Outcome: Certification & Knowledge",
+    "internship": "Outcome: Strong GitHub Portfolio & Job Readiness"
+  }
+],
+    "certificateCriteria": [
+      "Minimum attendance",
+      "Assignment completion",
+      "Active participation"
+    ]
+  },
+  "studentJourney": [
+    "Beginner",
+    "Learning basics",
+    "Real project work",
+    "Portfolio and GitHub",
+    "Career readiness"
+  ],
+  "faqs": [
+    {
+      "question": "Who can apply?",
+      "answer": "Students, freshers, and career switchers can apply."
+    },
+    {
+      "question": "Is this a job guarantee program?",
+      "answer": "No. We focus on skills, projects, and readiness. Jobs depend on individual effort."
+    },
+    {
+      "question": "Is the program online or offline?",
+      "answer": "The mode will be clearly communicated during onboarding."
+    },
+    {
+      "question": "Will I get a certificate?",
+      "answer": "Yes, certificates are awarded based on attendance and performance."
+    }
+  ],
+  "apply": {
+    "note": "We will contact you after reviewing your application."
+  }
+}
