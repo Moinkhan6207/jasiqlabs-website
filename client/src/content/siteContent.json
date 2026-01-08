@@ -1,0 +1,127 @@
+{
+  "brand": {
+    "name": "JASIQ Labs",
+    "tagline": "We build careers, software, and AI products."
+  },
+  "seo": {
+    "home": {
+      "title": "JASIQ Labs — Training, Services & Products",
+      "description": "JASIQ Labs is a registered IT company offering training & internships, software & AI services, and products & AI research. Explore divisions and get in touch."
+    },
+    "about": {
+      "title": "About JASIQ Labs — Vision, Mission & Trust",
+      "description": "Learn about JASIQ Labs: our mission, story, values, leadership, and compliance details. Built for trust and long-term impact."
+    },
+    "contact": {
+      "title": "Contact JASIQ Labs — Share Your Requirement",
+      "description": "Contact JASIQ Labs for training, services, partnerships, or product collaboration. Submit your details and we will respond soon."
+    },
+    "privacy": { "title": "Privacy Policy — JASIQ Labs", "description": "Privacy policy for JASIQ Labs website." },
+    "terms": { "title": "Terms & Conditions — JASIQ Labs", "description": "Terms and conditions for using JASIQ Labs website." },
+    "refund": { "title": "Refund & Cancellation Policy — JASIQ Labs", "description": "Refund and cancellation policy for JASIQ Labs." },
+    "disclaimer": { "title": "Disclaimer — JASIQ Labs", "description": "Disclaimer for JASIQ Labs website content and information." },
+    "cookie": { "title": "Cookie Policy — JASIQ Labs", "description": "Cookie policy for JASIQ Labs website." }
+  },
+  "home": {
+    "hero": {
+      "h1": "JASIQ Labs builds careers, software, and AI products.",
+      "supportingLine": "Choose what you are looking for — training, services, or products — and we will guide you clearly.",
+      "buttons": {
+        "training": "Training & Internships",
+        "services": "Software & AI Services",
+        "products": "Products & AI Research"
+      }
+    },
+    "whatWeDo": {
+      "title": "What we do",
+      "items": [
+        {
+          "title": "Training & Internships",
+          "text": "Mentor-led learning with real project practice. Designed for students who want job-ready skills."
+        },
+        {
+          "title": "Software & AI Services",
+          "text": "We help startups and businesses build reliable software. Clear process, clean delivery, and long-term support."
+        },
+        {
+          "title": "Products & AI Research",
+          "text": "We build products with a strong engineering mindset. Research-backed work focused on real problems."
+        }
+      ]
+    },
+    "divisions": {
+      "title": "Our divisions",
+      "cards": [
+        {
+          "id": "realworkstudio",
+          "title": "RealWorkStudio",
+          "for": "For Students",
+          "solves": "Guides learners from basics to real projects with structured mentorship.",
+          "cta": "Explore Training"
+        },
+        {
+          "id": "techworksstudio",
+          "title": "TechWorksStudio",
+          "for": "For Startups & Businesses",
+          "solves": "Builds software and AI solutions with clear planning and transparent delivery.",
+          "cta": "Explore Services"
+        },
+        {
+          "id": "products",
+          "title": "Products & AI",
+          "for": "For Product Collaboration",
+          "solves": "Creates product-grade systems and AI research modules focused on practical value.",
+          "cta": "Explore Products"
+        }
+      ]
+    },
+    "why": {
+      "title": "Why JASIQ Labs",
+      "points": [
+        "Real-world projects, not just theory",
+        "Mentor-led guidance and structured learning",
+        "Product-focused mindset and engineering discipline",
+        "Long-term career and business outcomes"
+      ]
+    },
+    "whoWeWorkWith": {
+      "title": "Who we work with",
+      "items": ["Students", "Startups", "Businesses"]
+    },
+    "trustCompliance": {
+      "title": "Trust & compliance",
+      "items": [
+        "Registered IT company",
+        "Professional working approach",
+        "Transparent processes and communication"
+      ]
+    },
+    "leadCapture": {
+      "title": "Get in touch",
+      "supportingLine": "Share your details and interest. We will guide you to the right division."
+    }
+  },
+  "about": {
+    "h1": "About JASIQ Labs",
+    "missionTitle": "Vision & mission",
+    "missionText": "Our mission is to build meaningful outcomes through learning, engineering, and product thinking — with clarity, discipline, and long-term impact.",
+    "storyTitle": "Company story",
+    "storyText": "JASIQ Labs was built with one simple goal: create a trustworthy and practical path for students, and deliver reliable software for businesses. We focus on clarity, process, and real results.",
+    "differentTitle": "What makes us different",
+    "differentItems": [
+      "Clarity-first communication",
+      "Structured mentorship and delivery approach",
+      "Strong engineering discipline",
+      "Focus on long-term outcomes, not short-term hype"
+    ],
+    "leadershipTitle": "Leadership",
+    "leadershipText": "We are a team of builders and mentors who care about quality, trust, and consistency.",
+    "cultureTitle": "Culture & values",
+    "cultureItems": ["Honesty in communication", "Discipline in execution", "Respect for learners and clients", "Focus on real outcomes"],
+    "complianceTitle": "Compliance & registration information",
+    "complianceText": "We follow basic compliance practices for website policies, user data safety, and transparent communication. Company registration details can be added/updated via admin in later phases."
+  }
+}
+
+
+

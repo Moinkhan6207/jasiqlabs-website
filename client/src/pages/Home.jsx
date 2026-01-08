@@ -1,0 +1,305 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import content from "../content/siteContent.json";
+import Seo from "../components/seo/Seo";
+import Button from "../components/ui/Button";
+import Field from "../components/ui/Field";
+import { trackEvent } from "../utils/analytics";
+import { submitLead } from "../utils/api";
+
+export default function Home() {
+  const c = content;
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    interestType: "STUDENT"
+  });
+  const [status, setStatus] = useState({ state: "idle", message: "" });
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    setStatus({ state: "loading", message: "" });
+
+    try {
+      trackEvent("lead_submit_attempt", { page: "home", interestType: form.interestType });
+      await submitLead({ ...form, sourcePage: "home" });
+      setStatus({ state: "success", message: "Thanks. Your details are received. We will contact you soon." });
+      setForm({ name: "", email: "", phone: "", interestType: "STUDENT" });
+      trackEvent("lead_submit_success", { page: "home" });
+    } catch (err) {
+      setStatus({ state: "error", message: err?.response?.data?.error || err?.message || "Something went wrong. Please try again." });
+      trackEvent("lead_submit_error", { page: "home" });
+    }
+  }
+
+  function jumpTo(id, label) {
+    trackEvent("home_hero_cta_click", { target: id });
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  return (
+    <>
+      <Seo title={c.seo.home.title} description={c.seo.home.description} />
+
+      {/* Hero Section */}
+      <section className="min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-primary-600 via-secondary-500 to-primary-600 bg-clip-text text-transparent">
+              {c.home.hero.h1}
+            </span>
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+            {c.home.hero.supportingLine}
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button 
+              variant="primary"
+              onClick={() => navigate("/realworkstudio")}
+            >
+              {c.home.hero.buttons.training}
+            </Button>
+            <Button 
+              variant="secondary"
+              onClick={() => navigate("/techWorksstudiopage")}
+            >
+              {c.home.hero.buttons.services}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => navigate("/productspage")}
+            >
+              {c.home.hero.buttons.products}
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* What We Do */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+            {c.home.whatWeDo.title}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {c.home.whatWeDo.items.map((item) => (
+              <article 
+                key={item.title} 
+                className="bg-white border border-gray-200 rounded-xl p-8 shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+              >
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">{item.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Our Divisions */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+            {c.home.divisions.title}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {c.home.divisions.cards.map((card) => (
+              <article 
+                key={card.id} 
+                id={card.id} 
+                className="bg-white border border-gray-200 rounded-xl p-8 shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+              >
+                <h3 className="text-2xl font-bold text-primary-600 mb-4">{card.title}</h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  <strong className="text-gray-900">Who it is for:</strong> {card.for}
+                </p>
+                <p className="text-sm text-gray-600 mb-6">
+                  <strong className="text-gray-900">What it solves:</strong> {card.solves}
+                </p>
+                
+                {/* 👇 YAHAN CHANGE KIYA HAI */}
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    // Analytics track karein
+                    trackEvent("division_card_cta_click", { division: card.id });
+                    
+                    // Logic: Card ID ke hisab se sahi page par bhejein
+                    if (card.id === "realworkstudio") {
+                      navigate("/realworkstudio");
+                    } else if (card.id === "techworksstudio") {
+                      // Note: Aapke routes.jsx me path 'techWorksstudiopage' hai
+                      navigate("/techWorksstudiopage"); 
+                    } else if (card.id === "products") {
+                      // Note: Aapke routes.jsx me path 'productspage' hai
+                      navigate("/productspage");
+                    } else {
+                      // Default fallback
+                      navigate("/contact");
+                    }
+                  }}
+                >
+                  {card.cta}
+                </Button>
+                
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why JASIQ Labs */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+            {c.home.why.title}
+          </h2>
+          <ul className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            {c.home.why.points.map((p) => (
+              <li 
+                key={p}
+                className="flex items-center space-x-3 text-lg text-gray-700"
+              >
+                <span className="flex-shrink-0 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center text-white font-bold">✓</span>
+                <span>{p}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Who We Work With */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+            {c.home.whoWeWorkWith.title}
+          </h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            {c.home.whoWeWorkWith.items.map((x) => (
+              <span 
+                key={x} 
+                className="px-6 py-3 bg-white border border-gray-200 rounded-full text-gray-700 font-medium shadow-md hover:shadow-lg transition-shadow"
+              >
+                {x}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust & Compliance */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+            {c.home.trustCompliance.title}
+          </h2>
+          <ul className="max-w-3xl mx-auto space-y-4">
+            {c.home.trustCompliance.items.map((x) => (
+              <li 
+                key={x}
+                className="flex items-center space-x-3 text-lg text-gray-700"
+              >
+                <span className="flex-shrink-0 w-6 h-6 bg-secondary-500 rounded-full flex items-center justify-center text-white font-bold">✓</span>
+                <span>{x}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Lead Capture Form */}
+      <section className="py-20 bg-gradient-to-br from-primary-600 to-secondary-600 text-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
+              {c.home.leadCapture.title}
+            </h2>
+            <p className="text-xl text-center mb-12 text-primary-100">
+              {c.home.leadCapture.supportingLine}
+            </p>
+
+            <form 
+              className="bg-white rounded-2xl p-8 shadow-2xl" 
+              onSubmit={onSubmit}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <Field label="Name">
+                  <input
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    placeholder="Your full name"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all text-gray-900"
+                  />
+                </Field>
+
+                <Field label="Email">
+                  <input
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    placeholder="you@example.com"
+                    type="email"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all text-gray-900"
+                  />
+                </Field>
+
+                <Field label="Phone">
+                  <input
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    placeholder="Your phone number"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all text-gray-900"
+                  />
+                </Field>
+
+                <Field label="Interest type">
+                  <select
+                    value={form.interestType}
+                    onChange={(e) => setForm({ ...form, interestType: e.target.value })}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all text-gray-900 bg-white"
+                  >
+                    <option value="STUDENT">Student</option>
+                    <option value="CLIENT">Client</option>
+                    <option value="PARTNER">Partner</option>
+                  </select>
+                </Field>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+                <Button type="submit" variant="primary" className="w-full sm:w-auto">
+                  {status.state === "loading" ? "Submitting..." : "Submit"}
+                </Button>
+                <a 
+                  className="text-primary-600 hover:text-primary-700 font-medium transition-colors" 
+                  href="/contact"
+                >
+                  Or go to Contact page
+                </a>
+              </div>
+
+              {status.state !== "idle" && (
+                <div 
+                  className={`p-4 rounded-lg text-center font-medium ${
+                    status.state === "success"
+                      ? "bg-green-50 text-green-800 border border-green-200"
+                      : status.state === "error"
+                      ? "bg-red-50 text-red-800 border border-red-200"
+                      : "bg-blue-50 text-blue-800 border border-blue-200"
+                  }`}
+                >
+                  {status.message}
+                </div>
+              )}
+            </form>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
