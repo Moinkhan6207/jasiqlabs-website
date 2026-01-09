@@ -1,0 +1,101 @@
+{
+  "home": {
+    "hero": {
+      "title": "We Build Scalable Software for Startups & Enterprises",
+      "subtitle": "From MVP to Full-Scale Engineering, we are your trusted technology partner.",
+      "ctaText": "View Our Services",
+      "ctaLink": "/techworksstudio/services"
+    },
+    "whatWeDo": [
+      { "title": "Custom Software", "desc": "Tailored solutions for complex business needs." },
+      { "title": "AI & Automation", "desc": "Smart algorithms to automate workflows." },
+      { "title": "Mobile & Web Apps", "desc": "Responsive and high-performance applications." }
+    ],
+    "whoWeWorkWith": ["Early Stage Startups", "Growing SMEs", "Large Enterprises"],
+    "whyUs": [
+      { "title": "Engineering First", "desc": "We focus on code quality and scalability, not just visuals." },
+      { "title": "Transparent Process", "desc": "Weekly updates and clear communication." },
+      { "title": "Long-term Partner", "desc": "We support you even after deployment." }
+    ],
+    "servicesPreview": [
+      { "id": "software-dev", "title": "Software Development", "desc": "Backend, Frontend & APIs" },
+      { "id": "mvp", "title": "MVP for Startups", "desc": "Launch in weeks, not months" },
+      { "id": "ai", "title": "AI & Automation", "desc": "Data-driven intelligence" }
+    ],
+    "leadCta": {
+      "text": "Have a project in mind?",
+      "button": "Contact Sales",
+      "link": "/techworksstudio/contact"
+    }
+  },
+  "services": {
+    "title": "Our Expertise",
+    "subtitle": "End-to-end technology services to drive your business growth.",
+    "list": [
+      {
+        "id": "software-development",
+        "title": "Custom Software Development",
+        "for": "Businesses needing specific workflows",
+        "problemSolved": "Off-the-shelf software doesn't fit your unique needs.",
+        "approach": "We analyze your workflow and build custom architecture.",
+        "outcome": "Scalable, secure, and efficient systems."
+      },
+      {
+        "id": "ai-automation",
+        "title": "AI & Automation Solutions",
+        "for": "Companies with repetitive manual tasks",
+        "problemSolved": "High operational costs and manual errors.",
+        "approach": "We implement Python-based AI scripts and bots.",
+        "outcome": "Reduced costs and 24/7 efficiency."
+      },
+      {
+        "id": "mvp-startups",
+        "title": "MVP for Startups",
+        "for": "Founders with an idea",
+        "problemSolved": "Need to launch fast to validate the market.",
+        "approach": "Agile development focusing on core features.",
+        "outcome": "Market-ready product in 4-8 weeks."
+      },
+      {
+        "id": "web-mobile",
+        "title": "Web & Mobile Applications",
+        "for": "Brands needing digital presence",
+        "problemSolved": "Need to reach customers on all devices.",
+        "approach": "React/Next.js for Web, React Native for Mobile.",
+        "outcome": "Seamless user experience across platforms."
+      }
+    ]
+  },
+  "howWeWork": {
+    "title": "Our Process",
+    "steps": [
+      { "step": 1, "title": "Requirement Analysis", "desc": "We understand your business goals deeply." },
+      { "step": 2, "title": "Planning & Architecture", "desc": "We design the technical blueprint." },
+      { "step": 3, "title": "Agile Development", "desc": "We build in sprints with regular feedback." },
+      { "step": 4, "title": "Testing & QA", "desc": "Rigorous testing to ensure bug-free code." },
+      { "step": 5, "title": "Deployment & Support", "desc": "Live launch and post-launch maintenance." }
+    ]
+  },
+  "engagementModels": {
+    "title": "Engagement Models",
+    "list": [
+      { "title": "Fixed Cost", "desc": "Best for well-defined projects with clear scope." },
+      { "title": "Monthly Retainer", "desc": "Best for ongoing maintenance and support." },
+      { "title": "Dedicated Team", "desc": "Hire our developers as your extended team." }
+    ]
+  },
+  "caseStudies": {
+    "title": "Success Stories",
+    "list": [
+      { "title": "E-Commerce Scaler", "problem": "High traffic crashes", "solution": "Microservices Migration", "outcome": "99.9% Uptime" },
+      { "title": "AI Chatbot", "problem": "High support costs", "solution": "GenAI Integration", "outcome": "70% Query Automation" }
+    ]
+  },
+  "contact": {
+    "title": "Start Your Project",
+    "subtitle": "Fill the form below and our technical team will reach out.",
+    "successMessage": "Request received. We will contact you within 24 hours."
+  }
+}
+
+
