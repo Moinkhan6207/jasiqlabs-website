@@ -1,0 +1,91 @@
+{
+  "home": {
+    "hero": {
+      "title": "Innovating for the Future with AI & SaaS",
+      "subtitle": "We don't just build software; we engineer intelligent products that solve real-world problems.",
+      "ctaText": "View Our Products",
+      "ctaLink": "/products/list"
+    },
+    "whatWeBuild": [
+      { "title": "SaaS Platforms", "desc": "Scalable cloud solutions for global businesses." },
+      { "title": "Internal Tools", "desc": "Efficiency engines that power operations." },
+      { "title": "AI Systems", "desc": "Smart algorithms driving automation and insights." }
+    ],
+    "difference": {
+      "title": "Products vs Services",
+      "products": "Owned platforms, continuous evolution, subscription-based.",
+      "services": "Client-specific, custom requirements, project-based."
+    }
+  },
+  "listing": {
+    "title": "Our Product Suite",
+    "subtitle": "Explore the platforms powered by JASIQ Labs engineering."
+  },
+  "productList": [
+    {
+      "id": "omnishop",
+      "name": "OmniShop Commerce Cloud",
+      "shortDesc": "A headless e-commerce engine for modern retail brands.",
+      "target": "Retailers & D2C Brands",
+      "status": "Beta",
+      "detail": {
+        "problem": "Traditional e-commerce platforms are slow and hard to customize.",
+        "solution": "OmniShop provides a lightning-fast API-first architecture.",
+        "features": ["Headless API", "Multi-vendor support", "AI Recommendations"],
+        "heroImage": "gradient-blue" 
+      }
+    },
+    {
+      "id": "certimint",
+      "name": "CertiMint",
+      "shortDesc": "Blockchain-based credential verification system.",
+      "target": "Universities & EdTech",
+      "status": "Active",
+      "detail": {
+        "problem": "Fake certificates are damaging institutional reputation.",
+        "solution": "CertiMint issues tamper-proof digital credentials.",
+        "features": ["Instant Verification", "Blockchain Security", "Bulk Issuance"],
+        "heroImage": "gradient-green"
+      }
+    },
+    {
+      "id": "edustack",
+      "name": "EDUSTACK",
+      "shortDesc": "All-in-one management ERP for educational institutes.",
+      "target": "Schools & Colleges",
+      "status": "Active",
+      "detail": {
+        "problem": "Fragmented tools for attendance, fees, and exams.",
+        "solution": "One unified platform for administration and learning.",
+        "features": ["LMS Integration", "Fee Management", "Parent App"],
+        "heroImage": "gradient-orange"
+      }
+    },
+    {
+      "id": "talent-platforms",
+      "name": "Talent Platforms",
+      "shortDesc": "AI-driven hiring and assessment ecosystem.",
+      "target": "HR Teams",
+      "status": "Concept",
+      "detail": {
+        "problem": "Resume screening is manual and biased.",
+        "solution": "AI agents that screen, interview, and rank candidates.",
+        "features": ["Auto-Interview", "Skill Mapping", "Bias Removal"],
+        "heroImage": "gradient-purple"
+      }
+    }
+  ],
+  "aiResearch": {
+    "title": "JASIQ AI Research",
+    "philosophy": "We believe AI should augment human intelligence, not replace it.",
+    "areas": [
+      { "title": "Generative AI", "desc": "Building LLM agents for customer support." },
+      { "title": "Computer Vision", "desc": "Automated quality control systems." },
+      { "title": "Predictive Analytics", "desc": "Forecasting business trends with high accuracy." }
+    ],
+    "vision": "To democratize access to advanced AI tools for small businesses."
+  }
+}
+
+
+

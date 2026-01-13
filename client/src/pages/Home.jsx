@@ -45,14 +45,14 @@ export default function Home() {
       <Seo title={c.seo.home.title} description={c.seo.home.description} />
 
       {/* Hero Section */}
-      <section className="min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-20">
+      <section className="min-h-[60vh] flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-10">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4">
             <span className="bg-gradient-to-r from-primary-600 via-secondary-500 to-primary-600 bg-clip-text text-transparent">
               {c.home.hero.h1}
             </span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
             {c.home.hero.supportingLine}
           </p>
 
@@ -65,13 +65,13 @@ export default function Home() {
             </Button>
             <Button 
               variant="secondary"
-              onClick={() => navigate("/techWorksstudiopage")}
+              onClick={() => navigate("/techworksstudio")}
             >
               {c.home.hero.buttons.services}
             </Button>
             <Button 
               variant="outline"
-              onClick={() => navigate("/productspage")}
+              onClick={() => navigate("/products")}
             >
               {c.home.hero.buttons.products}
             </Button>
@@ -80,16 +80,16 @@ export default function Home() {
       </section>
 
       {/* What We Do */}
-      <section className="py-20 bg-white">
+      <section className="py-7 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
             {c.home.whatWeDo.title}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {c.home.whatWeDo.items.map((item) => (
               <article 
                 key={item.title} 
-                className="bg-white border border-gray-200 rounded-xl p-8 shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+                className="bg-white border border-gray-200 rounded-xl p-6 shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
               >
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">{item.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{item.text}</p>
@@ -100,17 +100,17 @@ export default function Home() {
       </section>
 
       {/* Our Divisions */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-7 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
             {c.home.divisions.title}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {c.home.divisions.cards.map((card) => (
               <article 
                 key={card.id} 
                 id={card.id} 
-                className="bg-white border border-gray-200 rounded-xl p-8 shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+                className="bg-white border border-gray-200 rounded-xl p-6 shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
               >
                 <h3 className="text-2xl font-bold text-primary-600 mb-4">{card.title}</h3>
                 <p className="text-sm text-gray-600 mb-2">
@@ -127,17 +127,14 @@ export default function Home() {
                     // Analytics track karein
                     trackEvent("division_card_cta_click", { division: card.id });
                     
-                    // Logic: Card ID ke hisab se sahi page par bhejein
+                    // Route according to division ID
                     if (card.id === "realworkstudio") {
                       navigate("/realworkstudio");
                     } else if (card.id === "techworksstudio") {
-                      // Note: Aapke routes.jsx me path 'techWorksstudiopage' hai
-                      navigate("/techWorksstudiopage"); 
+                      navigate("/techworksstudio"); 
                     } else if (card.id === "products") {
-                      // Note: Aapke routes.jsx me path 'productspage' hai
-                      navigate("/productspage");
+                      navigate("/products");
                     } else {
-                      // Default fallback
                       navigate("/contact");
                     }
                   }}
@@ -152,12 +149,12 @@ export default function Home() {
       </section>
 
       {/* Why JASIQ Labs */}
-      <section className="py-20 bg-white">
+      <section className="py-7 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
             {c.home.why.title}
           </h2>
-          <ul className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ul className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
             {c.home.why.points.map((p) => (
               <li 
                 key={p}
@@ -172,9 +169,9 @@ export default function Home() {
       </section>
 
       {/* Who We Work With */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-7 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
             {c.home.whoWeWorkWith.title}
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
@@ -190,10 +187,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trust & Compliance */}
-      <section className="py-20 bg-white">
+      {/* Trust & Compliance
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
             {c.home.trustCompliance.title}
           </h2>
           <ul className="max-w-3xl mx-auto space-y-4">
@@ -208,24 +205,24 @@ export default function Home() {
             ))}
           </ul>
         </div>
-      </section>
+      </section> */}
 
       {/* Lead Capture Form */}
-      <section className="py-20 bg-gradient-to-br from-primary-600 to-secondary-600 text-white">
+      <section className="py-7 bg-gradient-to-br from-primary-600 to-secondary-600 text-white">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
               {c.home.leadCapture.title}
             </h2>
-            <p className="text-xl text-center mb-12 text-primary-100">
+            <p className="text-xl text-center mb-8 text-primary-100">
               {c.home.leadCapture.supportingLine}
             </p>
 
             <form 
-              className="bg-white rounded-2xl p-8 shadow-2xl" 
+              className="bg-white rounded-2xl p-6 shadow-xl" 
               onSubmit={onSubmit}
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <Field label="Name">
                   <input
                     value={form.name}
@@ -271,7 +268,7 @@ export default function Home() {
                 </Field>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
                 <Button type="submit" variant="primary" className="w-full sm:w-auto">
                   {status.state === "loading" ? "Submitting..." : "Submit"}
                 </Button>
@@ -285,7 +282,7 @@ export default function Home() {
 
               {status.state !== "idle" && (
                 <div 
-                  className={`p-4 rounded-lg text-center font-medium ${
+                  className={`p-3 rounded-lg text-center font-medium text-sm ${
                     status.state === "success"
                       ? "bg-green-50 text-green-800 border border-green-200"
                       : status.state === "error"
