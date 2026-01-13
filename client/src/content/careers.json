@@ -1,0 +1,49 @@
+{
+  "hero": {
+    "title": "Build the Future with JASIQ Labs",
+    "subtitle": "Join a team where code meets innovation. We don't just hire employees; we partner with problem solvers who want to master the MERN stack.",
+    "ctaText": "View Openings"
+  },
+  "stats": [
+    { "label": "Projects Delivered", "value": "25+" },
+    { "label": "Team Members", "value": "10+" },
+    { "label": "Coffee Cups", "value": "∞" }
+  ],
+  "whyUs": [
+    { "title": "Learning Culture", "desc": "Forget boring tutorials. Here you work on live production servers and real client databases." },
+    { "title": "Innovation First", "desc": "We experiment with AI Agents, Blockchain, and the latest React patterns every day." },
+    { "title": "Ownership", "desc": "You are not just a coder. You own your module from design to deployment." }
+  ],
+  "perks": [
+    "Flexible Working Hours",
+    "Internship Certificate",
+    "Direct Mentorship",
+    "Letter of Recommendation",
+    "Remote/Hybrid Options",
+    "Modern Tech Stack"
+  ],
+  "openings": [
+    { 
+      "role": "MERN Stack Intern", 
+      "type": "Internship (3 Months)", 
+      "location": "Remote / Hybrid",
+      "tags": ["React", "Node.js", "MongoDB"]
+    },
+    { 
+      "role": "UI/UX Designer", 
+      "type": "Internship (3 Months)", 
+      "location": "Remote",
+      "tags": ["Figma", "Tailwind CSS"] 
+    },
+    { 
+      "role": "Frontend Developer", 
+      "type": "Full Time", 
+      "location": "On-Site",
+      "tags": ["Next.js", "TypeScript"] 
+    }
+  ],
+  "apply": {
+    "text": "Ready to launch your career? Send your best work (GitHub/Portfolio) and Resume to:",
+    "email": "support@jasiqlabs.com"
+  }
+}

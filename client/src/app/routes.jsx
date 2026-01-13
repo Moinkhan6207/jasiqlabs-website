@@ -33,6 +33,11 @@ import ProductListing from "../pages/products/ProductListing";
 import ProductDetail from "../pages/products/ProductDetail";
 import AiResearch from "../pages/products/AiResearch";
 
+// Phase 5: Careers & Blog Imports
+import Careers from "../pages/careers/Careers";
+import BlogList from "../pages/blog/BlogList";
+import BlogPost from "../pages/blog/BlogPost";
+
 export const routes = [
   {
     path: "/",
@@ -42,6 +47,11 @@ export const routes = [
       { index: true, element: <Home /> },
       { path: "about", element: <About /> },
       { path: "contact", element: <ContactPage /> },
+
+      // --- Careers & Blog ---
+      { path: "careers", element: <Careers /> },
+      { path: "blog", element: <BlogList /> },
+      { path: "blog/:id", element: <BlogPost /> },
 
       // --- Legal Pages ---
       { path: "legal/privacy-policy", element: <PrivacyPolicy /> },

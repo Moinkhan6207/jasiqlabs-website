@@ -1,0 +1,47 @@
+[
+  {
+    "id": "starting-career-in-tech",
+    "title": "How to Start a Career in Tech in 2026",
+    "category": "Career Advice",
+    "summary": "The roadmap for freshers has changed. Focus on building real projects rather than just watching tutorials.",
+    "author": "Arbaaz (Sr. Dev)",
+    "date": "Jan 10, 2026",
+    "content": "<p>Getting into tech is exciting...</p><h2>Focus on Fundamentals</h2><p>Languages change, logic stays the same...</p>"
+  },
+  {
+    "id": "ai-in-web-dev",
+    "title": "Why AI Won't Replace Developers (Yet)",
+    "category": "Artificial Intelligence",
+    "summary": "AI is a tool, not a replacement. Learn how to use LLMs like ChatGPT and Copilot to speed up your workflow.",
+    "author": "JASIQ Team",
+    "date": "Jan 12, 2026",
+    "content": "<p>Everyone is talking about AI replacing jobs...</p><h2>The Human Element</h2><p>AI can write code, but it cannot understand client empathy yet.</p>"
+  },
+  {
+    "id": "mern-stack-roadmap",
+    "title": "Mastering the MERN Stack: A Beginner's Guide",
+    "category": "Web Development",
+    "summary": "MongoDB, Express, React, Node.js - why this stack is still the king of startup development in India.",
+    "author": "Tech Team",
+    "date": "Jan 15, 2026",
+    "content": "<p>The MERN stack offers a unified language (JavaScript) for both frontend and backend...</p>"
+  },
+  {
+    "id": "life-as-an-intern",
+    "title": "My First Month as a JASIQ Intern",
+    "category": "Internship Stories",
+    "summary": "From college theory to deploying production code. Here is what a real-world internship actually looks like.",
+    "author": "Saniya (Intern)",
+    "date": "Jan 18, 2026",
+    "content": "<p>College taught me syntax, but the internship taught me Git, deployment, and debugging...</p>"
+  },
+  {
+    "id": "future-of-saas",
+    "title": "Building SaaS Products in India",
+    "category": "Entrepreneurship",
+    "summary": "How Indian developers are shifting from service-based work to building global product companies.",
+    "author": "JASIQ Labs",
+    "date": "Jan 20, 2026",
+    "content": "<p>The era of 'Digital Coolie' is over. We are now building products for the world...</p>"
+  }
+]

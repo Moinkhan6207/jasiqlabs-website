@@ -46,6 +46,18 @@ export default function Header() {
               Home
             </Link>
 
+            <Link
+              to="/about"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive("/about")
+                  ? "text-primary-600 border-b-2 border-primary-600"
+                  : "text-gray-700 hover:text-primary-600"
+              }`}
+              onClick={() => trackEvent("nav_about_click")}
+            >
+              About
+            </Link>
+
             {/* Divisions Dropdown */}
             <div 
               className="relative"
@@ -91,23 +103,31 @@ export default function Header() {
               )}
             </div>
 
-            {/* Blog - Inactive */}
-            <span
-              className="px-3 py-2 text-sm font-medium text-gray-400 cursor-not-allowed relative group"
-              title="Coming Soon"
+            {/* Blog */}
+            <Link
+              to="/blog"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                location.pathname.startsWith("/blog")
+                  ? "text-primary-600 border-b-2 border-primary-600"
+                  : "text-gray-700 hover:text-primary-600"
+              }`}
+              onClick={() => trackEvent("nav_blog_click")}
             >
               Blog
-              <span className="absolute -bottom-1 left-3 right-3 h-0.5 bg-gray-300"></span>
-            </span>
+            </Link>
 
-            {/* Careers - Inactive */}
-            <span
-              className="px-3 py-2 text-sm font-medium text-gray-400 cursor-not-allowed relative group"
-              title="Coming Soon"
+            {/* Careers */}
+            <Link
+              to="/careers"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive("/careers")
+                  ? "text-primary-600 border-b-2 border-primary-600"
+                  : "text-gray-700 hover:text-primary-600"
+              }`}
+              onClick={() => trackEvent("nav_careers_click")}
             >
               Careers
-              <span className="absolute -bottom-1 left-3 right-3 h-0.5 bg-gray-300"></span>
-            </span>
+            </Link>
 
             {/* Contact Button */}
             <Link
@@ -204,9 +224,38 @@ export default function Header() {
               )}
             </div>
 
-            <span className="block px-4 py-2 text-gray-400">Blog (Coming Soon)</span>
-            <span className="block px-4 py-2 text-gray-400">Careers (Coming Soon)</span>
+            {/* Blog Link - Mobile */}
+            <Link
+              to="/blog"
+              className={`block px-4 py-2 rounded-lg transition-colors ${
+                location.pathname.startsWith("/blog")
+                  ? "bg-primary-50 text-primary-600 font-medium"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+              onClick={() => {
+                trackEvent("nav_blog_click");
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              Blog
+            </Link>
 
+            {/* Careers Link - Mobile */}
+            <Link
+              to="/careers"
+              className={`block px-4 py-2 rounded-lg transition-colors ${
+                isActive("/careers")
+                  ? "bg-primary-50 text-primary-600 font-medium"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+              onClick={() => {
+                trackEvent("nav_careers_click");
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              Careers
+            </Link>
+            
             <Link
               to="/contact"
               className={`block px-4 py-2 rounded-lg text-center font-medium transition-colors ${
