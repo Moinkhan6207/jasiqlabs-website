@@ -1,4 +1,5 @@
 import { PrismaClient, PageType } from "@prisma/client";
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -26,8 +27,36 @@ const PAGES = [
   { slug: "admin", routePath: "/admin", pageType: "ADMIN", isIndexable: false }
 ];
 
+// Default admin user
+const DEFAULT_ADMIN = {
+  email: 'admin@jasiqlabs.com',
+  password: 'admin123',
+  
+};
+
 async function main() {
-  // 1) SEO defaults
+  console.log('🌱 Starting database seeding...');
+
+  // 1) Create default admin user if not exists
+  const existingAdmin = await prisma.admin.findUnique({
+    where: { email: DEFAULT_ADMIN.email }
+  });
+
+  if (!existingAdmin) {
+    const hashedPassword = await bcrypt.hash(DEFAULT_ADMIN.password, 12);
+    await prisma.admin.create({
+      data: {
+        email: DEFAULT_ADMIN.email,
+        password: hashedPassword,
+        role: DEFAULT_ADMIN.role
+      }
+    });
+    console.log('✅ Created default admin user');
+  } else {
+    console.log('ℹ️  Admin user already exists, skipping creation');
+  }
+
+  // 2) SEO defaults
   const existingSeo = await prisma.seoSettings.findFirst();
   if (!existingSeo) {
     await prisma.seoSettings.create({
@@ -40,9 +69,11 @@ async function main() {
         defaultFaviconUrl: null
       }
     });
+    console.log('✅ Added default SEO settings');
   }
 
-  // 2) Pages registry
+  // 3) Pages registry
+  console.log('🔄 Syncing pages...');
   for (const p of PAGES) {
     await prisma.page.upsert({
       where: { slug: p.slug },
@@ -59,26 +90,65 @@ async function main() {
       }
     });
   }
+  console.log(`✅ Synced ${PAGES.length} pages`);
 
-  // 3) Create minimal sections for key pages (empty structured blocks)
+  // 4) Create minimal sections for home page if not exists
   const home = await prisma.page.findUnique({ where: { slug: "home" } });
   if (home) {
-    const existingSections = await prisma.pageSection.findFirst({ where: { pageId: home.id } });
+    const existingSections = await prisma.pageSection.findFirst({ 
+      where: { pageId: home.id } 
+    });
+    
     if (!existingSections) {
       await prisma.pageSection.createMany({
         data: [
-          { pageId: home.id, sectionKey: "hero", contentJson: { title: "JASIQ Labs" }, sortOrder: 1 },
-          { pageId: home.id, sectionKey: "divisions", contentJson: { items: [] }, sortOrder: 2 }
+          { 
+            pageId: home.id, 
+            sectionKey: "hero", 
+            contentJson: { 
+              title: "Welcome to JASIQ Labs",
+              subtitle: "Building the future through innovation",
+              ctaText: "Get Started",
+              ctaLink: "/contact"
+            }, 
+            sortOrder: 1 
+          },
+          { 
+            pageId: home.id, 
+            sectionKey: "divisions", 
+            contentJson: { 
+              title: "Our Divisions",
+              items: [
+                {
+                  title: "Real Work Studio",
+                  description: "Hands-on training and real-world experience",
+                  icon: "briefcase"
+                },
+                {
+                  title: "Tech Works Studio",
+                  description: "Custom software development and consulting",
+                  icon: "code"
+                },
+                {
+                  title: "Products & AI",
+                  description: "Innovative products powered by AI",
+                  icon: "cpu"
+                }
+              ]
+            }, 
+            sortOrder: 2 
+          }
         ]
       });
+      console.log('✅ Added default sections to home page');
     }
   }
 }
 
 main()
-  .then(() => console.log("✅ Seed completed"))
-  .catch((e) => {
-    console.error("❌ Seed failed:", e);
+  .then(() => console.log("🌱 Database seeding completed successfully!"))
+  .catch((error) => {
+    console.error("❌ Database seeding failed:", error);
     process.exit(1);
   })
   .finally(async () => {

@@ -78,25 +78,23 @@ model PageSection {
   @@index([pageId, sortOrder])
 }
 
-// --- YAHAN FIX KIYA HAI ---
 model Lead {
   id           String        @id @default(uuid())
   name         String
   email        String
   phone        String
-  interestType String        // "STUDENT", "CLIENT", "PARTNER"
-  sourcePage   String        // "home" or "contact"
-  
-  // ✅ Ye line missing thi, isliye error aa raha tha
-  division     LeadDivision? // Optional rakha hai taaki crash na ho
-
+  interestType String        @default("STUDENT") // Will be handled as enum in code
+  division String @default("TechWorksStudio")        // Will be handled as enum in code
+  message      String?       // Optional
+  source       String        @default("Website")
+  status       String        @default("New")
   createdAt    DateTime      @default(now())
 }
 
-model AdminUser {
-  id           String    @id @default(cuid())
+model Admin {
+  id           String    @id @default(uuid())
   email        String    @unique
-  passwordHash String
+  password     String
   createdAt    DateTime  @default(now())
-  lastLoginAt  DateTime?
+  updatedAt    DateTime  @updatedAt
 }

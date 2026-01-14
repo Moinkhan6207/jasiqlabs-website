@@ -1,7 +1,14 @@
+import { Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import Layout from "../components/layout/Layout";
 import Home from "../pages/Home";
 import About from "../pages/About";
-import ContactPage from "../pages/Contact";
+
+// Lazy load components for better performance
+const ContactPage = lazy(() => import('../pages/ContactPage'));
+const AdminLayout = lazy(() => import('../components/layouts/AdminLayout'));
+const AdminLogin = lazy(() => import('../pages/admin/AdminLogin'));
+const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
 
 // Legal Pages
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
@@ -38,6 +45,25 @@ import Careers from "../pages/careers/Careers";
 import BlogList from "../pages/blog/BlogList";
 import BlogPost from "../pages/blog/BlogPost";
 
+// Loading component for Suspense fallback
+const Loading = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+);
+
+// Protected Route component
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('adminToken');
+  
+  if (!token) {
+    window.location.href = '/admin/login';
+    return null;
+  }
+  
+  return children;
+};
+
 export const routes = [
   {
     path: "/",
@@ -46,7 +72,14 @@ export const routes = [
       // --- Main Website Pages ---
       { index: true, element: <Home /> },
       { path: "about", element: <About /> },
-      { path: "contact", element: <ContactPage /> },
+      { 
+        path: "contact", 
+        element: (
+          <Suspense fallback={<Loading />}>
+            <ContactPage />
+          </Suspense>
+        ) 
+      },
 
       // --- Careers & Blog ---
       { path: "careers", element: <Careers /> },
@@ -95,6 +128,35 @@ export const routes = [
           { path: "list", element: <ProductListing /> },   // URL: /products/list
           { path: "ai-research", element: <AiResearch /> },// URL: /products/ai-research
           { path: ":id", element: <ProductDetail /> },     // URL: /products/omnishop (Dynamic)
+        ],
+      },
+
+      // --- Phase 6: Admin Panel (Nested Routes) ---
+      {
+        path: "admin",
+        children: [
+          {
+            path: "login",
+            element: (
+              <Suspense fallback={<Loading />}>
+                <AdminLogin />
+              </Suspense>
+            )
+          },
+          {
+            path: "dashboard",
+            element: (
+              <Suspense fallback={<Loading />}>
+                <ProtectedRoute>
+                  <AdminLayout>
+                    <AdminDashboard />
+                  </AdminLayout>
+                </ProtectedRoute>
+              </Suspense>
+            )
+          },
+          // Redirect root admin path to dashboard
+          { path: "", element: <Navigate to="/admin/dashboard" replace /> },
         ],
       },
     ],

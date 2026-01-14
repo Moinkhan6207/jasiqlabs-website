@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { source } from "framer-motion/client";
 
 const prisma = new PrismaClient();
 
@@ -32,7 +33,7 @@ export const createLead = async (req, res) => {
         email,
         phone,
         interestType: interestType || "STUDENT",
-        sourcePage: sourcePage || "unknown",
+        source: source|| "unknown",
         // ✅ YAHAN FIX HAI: Division add kar diya
         division: derivedDivision, 
       },
