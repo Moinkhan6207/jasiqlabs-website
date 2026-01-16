@@ -1,13 +1,19 @@
 import express from 'express';
 import * as authController from '../controllers/authController.js';
-import { protect } from '../middlewares/authMiddleware.js'; // .js lagana zaroori hai
+import { protect, restrictTo } from '../middlewares/authMiddleware.js';
+import adminRouter from './admin.routes.js';
+
 const router = express.Router();
 
 // Public routes
 router.post('/login', authController.login);
 
-// Protected routes
+// Protect all routes after this middleware
 router.use(protect);
+
+// Admin dashboard and management routes
+router.use('/cms', restrictTo('admin'), adminRouter);
+
 // Get current admin
 router.get('/me', authController.getMe);
 

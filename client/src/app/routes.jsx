@@ -1,5 +1,6 @@
-import { Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
+import { AuthProvider } from '../contexts/AuthContext';
 import Layout from "../components/layout/Layout";
 import Home from "../pages/Home";
 import About from "../pages/About";
@@ -52,88 +53,109 @@ const Loading = () => (
   </div>
 );
 
+// App Layout component that wraps the entire app with AuthProvider
+const AppLayout = () => (
+  <AuthProvider>
+    <Outlet />
+  </AuthProvider>
+);
+
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('adminToken');
+  const token = localStorage.getItem('token');
   
   if (!token) {
-    window.location.href = '/admin/login';
-    return null;
+    return <Navigate to="/admin/login" replace />;
   }
   
   return children;
 };
 
-export const routes = [
+// Admin Layout Wrapper
+const AdminLayoutWrapper = ({ children }) => (
+  <Suspense fallback={<Loading />}>
+    <AdminLayout>
+      {children}
+    </AdminLayout>
+  </Suspense>
+);
+
+// Create the router configuration
+export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Layout />,
+    element: <AppLayout />,
     children: [
-      // --- Main Website Pages ---
-      { index: true, element: <Home /> },
-      { path: "about", element: <About /> },
-      { 
-        path: "contact", 
-        element: (
-          <Suspense fallback={<Loading />}>
-            <ContactPage />
-          </Suspense>
-        ) 
-      },
-
-      // --- Careers & Blog ---
-      { path: "careers", element: <Careers /> },
-      { path: "blog", element: <BlogList /> },
-      { path: "blog/:id", element: <BlogPost /> },
-
-      // --- Legal Pages ---
-      { path: "legal/privacy-policy", element: <PrivacyPolicy /> },
-      { path: "legal/terms", element: <Terms /> },
-      { path: "legal/refund-cancellation", element: <RefundCancellation /> },
-      { path: "legal/disclaimer", element: <Disclaimer /> },
-      { path: "legal/cookie-policy", element: <CookiePolicy /> },
-
-      // --- Phase 2: RealWorkStudio (Nested Routes) ---
       {
-        path: "realworkstudio",
-        element: <RwsLayout />,
+        path: "/",
+        element: <Layout />,
         children: [
-          { index: true, element: <RwsHome /> },
-          { path: "programs", element: <Programs /> },
-          { path: "internship-model", element: <InternshipModel /> },
-          { path: "student-journey", element: <StudentJourney /> },
-          { path: "faqs", element: <Faqs /> },
-          { path: "apply", element: <Apply /> },
+          // --- Main Website Pages ---
+          { index: true, element: <Home /> },
+          { path: "about", element: <About /> },
+          { 
+            path: "contact", 
+            element: (
+              <Suspense fallback={<Loading />}>
+                <ContactPage />
+              </Suspense>
+            ) 
+          },
+
+          // --- Careers & Blog ---
+          { path: "careers", element: <Careers /> },
+          { path: "blog", element: <BlogList /> },
+          { path: "blog/:id", element: <BlogPost /> },
+
+          // --- Legal Pages ---
+          { path: "legal/privacy-policy", element: <PrivacyPolicy /> },
+          { path: "legal/terms", element: <Terms /> },
+          { path: "legal/refund-cancellation", element: <RefundCancellation /> },
+          { path: "legal/disclaimer", element: <Disclaimer /> },
+          { path: "legal/cookie-policy", element: <CookiePolicy /> },
+
+          // --- Phase 2: RealWorkStudio (Nested Routes) ---
+          {
+            path: "realworkstudio",
+            element: <RwsLayout />,
+            children: [
+              { index: true, element: <RwsHome /> },
+              { path: "programs", element: <Programs /> },
+              { path: "internship-model", element: <InternshipModel /> },
+              { path: "student-journey", element: <StudentJourney /> },
+              { path: "faqs", element: <Faqs /> },
+              { path: "apply", element: <Apply /> },
+            ],
+          },
+
+          // --- Phase 3: TechWorksStudio (Nested Routes) ---
+          {
+            path: "techworksstudio",
+            element: <TwsLayout />,
+            children: [
+              { index: true, element: <TwsHome /> },
+              { path: "services", element: <TwsServices /> },
+              { path: "process", element: <TwsProcess /> },
+              { path: "contact", element: <TwsContact /> },
+            ],
+          },
+
+          // --- Phase 4: Products & AI (Nested Routes) ---
+          {
+            path: "products",
+            element: <ProductsLayout />,
+            children: [
+              { index: true, element: <ProductsHome /> },
+              { path: "list", element: <ProductListing /> },
+              { path: "ai-research", element: <AiResearch /> },
+              { path: ":id", element: <ProductDetail /> },
+            ],
+          },
         ],
       },
 
-      // --- Phase 3: TechWorksStudio (Nested Routes) ---
+      // --- Admin Routes ---
       {
-        path: "techworksstudio",
-        element: <TwsLayout />,
-        children: [
-          { index: true, element: <TwsHome /> },
-          { path: "services", element: <TwsServices /> },
-          { path: "process", element: <TwsProcess /> },
-          { path: "contact", element: <TwsContact /> },
-        ],
-      },
-
-      // --- Phase 4: Products & AI (Nested Routes) ---
-      {
-        path: "products",
-        element: <ProductsLayout />,
-        children: [
-          { index: true, element: <ProductsHome /> },      // URL: /products
-          { path: "list", element: <ProductListing /> },   // URL: /products/list
-          { path: "ai-research", element: <AiResearch /> },// URL: /products/ai-research
-          { path: ":id", element: <ProductDetail /> },     // URL: /products/omnishop (Dynamic)
-        ],
-      },
-
-      // --- Phase 6: Admin Panel (Nested Routes) ---
-      {
-        path: "admin",
+        path: "/admin",
         children: [
           {
             path: "login",
@@ -146,19 +168,25 @@ export const routes = [
           {
             path: "dashboard",
             element: (
-              <Suspense fallback={<Loading />}>
-                <ProtectedRoute>
-                  <AdminLayout>
-                    <AdminDashboard />
-                  </AdminLayout>
-                </ProtectedRoute>
-              </Suspense>
+              <ProtectedRoute>
+                <AdminLayoutWrapper>
+                  <AdminDashboard />
+                </AdminLayoutWrapper>
+              </ProtectedRoute>
             )
           },
-          // Redirect root admin path to dashboard
-          { path: "", element: <Navigate to="/admin/dashboard" replace /> },
+          { 
+            index: true, 
+            element: <Navigate to="/admin/dashboard" replace /> 
+          },
         ],
       },
+
+      // 404 - Not Found
+      {
+        path: "*",
+        element: <Navigate to="/" replace />
+      }
     ],
   },
-];
+]);

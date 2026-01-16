@@ -28,20 +28,34 @@ const ContactPage = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:8080/api/public/leads', {
+      // Format the data to match the backend expectations
+      const leadData = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        interestType: formData.interestType, // Will be converted to uppercase in the backend
+        source: 'WEBSITE',
+        message: formData.message ? formData.message.trim() : '',
+      };
+
+      console.log('Submitting lead:', leadData);
+      
+      const response = await fetch('http://localhost:8080/api/leads/public', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(leadData),
       });
 
+      const responseData = await response.json();
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Something went wrong');
+        console.error('Lead submission failed:', responseData);
+        throw new Error(responseData.message || 'Failed to submit form. Please try again.');
       }
 
-      // Reset form
+      // Reset form on success
       setFormData({
         name: '',
         email: '',
@@ -50,8 +64,10 @@ const ContactPage = () => {
         division: 'TechWorksStudio',
         message: ''
       });
-
+      
+      // Show success message
       toast.success('Thank you for contacting us! We will get back to you soon.');
+      
     } catch (error) {
       console.error('Error submitting form:', error);
       toast.error(error.message || 'Failed to submit form. Please try again.');
@@ -196,9 +212,9 @@ const ContactPage = () => {
                         onChange={handleChange}
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                       >
-                        <option value="Student">Student</option>
-                        <option value="Client">Client</option>
-                        <option value="Partner">Partner</option>
+                        <option value="STUDENT">Student</option>
+                        <option value="CLIENT">Client</option>
+                        <option value="PARTNER">Partner</option>
                       </select>
                     </div>
 

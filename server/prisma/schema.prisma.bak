@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PageType {
+  PUBLIC
+  ADMIN
+}
+
+enum LeadInterestType {
+  STUDENT
+  CLIENT
+  PARTNER
+}
+
+enum LeadDivision {
+  RWS
+  TWS
+  PRODUCTS
+}
+
+enum LeadStatus {
+  NEW
+  REVIEWED
+}
+
+model SeoSettings {
+  id                     String   @id @default(cuid())
+  siteName               String
+  titleTemplate          String
+  defaultMetaDescription String
+  defaultOgImageUrl      String?
+  defaultFaviconUrl      String?
+  updatedAt              DateTime @updatedAt
+}
+
+model Page {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  routePath   String   @unique
+  pageType    PageType
+  isIndexable Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+
+  seo      PageSeo?
+  sections PageSection[]
+}
+
+model PageSeo {
+  id              String  @id @default(cuid())
+  pageId          String  @unique
+  metaTitle       String?
+  metaDescription String?
+  canonicalUrl    String?
+  ogTitle         String?
+  ogDescription   String?
+  ogImageUrl      String?
+  robots          String?
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+}
+
+model PageSection {
+  id          String   @id @default(cuid())
+  pageId      String
+  sectionKey  String
+  contentJson Json
+  sortOrder   Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId, sortOrder])
+}
+
+model Lead {
+  id           String        @id @default(uuid())
+  name         String
+  email        String
+  phone        String
+  interestType String        @default("STUDENT") // Will be handled as enum in code
+  division String @default("TechWorksStudio")        // Will be handled as enum in code
+  message      String?       // Optional
+  source       String        @default("Website")
+  status       String        @default("New")
+  createdAt    DateTime      @default(now())
+}
+
+model Admin {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  password     String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}

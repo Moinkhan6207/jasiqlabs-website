@@ -1,0 +1,103 @@
+.admin-layout {
+  min-height: 100vh;
+}
+
+.admin-header {
+  padding: 0 16px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1;
+  position: sticky;
+  top: 0;
+}
+
+.admin-sider {
+  box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+  z-index: 10;
+  overflow: auto;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.admin-content {
+  margin: 24px 16px;
+  padding: 24px;
+  background: #fff;
+  min-height: calc(100vh - 112px);
+  border-radius: 8px;
+}
+
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.notification-badge {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.notification-badge:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.user-dropdown {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-dropdown:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.user-avatar {
+  background: #1890ff;
+  color: #fff;
+}
+
+.mobile-menu-trigger {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-sider {
+    position: fixed;
+    height: 100%;
+    z-index: 1000;
+  }
+  
+  .mobile-menu-trigger {
+    display: block;
+  }
+  
+  .admin-content {
+    margin: 16px;
+    padding: 16px;
+  }
+}
