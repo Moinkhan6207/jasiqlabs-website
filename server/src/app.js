@@ -13,7 +13,7 @@ import { sitemapRouter } from "./routes/sitemap.routes.js";
 import { publicSeoRouter } from "./routes/publicSeo.routes.js";
 import publicPagesRouter from "./routes/publicPages.routes.js";
 import leadRoutes from "./routes/leadRoutes.js";
-import adminRoutes from "./routes/adminRoutes.js";
+import adminRoutes from "./routes/admin.routes.js";
 import AppError from "./utils/appError.js";
 import { protect } from "./middlewares/authMiddleware.js";
 
@@ -91,7 +91,7 @@ import authRoutes from './routes/auth.routes.js';
 app.use('/api/admin/auth', authRoutes);
 
 // Protected routes
-app.use('/api/admin/leads', protect, leadRoutes); 
+//app.use('/api/admin/leads', protect, leadRoutes); 
 app.use('/api/admin', protect, adminRoutes);
 
 app.use("/", robotsRouter);

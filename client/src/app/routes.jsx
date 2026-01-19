@@ -10,6 +10,11 @@ const ContactPage = lazy(() => import('../pages/ContactPage'));
 const AdminLayout = lazy(() => import('../components/layouts/AdminLayout'));
 const AdminLogin = lazy(() => import('../pages/admin/AdminLogin'));
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
+const LeadsPage = lazy(() => import('../pages/admin/LeadsPage'));
+const BlogPage = lazy(() => import('../pages/admin/BlogPage'));
+const CareersPage = lazy(() => import('../pages/admin/CareersPage'));
+const ContentPage = lazy(() => import('../pages/admin/ContentPage'));
+const SettingsPage = lazy(() => import('../pages/admin/SettingsPage'));
 
 // Legal Pages
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
@@ -62,7 +67,7 @@ const AppLayout = () => (
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('adminToken');
   
   if (!token) {
     return <Navigate to="/admin/login" replace />;
@@ -166,14 +171,22 @@ export const router = createBrowserRouter([
             )
           },
           {
-            path: "dashboard",
             element: (
               <ProtectedRoute>
                 <AdminLayoutWrapper>
-                  <AdminDashboard />
+                  <Outlet />
                 </AdminLayoutWrapper>
               </ProtectedRoute>
-            )
+            ),
+            children: [
+              { path: "dashboard", element: <AdminDashboard /> },
+              { path: "leads", element: <LeadsPage /> },
+              { path: "blog", element: <BlogPage /> },
+              { path: "careers", element: <CareersPage /> },
+              { path: "content/*", element: <ContentPage /> },
+              { path: "settings", element: <SettingsPage /> },
+              { index: true, element: <Navigate to="dashboard" replace /> },
+            ]
           },
           { 
             index: true, 

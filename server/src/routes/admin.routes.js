@@ -31,18 +31,11 @@ import {
 } from '../controllers/admin/division.controller.js';
 import {
   getLeads,
+  updateLeadStatus, // 👈 FIX 1: Ye Import Miss kar diya tha aapne
   exportLeadsToCSV,
 } from '../controllers/admin/lead.controller.js';
-// Note: Config controller shayad abhi bana na ho, agar error aaye to ise comment kar dena
-// import {
-//   getGlobalConfigs,
-//   updateGlobalConfig,
-// } from '../controllers/admin/config.controller.js';
 
 const router = express.Router();
-
-// All routes in this file are already protected by the middleware in app.js
-// No need to apply protect middleware here again
 
 // Dashboard Routes
 router.get('/dashboard/stats', getDashboardStats);
@@ -83,16 +76,10 @@ router.route('/divisions/:type/:id')
   .patch(updateDivisionContent)
   .delete(deleteDivisionContent);
 
-// Leads Management
+// Leads Management Routes
 router.get('/leads', getLeads);
 router.get('/leads/export', exportLeadsToCSV);
+// 👇 FIX 2: Ye Route Add kiya (Status Update ke liye)
+router.patch('/leads/:id/status', updateLeadStatus);
 
-// Global Config (Abhi ke liye comment kiya hai taaki crash na ho)
-// router.route('/config')
-//   .get(getGlobalConfigs);
-
-// router.route('/config/:key')
-//   .patch(updateGlobalConfig);
-
-// 👇 Sabse Zaroori Line (Default Export)
 export default router;

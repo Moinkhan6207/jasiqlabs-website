@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, Outlet } from 'react-router-dom';
-import { LogOut, LayoutDashboard, Users, MessageSquare, Menu, X } from 'lucide-react';
+import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
+import { 
+  LogOut, 
+  LayoutDashboard, 
+  Users, 
+  FileText, 
+  Briefcase, 
+  Settings, 
+  Menu, 
+  X,
+  FileTextIcon,
+  Home,
+  Info
+} from 'lucide-react';
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -19,10 +31,23 @@ const AdminLayout = () => {
     }
   }, [navigate]);
 
+  const location = useLocation();
+
   const navigation = [
-    { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard, current: true },
-    { name: 'Leads', href: '/admin/leads', icon: Users, current: false },
-    { name: 'Messages', href: '/admin/messages', icon: MessageSquare, current: false },
+    { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard, current: location.pathname === '/admin/dashboard' },
+    { name: 'Leads Management', href: '/admin/leads', icon: Users, current: location.pathname === '/admin/leads' },
+    { name: 'Blog Posts', href: '/admin/blog', icon: FileText, current: location.pathname === '/admin/blog' },
+    { name: 'Careers', href: '/admin/careers', icon: Briefcase, current: location.pathname === '/admin/careers' },
+    { 
+      name: 'Page Content', 
+      icon: FileTextIcon,
+      current: location.pathname.startsWith('/admin/page-content'),
+      children: [
+        { name: 'Home', href: '/admin/page-content/home', icon: Home },
+        { name: 'About', href: '/admin/page-content/about', icon: Info },
+      ]
+    },
+    { name: 'Settings', href: '/admin/settings', icon: Settings, current: location.pathname === '/admin/settings' },
   ];
 
   return (
@@ -57,23 +82,51 @@ const AdminLayout = () => {
             </div>
             <nav className="mt-5 flex-1 px-2 space-y-1 bg-white">
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                    item.current
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-                >
-                  <item.icon
-                    className={`mr-3 flex-shrink-0 h-6 w-6 ${
-                      item.current ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-500'
-                    }`}
-                    aria-hidden="true"
-                  />
-                  {item.name}
-                </Link>
+                <div key={item.name}>
+                  {item.children ? (
+                    <div className="space-y-1">
+                      <div className="px-2 pt-2 pb-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        {item.name}
+                      </div>
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          to={child.href}
+                          className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                            location.pathname === child.href
+                              ? 'bg-blue-50 text-blue-600'
+                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                          }`}
+                        >
+                          <child.icon
+                            className={`mr-3 flex-shrink-0 h-5 w-5 ${
+                              location.pathname === child.href ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
+                            }`}
+                            aria-hidden="true"
+                          />
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                        item.current
+                          ? 'bg-blue-50 text-blue-600'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      }`}
+                    >
+                      <item.icon
+                        className={`mr-3 flex-shrink-0 h-6 w-6 ${
+                          item.current ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-500'
+                        }`}
+                        aria-hidden="true"
+                      />
+                      {item.name}
+                    </Link>
+                  )}
+                </div>
               ))}
             </nav>
           </div>
