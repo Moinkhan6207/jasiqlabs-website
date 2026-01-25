@@ -2,13 +2,12 @@ import { PrismaClient } from '@prisma/client';
 import AppError from '../../utils/appError.js';
 import catchAsync from '../../utils/catchAsync.js';
 import slugify from 'slugify';
+import logger from '../../utils/logger.js';
 
 const prisma = new PrismaClient();
 
 /**
  * Get all blog posts
- * @route GET /api/admin-cms/blog
- * @access Private/Admin
  */
 export const getBlogPosts = catchAsync(async (req, res, next) => {
   const { published, limit = 10, page = 1 } = req.query;
@@ -28,6 +27,16 @@ export const getBlogPosts = catchAsync(async (req, res, next) => {
     prisma.blogPost.count({ where }),
   ]);
 
+  // Read operations ko usually log nahi karte taaki logs bhar na jayein
+  // Agar debugging ke liye chahiye to ye use karein:
+  /*
+  logger.debug('Fetched blog posts list', {
+    event: 'BLOG_FETCH_LIST',
+    count: posts.length,
+    correlationId: req.correlationId
+  });
+  */
+
   res.status(200).json({
     status: 'success',
     results: posts.length,
@@ -40,8 +49,6 @@ export const getBlogPosts = catchAsync(async (req, res, next) => {
 
 /**
  * Get a single blog post
- * @route GET /api/admin-cms/blog/:id
- * @access Private/Admin
  */
 export const getBlogPost = catchAsync(async (req, res, next) => {
   const post = await prisma.blogPost.findUnique({
@@ -49,6 +56,13 @@ export const getBlogPost = catchAsync(async (req, res, next) => {
   });
 
   if (!post) {
+    // 👈 NEW: Structured Warning
+    logger.warn('Blog post not found', {
+      event: 'BLOG_NOT_FOUND',
+      blogId: req.params.id,
+      correlationId: req.correlationId,
+      ip: req.ip
+    });
     return next(new AppError('No blog post found with that ID', 404));
   }
 
@@ -62,8 +76,6 @@ export const getBlogPost = catchAsync(async (req, res, next) => {
 
 /**
  * Create a new blog post
- * @route POST /api/admin-cms/blog
- * @access Private/Admin
  */
 export const createBlogPost = catchAsync(async (req, res, next) => {
   const { title, summary, content, coverImage, metaTitle, metaDesc } = req.body;
@@ -83,6 +95,16 @@ export const createBlogPost = catchAsync(async (req, res, next) => {
     },
   });
 
+  // 👈 NEW: Structured Success Log
+  logger.info('New Blog Created Successfully', {
+    event: 'BLOG_CREATED',
+    blogId: post.id,
+    title: title,
+    author: req.user.name,
+    userId: req.user.id,
+    correlationId: req.correlationId
+  });
+
   res.status(201).json({
     status: 'success',
     data: {
@@ -93,8 +115,6 @@ export const createBlogPost = catchAsync(async (req, res, next) => {
 
 /**
  * Update a blog post
- * @route PATCH /api/admin-cms/blog/:id
- * @access Private/Admin
  */
 export const updateBlogPost = catchAsync(async (req, res, next) => {
   const { title, summary, content, coverImage, published, metaTitle, metaDesc } = req.body;
@@ -119,6 +139,16 @@ export const updateBlogPost = catchAsync(async (req, res, next) => {
     data: updateData,
   });
 
+  // 👈 NEW: Structured Update Log
+  logger.info('Blog Post Updated', {
+    event: 'BLOG_UPDATED',
+    blogId: req.params.id,
+    title: updatedPost.title,
+    isPublished: updatedPost.published,
+    userId: req.user.id,
+    correlationId: req.correlationId
+  });
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -129,12 +159,19 @@ export const updateBlogPost = catchAsync(async (req, res, next) => {
 
 /**
  * Delete a blog post
- * @route DELETE /api/admin-cms/blog/:id
- * @access Private/Admin
  */
 export const deleteBlogPost = catchAsync(async (req, res, next) => {
-  await prisma.blogPost.delete({
+  const deletedPost = await prisma.blogPost.delete({
     where: { id: req.params.id },
+  });
+
+  // 👈 NEW: Structured Deletion Log
+  logger.info('Blog Post Deleted', {
+    event: 'BLOG_DELETED',
+    blogId: req.params.id,
+    title: deletedPost.title,
+    userId: req.user.id,
+    correlationId: req.correlationId
   });
 
   res.status(204).json({

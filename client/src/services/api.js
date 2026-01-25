@@ -1,8 +1,7 @@
 import axios from 'axios';
-// Agar ENV file nahi hai to ise comment kar dein ya direct URL use karein
-// import { ENV } from "../config/env"; 
 
-const BASE_URL = 'http://localhost:8080'; // Ya process.env.VITE_API_URL
+// Backend URL
+const BASE_URL = 'http://localhost:8080';
 
 // Create axios instance
 const api = axios.create({
@@ -12,11 +11,10 @@ const api = axios.create({
   },
 });
 
-// 1. REQUEST INTERCEPTOR (Token bhejna)
+// 1. REQUEST INTERCEPTOR
 api.interceptors.request.use(
   (config) => {
-    // Token ka naam 'adminToken' hi rakhein (Backend/Context se match karein)
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -25,16 +23,13 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 2. RESPONSE INTERCEPTOR (401 Handle karna)
+// 2. RESPONSE INTERCEPTOR
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      localStorage.removeItem('token');
       localStorage.removeItem('adminToken');
-      // Agar hum login page par nahi hain, tabhi redirect karein
-      if (!window.location.pathname.includes('/admin/login')) {
-        window.location.href = '/admin/login';
-      }
     }
     return Promise.reject(error);
   }
@@ -49,75 +44,71 @@ export const auth = {
     return response.data; 
   },
   logout: () => {
+    localStorage.removeItem('token');
     localStorage.removeItem('adminToken');
-    return api.post('/api/admin/auth/logout');
+    return Promise.resolve(); 
   },
   getCurrentUser: () => api.get('/api/admin/auth/me'),
 };
 
-// 4. LEADS ENDPOINTS (Protected)
+// 4. LEADS ENDPOINTS (Admin Side)
 export const leads = {
-  getAll: (params = {}) => api.get('/api/admin/leads', { params }),
+  getAll: () => api.get('/api/admin/leads'),
   getById: (id) => api.get(`/api/admin/leads/${id}`),
   updateStatus: (id, status) => api.patch(`/api/admin/leads/${id}/status`, { status }),
-  exportLeads: (params = {}) => 
+  exportLeads: () => 
     api.get('/api/admin/leads/export', { 
-      params,
-      responseType: 'blob', // Important for file download
+      responseType: 'blob',
     }),
 };
 
 // 5. BLOG ENDPOINTS
 export const blog = {
-  getAll: (params = {}) => api.get('/api/admin/blogs', { params }),
-  getById: (id) => api.get(`/api/admin/blogs/${id}`),
-  create: (data) => {
-    const formData = new FormData();
-    Object.keys(data).forEach(key => formData.append(key, data[key]));
-    return api.post('/api/admin/blogs', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-  },
-  update: (id, data) => {
-    const formData = new FormData();
-    Object.keys(data).forEach(key => formData.append(key, data[key]));
-    return api.put(`/api/admin/blogs/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-  },
-  delete: (id) => api.delete(`/api/admin/blogs/${id}`),
+  getAll: () => api.get('/api/admin/blog'),
+  getById: (id) => api.get(`/api/admin/blog/${id}`),
+  create: (data) => api.post('/api/admin/blog', data),
+  update: (id, data) => api.patch(`/api/admin/blog/${id}`, data),
+  delete: (id) => api.delete(`/api/admin/blog/${id}`),
 };
 
 // 6. CAREERS ENDPOINTS
 export const careers = {
-  getAll: (params = {}) => api.get('/api/admin/careers', { params }),
+  getAll: () => api.get('/api/admin/careers'),
   getById: (id) => api.get(`/api/admin/careers/${id}`),
   create: (data) => api.post('/api/admin/careers', data),
-  update: (id, data) => api.put(`/api/admin/careers/${id}`, data),
+  update: (id, data) => api.patch(`/api/admin/careers/${id}`, data),
   delete: (id) => api.delete(`/api/admin/careers/${id}`),
-  getApplications: (params = {}) => api.get('/api/admin/careers/applications', { params }),
 };
 
 // 7. DASHBOARD ENDPOINTS
 export const dashboard = {
   getStats: () => api.get('/api/admin/dashboard/stats'),
-  getRecentLeads: (limit = 5) => 
-    api.get('/api/admin/dashboard/recent-leads', { params: { limit } }),
+  getRecentLeads: () => api.get('/api/admin/dashboard/recent-leads'),
 };
 
-// 8. PUBLIC ENDPOINTS
+// 👇 8. PUBLIC ENDPOINTS (Ye Add kiya hai - VERY IMPORTANT)
 export const publicApi = {
-  getSeoDefaults: () => api.get('/api/public/seo/defaults'),
-  getPageSeo: (slug) => api.get(`/api/public/seo/page/${slug}`),
-  submitLead: (leadData) => api.post('/api/public/leads', leadData),
+  // Contact Form
+  submitLead: (leadData) => api.post('/api/public/leads', leadData),  
+  // Agar SEO APIs bhi chahiye to:
+  // getPageSeo: (slug) => api.get(`/api/public/seo/page/${slug}`),
+
+
+  // 👇 Ye DO lines add karein (Blog ke liye)
+  getBlogPosts: () => api.get('/api/admin/blog?published=true'), // Sirf published posts
+  getBlogPostById: (id) => api.get(`/api/admin/blog/${id}`),
 };
+
+
 
 // Default Export
-export default {
+const apiService = {
   auth,
   leads,
   blog,
   careers,
   dashboard,
-  public: publicApi,
+  public: publicApi, // 👈 Export me Public add kiya
 };
+
+export default apiService;

@@ -1,12 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useParams, Link } from 'react-router-dom';
-import blogData from '../../content/blog.json';
-import { ArrowLeft, Calendar, User, Clock } from 'lucide-react';
+import { publicApi } from '../../services/api'; // ✅ API
+import blogDataJson from '../../content/blog.json'; // ✅ JSON
+import { ArrowLeft, Calendar, User, Clock, RefreshCw } from 'lucide-react';
 
 const BlogPost = () => {
   const { id } = useParams();
-  const post = blogData.find(post => post.id === id);
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // --- LOGIC: Fetch from JSON or API ---
+  useEffect(() => {
+    const loadPost = async () => {
+      setLoading(true);
+
+      // 1. Try finding in JSON first
+      const localPost = blogDataJson.find((p) => p.id === id);
+
+      if (localPost) {
+        setPost(localPost);
+        setLoading(false);
+      } else {
+        // 2. Not found in JSON, try API
+        try {
+          const response = await publicApi.getBlogPostById(id);
+          const apiPost = response.data?.data?.post;
+          if (apiPost) {
+            setPost(apiPost);
+          }
+        } catch (error) {
+          console.error("Post not found in DB either", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadPost();
+  }, [id]);
+
+  // --- LOADING / ERROR STATES ---
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <RefreshCw className="animate-spin text-indigo-600 h-8 w-8" />
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -22,15 +63,25 @@ const BlogPost = () => {
     );
   }
 
-  // Calculate reading time (assuming 200 words per minute)
-  const wordCount = post.content.split(/\s+/).length;
+  // --- CALCULATIONS & FORMATTING (Old Logic) ---
+  const wordCount = post.content ? post.content.split(/\s+/).length : 0;
   const readingTime = Math.ceil(wordCount / 200);
 
+  const formatDate = (dateInput) => {
+    if (!dateInput) return '';
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return dateInput; // Return as is if already formatted string
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  };
+
+  // --- DESIGN SECTION (Old UI Restored) ---
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <Helmet>
-        <title>{post.title} | JASIQ Labs Blog</title>
-        <meta name="description" content={post.summary} />
+        <title>{post.metaTitle || post.title} | JASIQ Labs Blog</title>
+        <meta name="description" content={post.metaDesc || post.summary} />
       </Helmet>
 
       <div className="container mx-auto px-4 max-w-4xl">
@@ -42,15 +93,23 @@ const BlogPost = () => {
         </Link>
 
         <article className="bg-white rounded-xl shadow-sm overflow-hidden">
+          
+          {/* Cover Image (If exists) - Added to match API data capabilities */}
+          {post.coverImage && (
+            <div className="w-full h-64 md:h-96 overflow-hidden">
+               <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover" />
+            </div>
+          )}
+
           <div className="p-8">
             <div className="flex flex-wrap items-center text-sm text-gray-500 mb-6">
               <span className="flex items-center mr-6 mb-2 sm:mb-0">
                 <Calendar size={16} className="mr-1" />
-                {post.date}
+                {formatDate(post.createdAt || post.date)}
               </span>
               <span className="flex items-center mr-6 mb-2 sm:mb-0">
                 <User size={16} className="mr-1" />
-                {post.author}
+                {post.author || 'Admin'}
               </span>
               <span className="flex items-center">
                 <Clock size={16} className="mr-1" />
@@ -102,7 +161,8 @@ const BlogPost = () => {
         <div className="mt-12">
           <h3 className="text-xl font-semibold text-gray-900 mb-6">More from our blog</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {blogData
+            {/* Note: Recommendations ke liye hum abhi sirf JSON data use kar rahe hain taaki complexity kam rahe */}
+            {blogDataJson
               .filter(p => p.id !== post.id)
               .slice(0, 2)
               .map(relatedPost => (

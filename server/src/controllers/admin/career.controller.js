@@ -1,13 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import AppError from '../../utils/appError.js';
 import catchAsync from '../../utils/catchAsync.js';
+import logger from '../../utils/logger.js';
 
 const prisma = new PrismaClient();
 
 /**
  * Get all job openings
- * @route GET /api/admin-cms/careers
- * @access Private/Admin
  */
 export const getJobOpenings = catchAsync(async (req, res, next) => {
   const { status, type, limit = 10, page = 1 } = req.query;
@@ -39,8 +38,6 @@ export const getJobOpenings = catchAsync(async (req, res, next) => {
 
 /**
  * Get a single job opening
- * @route GET /api/admin-cms/careers/:id
- * @access Private/Admin
  */
 export const getJobOpening = catchAsync(async (req, res, next) => {
   const job = await prisma.jobOpening.findUnique({
@@ -48,6 +45,12 @@ export const getJobOpening = catchAsync(async (req, res, next) => {
   });
 
   if (!job) {
+    // 👈 NEW: Structured Warning
+    logger.warn('Job Opening not found', {
+      event: 'JOB_NOT_FOUND',
+      jobId: req.params.id,
+      correlationId: req.correlationId
+    });
     return next(new AppError('No job opening found with that ID', 404));
   }
 
@@ -61,8 +64,6 @@ export const getJobOpening = catchAsync(async (req, res, next) => {
 
 /**
  * Create a new job opening
- * @route POST /api/admin-cms/careers
- * @access Private/Admin
  */
 export const createJobOpening = catchAsync(async (req, res, next) => {
   const {
@@ -92,6 +93,17 @@ export const createJobOpening = catchAsync(async (req, res, next) => {
     },
   });
 
+  // 👈 NEW: Structured Success Log
+  logger.info('New Job Position Created', {
+    event: 'JOB_CREATED',
+    jobId: job.id,
+    title: title,
+    type: type,
+    location: location,
+    userId: req.user?.id || 'admin',
+    correlationId: req.correlationId
+  });
+
   res.status(201).json({
     status: 'success',
     data: {
@@ -102,8 +114,6 @@ export const createJobOpening = catchAsync(async (req, res, next) => {
 
 /**
  * Update a job opening
- * @route PATCH /api/admin-cms/careers/:id
- * @access Private/Admin
  */
 export const updateJobOpening = catchAsync(async (req, res, next) => {
   const {
@@ -126,6 +136,16 @@ export const updateJobOpening = catchAsync(async (req, res, next) => {
     data: updateData,
   });
 
+  // 👈 NEW: Structured Update Log
+  logger.info('Job Opening Updated', {
+    event: 'JOB_UPDATED',
+    jobId: req.params.id,
+    title: updatedJob.title,
+    status: updatedJob.status,
+    userId: req.user?.id || 'admin',
+    correlationId: req.correlationId
+  });
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -136,12 +156,19 @@ export const updateJobOpening = catchAsync(async (req, res, next) => {
 
 /**
  * Delete a job opening
- * @route DELETE /api/admin-cms/careers/:id
- * @access Private/Admin
  */
 export const deleteJobOpening = catchAsync(async (req, res, next) => {
-  await prisma.jobOpening.delete({
+  const deletedJob = await prisma.jobOpening.delete({
     where: { id: req.params.id },
+  });
+
+  // 👈 NEW: Structured Deletion Log
+  logger.info('Job Opening Deleted', {
+    event: 'JOB_DELETED',
+    jobId: req.params.id,
+    title: deletedJob.title,
+    userId: req.user?.id || 'admin',
+    correlationId: req.correlationId
   });
 
   res.status(204).json({

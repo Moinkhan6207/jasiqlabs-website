@@ -40,7 +40,7 @@ const ContactPage = () => {
 
       console.log('Submitting lead:', leadData);
       
-      const response = await fetch('http://localhost:8080/api/leads/public', {
+      const response = await fetch('http://localhost:8080/api/public/leads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

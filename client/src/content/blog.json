@@ -6,6 +6,7 @@
     "summary": "The roadmap for freshers has changed. Focus on building real projects rather than just watching tutorials.",
     "author": "Arbaaz (Sr. Dev)",
     "date": "Jan 10, 2026",
+    "coverImage": "https://placehold.co/800x400/2563eb/ffffff?text=Career+in+Tech+2026",
     "content": "<p>Getting into tech is exciting...</p><h2>Focus on Fundamentals</h2><p>Languages change, logic stays the same...</p>"
   },
   {
@@ -15,6 +16,7 @@
     "summary": "AI is a tool, not a replacement. Learn how to use LLMs like ChatGPT and Copilot to speed up your workflow.",
     "author": "JASIQ Team",
     "date": "Jan 12, 2026",
+    "coverImage": "https://placehold.co/800x400/10b981/ffffff?text=AI+vs+Developers",
     "content": "<p>Everyone is talking about AI replacing jobs...</p><h2>The Human Element</h2><p>AI can write code, but it cannot understand client empathy yet.</p>"
   },
   {
@@ -24,6 +26,7 @@
     "summary": "MongoDB, Express, React, Node.js - why this stack is still the king of startup development in India.",
     "author": "Tech Team",
     "date": "Jan 15, 2026",
+    "coverImage": "https://placehold.co/800x400/f59e0b/ffffff?text=MERN+Stack+Guide",
     "content": "<p>The MERN stack offers a unified language (JavaScript) for both frontend and backend...</p>"
   },
   {
@@ -33,6 +36,7 @@
     "summary": "From college theory to deploying production code. Here is what a real-world internship actually looks like.",
     "author": "Saniya (Intern)",
     "date": "Jan 18, 2026",
+    "coverImage": "https://placehold.co/800x400/8b5cf6/ffffff?text=Internship+Life",
     "content": "<p>College taught me syntax, but the internship taught me Git, deployment, and debugging...</p>"
   },
   {
@@ -42,6 +46,7 @@
     "summary": "How Indian developers are shifting from service-based work to building global product companies.",
     "author": "JASIQ Labs",
     "date": "Jan 20, 2026",
+    "coverImage": "https://placehold.co/800x400/ef4444/ffffff?text=SaaS+in+India",
     "content": "<p>The era of 'Digital Coolie' is over. We are now building products for the world...</p>"
   }
 ]
