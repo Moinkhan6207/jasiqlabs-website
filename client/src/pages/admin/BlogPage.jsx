@@ -9,24 +9,24 @@ const BlogPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
 
-  // Form State (Updated with Category & Author)
+  // 1. Initial State with NEW Fields
   const [formData, setFormData] = useState({
     title: '',
-    category: 'Tech', // Default
+    category: 'Tech',
+    tags: '', // String for input
     summary: '',
     content: '',
     coverImage: '',
-    author: '', // Optional override
+    author: '',
+    isFeatured: false, // Boolean
     published: false
   });
 
-  // Categories List (Dropdown ke liye)
   const CATEGORIES = [
     "Tech", "Career Advice", "Web Development", 
     "Artificial Intelligence", "Internship Stories", "Entrepreneurship"
   ];
 
-  // Helper to format date
   const formatDate = (dateString) => {
     if (!dateString) return 'Not Published';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -34,7 +34,6 @@ const BlogPage = () => {
     });
   };
 
-  // Fetch Posts
   const fetchPosts = async () => {
     try {
       setLoading(true);
@@ -52,7 +51,6 @@ const BlogPage = () => {
     fetchPosts();
   }, []);
 
-  // Handle Delete
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       try {
@@ -65,7 +63,6 @@ const BlogPage = () => {
     }
   };
 
-  // Toggle Publish Status Directly
   const togglePublish = async (post) => {
     try {
       await api.blog.update(post.id, { published: !post.published });
@@ -76,15 +73,21 @@ const BlogPage = () => {
     }
   };
 
-  // Handle Submit (Create/Update)
+  // 2. Updated Handle Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Tags string ko Array me convert karein
+      const processedData = {
+        ...formData,
+        tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
+      };
+
       if (editingPost) {
-        await api.blog.update(editingPost.id, formData);
+        await api.blog.update(editingPost.id, processedData);
         toast.success('Post updated successfully');
       } else {
-        await api.blog.create(formData);
+        await api.blog.create(processedData);
         toast.success('Post created successfully');
       }
       closeModal();
@@ -100,10 +103,13 @@ const BlogPage = () => {
     setFormData({
       title: post.title,
       category: post.category || 'Tech',
+      // Array to String for Display
+      tags: post.tags ? post.tags.join(', ') : '', 
       summary: post.summary,
       content: post.content,
       coverImage: post.coverImage || '',
       author: post.author || '',
+      isFeatured: post.isFeatured || false,
       published: post.published
     });
     setShowModal(true);
@@ -113,8 +119,8 @@ const BlogPage = () => {
     setShowModal(false);
     setEditingPost(null);
     setFormData({ 
-      title: '', category: 'Tech', summary: '', content: '', 
-      coverImage: '', author: '', published: false 
+      title: '', category: 'Tech', tags: '', summary: '', content: '', 
+      coverImage: '', author: '', isFeatured: false, published: false 
     });
   };
 
@@ -155,12 +161,20 @@ const BlogPage = () => {
                 posts.map((post) => (
                   <tr key={post.id} className="hover:bg-gray-50 transition-colors">
                     <td className="p-5">
-                      <div className="font-medium text-gray-900">{post.title}</div>
+                      <div className="font-medium text-gray-900 flex items-center gap-2">
+                        {post.title}
+                        {post.isFeatured && <span className="text-[10px] bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded border border-yellow-200">Featured</span>}
+                      </div>
                       <div className="text-xs text-gray-500 mt-1 truncate max-w-xs">{post.summary}</div>
-                      <div className="mt-1">
+                      <div className="mt-1 flex gap-2">
                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                            {post.category || 'Tech'}
                          </span>
+                         {post.tags && post.tags.length > 0 && (
+                           <span className="text-xs text-gray-400 self-center">
+                             +{post.tags.length} tags
+                           </span>
+                         )}
                       </div>
                     </td>
                     <td className="p-5 text-sm text-gray-600">
@@ -168,7 +182,6 @@ const BlogPage = () => {
                         <span className="font-medium">{post.author || 'Admin'}</span>
                         <span className="text-xs text-gray-400 flex items-center gap-1">
                           <Calendar size={10} /> 
-                          {/* Date automatically backend se aayegi */}
                           {formatDate(post.createdAt)}
                         </span>
                       </div>
@@ -243,7 +256,7 @@ const BlogPage = () => {
                   </select>
                 </div>
 
-                {/* Author Name (Optional) */}
+                {/* Author Name */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Author Name (Optional)</label>
                   <input 
@@ -255,7 +268,19 @@ const BlogPage = () => {
                   />
                 </div>
 
-                {/* Cover Image (Full Width) */}
+                {/* 👇 NEW TAGS INPUT (Placed Here) */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tags (Comma Separated)</label>
+                  <input 
+                    type="text" 
+                    className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
+                    value={formData.tags}
+                    onChange={(e) => setFormData({...formData, tags: e.target.value})}
+                    placeholder="e.g. React, Coding, Career"
+                  />
+                </div>
+
+                {/* Cover Image */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image URL</label>
                   <input 
@@ -267,7 +292,7 @@ const BlogPage = () => {
                   />
                 </div>
 
-                {/* Summary (Full Width) */}
+                {/* Summary */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Summary (Short Description)</label>
                   <textarea 
@@ -279,7 +304,7 @@ const BlogPage = () => {
                   />
                 </div>
 
-                {/* Content (Full Width) */}
+                {/* Content */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Content (HTML Supported)</label>
                   <div className="relative">
@@ -296,22 +321,44 @@ const BlogPage = () => {
                   <p className="text-xs text-gray-500 mt-1">You can use HTML tags like &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, etc.</p>
                 </div>
 
-                {/* Publish Toggle */}
+                {/* 👇 NEW FEATURED TOGGLE (Placed Here) */}
                 <div className="md:col-span-2">
-                   <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
-                    <div className="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-                        <input 
-                        type="checkbox" 
-                        id="published"
-                        className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
-                        checked={formData.published}
-                        onChange={(e) => setFormData({...formData, published: e.target.checked})}
-                        />
-                        <label htmlFor="published" className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${formData.published ? 'bg-green-500' : 'bg-gray-300'}`}></label>
-                    </div>
-                    <label htmlFor="published" className="text-sm font-medium text-gray-700">
-                        {formData.published ? 'Publish Immediately' : 'Save as Draft'}
-                    </label>
+                   <div className="flex flex-col sm:flex-row gap-4">
+                     
+                     {/* Publish Toggle */}
+                     <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100 flex-1">
+                        <div className="relative inline-block w-12 mr-2 align-middle select-none">
+                            <input 
+                            type="checkbox" 
+                            id="published"
+                            className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                            checked={formData.published}
+                            onChange={(e) => setFormData({...formData, published: e.target.checked})}
+                            />
+                            <label htmlFor="published" className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${formData.published ? 'bg-green-500' : 'bg-gray-300'}`}></label>
+                        </div>
+                        <label htmlFor="published" className="text-sm font-medium text-gray-700">
+                            {formData.published ? 'Publish Immediately' : 'Save as Draft'}
+                        </label>
+                     </div>
+
+                     {/* Featured Toggle */}
+                     <div className="flex items-center gap-3 p-4 bg-yellow-50 rounded-lg border border-yellow-100 flex-1">
+                        <div className="relative inline-block w-12 mr-2 align-middle select-none">
+                            <input 
+                            type="checkbox" 
+                            id="featured"
+                            className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                            checked={formData.isFeatured}
+                            onChange={(e) => setFormData({...formData, isFeatured: e.target.checked})}
+                            />
+                            <label htmlFor="featured" className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${formData.isFeatured ? 'bg-yellow-500' : 'bg-gray-300'}`}></label>
+                        </div>
+                        <label htmlFor="featured" className="text-sm font-medium text-gray-700">
+                            {formData.isFeatured ? 'Featured Post (Pin to Top)' : 'Standard Post'}
+                        </label>
+                     </div>
+
                    </div>
                 </div>
               </div>
@@ -330,6 +377,7 @@ const BlogPage = () => {
       )}
     </div>
   );
+
 };
 
 export default BlogPage;

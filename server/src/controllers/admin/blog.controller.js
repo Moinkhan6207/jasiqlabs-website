@@ -27,16 +27,6 @@ export const getBlogPosts = catchAsync(async (req, res, next) => {
     prisma.blogPost.count({ where }),
   ]);
 
-  // Read operations ko usually log nahi karte taaki logs bhar na jayein
-  // Agar debugging ke liye chahiye to ye use karein:
-  /*
-  logger.debug('Fetched blog posts list', {
-    event: 'BLOG_FETCH_LIST',
-    count: posts.length,
-    correlationId: req.correlationId
-  });
-  */
-
   res.status(200).json({
     status: 'success',
     results: posts.length,
@@ -56,7 +46,6 @@ export const getBlogPost = catchAsync(async (req, res, next) => {
   });
 
   if (!post) {
-    // 👈 NEW: Structured Warning
     logger.warn('Blog post not found', {
       event: 'BLOG_NOT_FOUND',
       blogId: req.params.id,
@@ -78,7 +67,7 @@ export const getBlogPost = catchAsync(async (req, res, next) => {
  * Create a new blog post
  */
 export const createBlogPost = catchAsync(async (req, res, next) => {
-  const { title, summary, content, coverImage, metaTitle, metaDesc } = req.body;
+  const { title, summary, content, coverImage, metaTitle, metaDesc, category, author, tags, isFeatured } = req.body;
   
   const slug = slugify(title, { lower: true, strict: true });
   
@@ -89,13 +78,15 @@ export const createBlogPost = catchAsync(async (req, res, next) => {
       summary,
       content,
       coverImage: coverImage || null,
-      author: req.user.name || 'Admin',
+      author: author || 'Admin',
+      category: category || 'Tech',
+      tags: tags || [],
+      isFeatured: isFeatured || false,
       metaTitle: metaTitle || title,
       metaDesc: metaDesc || summary.substring(0, 160),
     },
   });
 
-  // 👈 NEW: Structured Success Log
   logger.info('New Blog Created Successfully', {
     event: 'BLOG_CREATED',
     blogId: post.id,
@@ -117,7 +108,8 @@ export const createBlogPost = catchAsync(async (req, res, next) => {
  * Update a blog post
  */
 export const updateBlogPost = catchAsync(async (req, res, next) => {
-  const { title, summary, content, coverImage, published, metaTitle, metaDesc } = req.body;
+  // 👇 FIX: Yahan 'published' add kar diya hai (Yehi missing tha aapke purane code mein)
+  const { title, published } = req.body;
   
   const updateData = { ...req.body };
   
@@ -139,7 +131,6 @@ export const updateBlogPost = catchAsync(async (req, res, next) => {
     data: updateData,
   });
 
-  // 👈 NEW: Structured Update Log
   logger.info('Blog Post Updated', {
     event: 'BLOG_UPDATED',
     blogId: req.params.id,
@@ -165,7 +156,6 @@ export const deleteBlogPost = catchAsync(async (req, res, next) => {
     where: { id: req.params.id },
   });
 
-  // 👈 NEW: Structured Deletion Log
   logger.info('Blog Post Deleted', {
     event: 'BLOG_DELETED',
     blogId: req.params.id,
