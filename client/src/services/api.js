@@ -71,13 +71,19 @@ export const blog = {
   delete: (id) => api.delete(`/api/admin/blog/${id}`),
 };
 
-// 6. CAREERS ENDPOINTS
+// 6. CAREERS ENDPOINTS (Admin Side)
 export const careers = {
   getAll: () => api.get('/api/admin/careers'),
   getById: (id) => api.get(`/api/admin/careers/${id}`),
   create: (data) => api.post('/api/admin/careers', data),
   update: (id, data) => api.patch(`/api/admin/careers/${id}`, data),
   delete: (id) => api.delete(`/api/admin/careers/${id}`),
+  
+  // 👇 NEW: Toggle Application Status (ON/OFF Switch)
+  toggleApplicationStatus: (id) => api.patch(`/api/admin/careers/${id}/toggle-apply`),
+
+  // Public Get All (Yahan bhi rakh sakte hain ya publicApi me)
+  getPublicAll: () => api.get('/api/public/careers'),
 };
 
 // 7. DASHBOARD ENDPOINTS
@@ -86,20 +92,18 @@ export const dashboard = {
   getRecentLeads: () => api.get('/api/admin/dashboard/recent-leads'),
 };
 
-// 👇 8. PUBLIC ENDPOINTS (Ye Add kiya hai - VERY IMPORTANT)
+// 8. PUBLIC ENDPOINTS (User Side)
 export const publicApi = {
   // Contact Form
   submitLead: (leadData) => api.post('/api/public/leads', leadData),  
-  // Agar SEO APIs bhi chahiye to:
-  // getPageSeo: (slug) => api.get(`/api/public/seo/page/${slug}`),
 
+  // Blog Public URLs
+  getBlogPosts: () => api.get('/api/public/blog'), 
+  getBlogPostById: (id) => api.get(`/api/public/blog/${id}`),
 
-  // 👇 Ye DO lines add karein (Blog ke liye)
-  getBlogPosts: () => api.get('/api/admin/blog?published=true'), // Sirf published posts
-  getBlogPostById: (id) => api.get(`/api/admin/blog/${id}`),
+  // 👇 NEW: Submit Job Application
+  submitApplication: (jobId, applicationData) => api.post(`/api/public/careers/${jobId}/apply`, applicationData),
 };
-
-
 
 // Default Export
 const apiService = {
@@ -108,7 +112,7 @@ const apiService = {
   blog,
   careers,
   dashboard,
-  public: publicApi, // 👈 Export me Public add kiya
+  public: publicApi, 
 };
 
 export default apiService;

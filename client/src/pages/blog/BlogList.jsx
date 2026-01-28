@@ -91,7 +91,7 @@ const BlogList = () => {
         
         {/* 2. ✨ FEATURED POST (Bada wala Card) */}
         <div className="mb-16 relative z-10">
-          <Link to={`/blog/${featuredPost.id}`} className="group block">
+          <Link to={`/blog/${featuredPost.slug}`} className="group block">
             <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden md:flex">
               
               {/* Left: Image or Gradient */}
@@ -184,7 +184,7 @@ const BlogList = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {otherPosts.map((post) => (
-                <Link key={post.id} to={`/blog/${post.id}`} className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden flex flex-col h-full hover:-translate-y-1">
+                <Link key={post.id} to={`/blog/${post.slug}`} className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden flex flex-col h-full hover:-translate-y-1">
                   
                   {/* Grid Image */}
                   {post.coverImage && (

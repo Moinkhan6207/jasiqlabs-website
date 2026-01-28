@@ -17,6 +17,8 @@ import {
   createJobOpening,
   updateJobOpening,
   deleteJobOpening,
+  toggleApplicationStatus,
+  getJobApplications,
 } from '../controllers/admin/career.controller.js';
 import {
   getPageContents,
@@ -55,6 +57,11 @@ router.route('/blog/:id')
 router.route('/careers')
   .get(getJobOpenings)
   .post(createJobOpening);
+
+router.patch('/careers/:id/toggle-apply', toggleApplicationStatus);
+
+// 👇 Admin: View Applications for a Job
+router.get('/careers/:id/applications', getJobApplications);
 
 router.route('/careers/:id')
   .get(getJobOpening)

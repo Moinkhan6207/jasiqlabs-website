@@ -14,6 +14,26 @@
     { "title": "Innovation First", "desc": "We experiment with AI Agents, Blockchain, and the latest React patterns every day." },
     { "title": "Ownership", "desc": "You are not just a coder. You own your module from design to deployment." }
   ],
+  "whoCanApply": [
+    {
+      "id": "student",
+      "title": "Students & Interns",
+      "desc": "Current students looking for industrial training or summer internships. You want real project exposure, not just theory.",
+      "iconType": "book"
+    },
+    {
+      "id": "fresher",
+      "title": "Fresh Graduates",
+      "desc": "0-1 years of experience. You know the basics of coding (MERN/Java) and are ready to build scalable applications.",
+      "iconType": "sprout"
+    },
+    {
+      "id": "pro",
+      "title": "Professionals",
+      "desc": "Experienced developers looking to lead teams, mentor juniors, and architect complex solutions in a product-led environment.",
+      "iconType": "briefcase"
+    }
+  ],
   "perks": [
     "Flexible Working Hours",
     "Internship Certificate",

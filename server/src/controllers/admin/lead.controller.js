@@ -3,9 +3,21 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // 1. Create Lead (Public - Contact Form se aayega)
+// 1. Create Lead (Public - Contact Form se aayega)
 export const createLead = async (req, res) => {
   try {
-    const { name, email, phone, message, interestType, division } = req.body;
+    const { name, email, phone, message, interestType, division, website_url } = req.body;
+
+    // 🛡️ SPAM CHECK (Honeypot)
+    // Agar hidden field 'website_url' bhara hua hai, to ye BOT hai.
+    if (website_url) {
+      console.log(`Spam attempt blocked from email: ${email}`);
+      // Fake success return karo taaki bot ko pata na chale
+      return res.status(200).json({
+        status: 'success',
+        message: 'Thank you! We have received your query.',
+      });
+    }
 
     // Basic Validation
     if (!name || !email) {
@@ -44,6 +56,8 @@ export const createLead = async (req, res) => {
     });
   }
 };
+
+  
 
 // 2. Get All Leads (Admin Only)
 export const getLeads = async (req, res) => {

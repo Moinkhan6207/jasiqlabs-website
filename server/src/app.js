@@ -14,6 +14,8 @@ import { robotsRouter } from "./routes/robots.routes.js";
 import { sitemapRouter } from "./routes/sitemap.routes.js";
 import { publicSeoRouter } from "./routes/publicSeo.routes.js";
 import publicPagesRouter from "./routes/publicPages.routes.js";
+import publicBlogRouter from "./routes/publicBlog.routes.js";
+import publicCareerRouter from "./routes/publicCareer.routes.js";
 import leadRoutes from "./routes/leadRoutes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import authRoutes from './routes/auth.routes.js';
@@ -91,7 +93,9 @@ app.get("/health", (_req, res) => res.status(200).json({ status: 'OK' }));
 // Public routes
 app.use("/api/public/seo", publicSeoRouter);
 app.use("/api/public/pages", publicPagesRouter);
-app.use("/api/public/leads", leadRoutes); 
+app.use("/api/public/leads", leadRoutes);
+app.use("/api/public/blog", publicBlogRouter);
+app.use("/api/public/careers", publicCareerRouter);
 
 // Auth Routes
 app.use('/api/admin/auth', authRoutes);

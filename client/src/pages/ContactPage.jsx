@@ -10,7 +10,8 @@ const ContactPage = () => {
     phone: '',
     interestType: 'Student',
     division: 'TechWorksStudio',
-    message: ''
+    message: '',
+    website_url: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,7 +63,8 @@ const ContactPage = () => {
         phone: '',
         interestType: 'Student',
         division: 'TechWorksStudio',
-        message: ''
+        message: '',
+        website_url: ''
       });
       
       // Show success message
@@ -151,6 +153,20 @@ const ContactPage = () => {
                   </div>
                 </div>
               </div>
+
+              {/* 👇 SPAM TRAP FIELD (Hidden) */}
+                    <div style={{ display: 'none' }} aria-hidden="true">
+                      <label htmlFor="website_url">Website</label>
+                      <input
+                        type="text"
+                        name="website_url"
+                        id="website_url"
+                        value={formData.website_url}
+                        onChange={handleChange}
+                        tabIndex="-1"
+                        autoComplete="off"
+                      />
+                    </div>
 
               {/* Right Column - Contact Form */}
               <div className="p-8">

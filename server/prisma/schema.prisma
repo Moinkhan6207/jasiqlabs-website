@@ -147,21 +147,25 @@ model BlogPost {
   @@index([slug, published])
 }
 model JobOpening {
-  id          String   @id @default(uuid())
-  title       String
-  type        JobType
-  location    String
-  description String   @db.Text
-  requirements String[]
+  id               String   @id @default(uuid())
+  title            String
+  type             JobType
+  location         String
+  description      String   @db.Text
+  requirements     String[]
   responsibilities String[]
-  status      String   @default("DRAFT") // DRAFT, PUBLISHED, CLOSED
-  applyLink   String?
-  postedAt    DateTime @default(now())
-  expiresAt   DateTime?
-  salaryRange String?
-  experience  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status           String   @default("DRAFT") // DRAFT, PUBLISHED, CLOSED
+  applyLink        String?
+  postedAt         DateTime @default(now())
+  expiresAt        DateTime?
+  salaryRange      String?
+  experience       String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 👇 NEW: Ye do nayi lines add ki gayi hain
+  acceptingApplications Boolean          @default(true)
+  applications          JobApplication[]
 
   @@index([status, type])
 }
@@ -211,6 +215,23 @@ model GlobalConfig {
   isPublic    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+
+// 👇 NEW MODEL: Job Applications store karne ke liye
+model JobApplication {
+  id          String     @id @default(uuid())
+  name        String
+  email       String
+  phone       String
+  resumeLink  String     // Google Drive / LinkedIn Link
+  coverLetter String?    // Optional
+  
+  // Relation to JobOpening
+  jobId       String
+  job         JobOpening @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime   @default(now())
 }
 
 // Indexes are defined inline with their respective models

@@ -188,6 +188,22 @@ export default function Header() {
               Home
             </Link>
 
+              {/* 👇 2. ABOUT LINK ADD KAREIN (Yahan) */}
+            <Link
+              to="/about"
+              className={`block px-4 py-2 rounded-lg transition-colors ${
+                isActive("/about")
+                  ? "bg-primary-50 text-primary-600 font-medium"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+              onClick={() => {
+                trackEvent("nav_about_click");
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              About
+            </Link>
+
             {/* Mobile Divisions */}
             <div className="px-4 py-2">
               <button

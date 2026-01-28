@@ -41,18 +41,29 @@ export const getBlogPosts = catchAsync(async (req, res, next) => {
  * Get a single blog post
  */
 export const getBlogPost = catchAsync(async (req, res, next) => {
-  const post = await prisma.blogPost.findUnique({
-    where: { id: req.params.id },
-  });
+  const { id } = req.params; // Ye ID bhi ho sakta hai aur SLUG bhi
+
+  // Check karein ki kya ye UUID (Database ID) hai?
+  const isUuid = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/.test(id);
+
+  let post;
+
+  if (isUuid) {
+    // Agar ID hai to ID se dhundo
+    post = await prisma.blogPost.findUnique({ where: { id } });
+  } else {
+    // Agar Slug hai to Slug se dhundo
+    post = await prisma.blogPost.findUnique({ where: { slug: id } });
+  }
 
   if (!post) {
+    // Logger me warning add karein
     logger.warn('Blog post not found', {
       event: 'BLOG_NOT_FOUND',
-      blogId: req.params.id,
-      correlationId: req.correlationId,
-      ip: req.ip
+      identifier: id,
+      correlationId: req.correlationId
     });
-    return next(new AppError('No blog post found with that ID', 404));
+    return next(new AppError('No blog post found', 404));
   }
 
   res.status(200).json({
