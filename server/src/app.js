@@ -19,6 +19,8 @@ import publicCareerRouter from "./routes/publicCareer.routes.js";
 import leadRoutes from "./routes/leadRoutes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import authRoutes from './routes/auth.routes.js';
+import pageContentRoutes from './routes/pageContent.routes.js';
+import seoRoutes from './routes/seo.routes.js';
 
 // Utils Imports
 import AppError from "./utils/appError.js";
@@ -103,7 +105,13 @@ app.use('/api/admin/auth', authRoutes);
 // Protected routes
 app.use('/api/admin', protect, adminRoutes);
 
-// SEO Routes
+// Page Content Routes
+app.use('/api/content', pageContentRoutes);
+
+// SEO Management Routes
+app.use('/api/seo', protect, seoRoutes);
+
+// SEO Public Routes
 app.use("/", robotsRouter);
 app.use("/", sitemapRouter);
 

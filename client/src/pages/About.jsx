@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import content from "../content/siteContent.json";
 import Seo from "../components/seo/Seo";
+import { pageContent } from "../services/api";
 
 // Icons (You can replace these with your actual icons)
 const CultureIcon = ({ className }) => (
@@ -26,9 +27,55 @@ export default function About() {
   const c = content;
   const [isMounted, setIsMounted] = useState(false);
 
+  // 🟢 Dynamic Hero State (Default: JSON Data)
+  const [heroData, setHeroData] = useState({
+    title: c.about.h1,
+    subtitle: "Empowering innovation through technology, training, and transformative solutions."
+  });
+
+  // 🟢 Dynamic Mission State (Default: JSON Data)
+  const [missionData, setMissionData] = useState({
+    missionTitle: c.about.missionTitle,
+    missionDesc: c.about.missionText,
+    visionTitle: "Our Vision",
+    visionDesc: "To be the leading force in technological innovation, transforming ideas into impactful solutions that drive progress and create sustainable value for our clients and communities worldwide."
+  });
+
   useEffect(() => {
     setIsMounted(true);
     return () => setIsMounted(false);
+  }, []);
+
+  // 🟢 Fetch Data from Database on Load
+  useEffect(() => {
+    const fetchDynamicContent = async () => {
+      try {
+        // 1. Fetch Hero Data
+        const heroResponse = await pageContent.get('about', 'hero');
+        const heroDbData = heroResponse.data; 
+        
+        if (heroDbData) {
+          setHeroData({
+            title: heroDbData.title || c.about.h1,
+            subtitle: heroDbData.subtitle || "Empowering innovation through technology, training, and transformative solutions."
+          });
+        }
+
+        // 2. Fetch Mission Data (assuming it's stored in the same 'hero' section for now)
+        if (heroDbData) {
+          setMissionData({
+            missionTitle: heroDbData.missionTitle || c.about.missionTitle,
+            missionDesc: heroDbData.missionDesc || c.about.missionText,
+            visionTitle: heroDbData.visionTitle || "Our Vision",
+            visionDesc: heroDbData.visionDesc || "To be the leading force in technological innovation, transforming ideas into impactful solutions that drive progress and create sustainable value for our clients and communities worldwide."
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load About page content", error);
+      }
+    };
+
+    fetchDynamicContent();
   }, []);
 
   // Animation classes that will be applied when component mounts
@@ -45,10 +92,12 @@ export default function About() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className={`text-4xl md:text-5xl font-bold mb-6 ${isMounted ? fadeInUpActive : fadeInUp}`}>
-              {c.about.h1}
+              {/* 🟢 Dynamic Hero Title */}
+              {heroData.title}
             </h1>
             <p className={`text-xl md:text-2xl text-primary-100 max-w-3xl mx-auto ${isMounted ? fadeInUpActive : fadeInUp}`} style={{ transitionDelay: '100ms' }}>
-              Empowering innovation through technology, training, and transformative solutions.
+              {/* 🟢 Dynamic Hero Subtitle */}
+              {heroData.subtitle}
             </p>
           </div>
         </div>
@@ -63,8 +112,8 @@ export default function About() {
               <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
                 <MissionIcon className="w-8 h-8 text-primary-600" />
               </div>
-              <h2 className="text-2xl font-bold text-center mb-4">{c.about.missionTitle}</h2>
-              <p className="text-gray-600 text-center">{c.about.missionText}</p>
+              <h2 className="text-2xl font-bold text-center mb-4">{/* 🟢 Dynamic Mission Title */}{missionData.missionTitle}</h2>
+              <p className="text-gray-600 text-center">{/* 🟢 Dynamic Mission Description */}{missionData.missionDesc}</p>
             </div>
 
             {/* Vision */}
@@ -72,9 +121,10 @@ export default function About() {
               <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
                 <VisionIcon className="w-8 h-8 text-primary-600" />
               </div>
-              <h2 className="text-2xl font-bold text-center mb-4">Our Vision</h2>
+              <h2 className="text-2xl font-bold text-center mb-4">{/* 🟢 Dynamic Vision Title */}{missionData.visionTitle}</h2>
               <p className="text-gray-600 text-center">
-                To be the leading force in technological innovation, transforming ideas into impactful solutions that drive progress and create sustainable value for our clients and communities worldwide.
+                {/* 🟢 Dynamic Vision Description */}
+                {missionData.visionDesc}
               </p>
             </div>
           </div>

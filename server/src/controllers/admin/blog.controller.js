@@ -1,10 +1,11 @@
-import { PrismaClient } from '@prisma/client';
+// 👇 CORRECT IMPORT (Is file se import karna hai)
+import { prisma } from '../../db/prisma.js'; // Humne ye file Step 1 me banayi thi
 import AppError from '../../utils/appError.js';
 import catchAsync from '../../utils/catchAsync.js';
 import slugify from 'slugify';
 import logger from '../../utils/logger.js';
 
-const prisma = new PrismaClient();
+// ❌ YE LINE HATA DEIN: const prisma = new PrismaClient();
 
 /**
  * Get all blog posts
@@ -41,28 +42,19 @@ export const getBlogPosts = catchAsync(async (req, res, next) => {
  * Get a single blog post
  */
 export const getBlogPost = catchAsync(async (req, res, next) => {
-  const { id } = req.params; // Ye ID bhi ho sakta hai aur SLUG bhi
+  const { id } = req.params; 
 
-  // Check karein ki kya ye UUID (Database ID) hai?
   const isUuid = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/.test(id);
 
   let post;
 
   if (isUuid) {
-    // Agar ID hai to ID se dhundo
     post = await prisma.blogPost.findUnique({ where: { id } });
   } else {
-    // Agar Slug hai to Slug se dhundo
     post = await prisma.blogPost.findUnique({ where: { slug: id } });
   }
 
   if (!post) {
-    // Logger me warning add karein
-    logger.warn('Blog post not found', {
-      event: 'BLOG_NOT_FOUND',
-      identifier: id,
-      correlationId: req.correlationId
-    });
     return next(new AppError('No blog post found', 404));
   }
 
@@ -102,9 +94,7 @@ export const createBlogPost = catchAsync(async (req, res, next) => {
     event: 'BLOG_CREATED',
     blogId: post.id,
     title: title,
-    author: req.user.name,
-    userId: req.user.id,
-    correlationId: req.correlationId
+    userId: req.user.id
   });
 
   res.status(201).json({
@@ -119,7 +109,6 @@ export const createBlogPost = catchAsync(async (req, res, next) => {
  * Update a blog post
  */
 export const updateBlogPost = catchAsync(async (req, res, next) => {
-  // 👇 FIX: Yahan 'published' add kar diya hai (Yehi missing tha aapke purane code mein)
   const { title, published } = req.body;
   
   const updateData = { ...req.body };
@@ -128,7 +117,6 @@ export const updateBlogPost = catchAsync(async (req, res, next) => {
     updateData.slug = slugify(title, { lower: true, strict: true });
   }
   
-  // Handle publish action
   if (published === true) {
     updateData.published = true;
     updateData.publishedAt = new Date();
@@ -145,10 +133,7 @@ export const updateBlogPost = catchAsync(async (req, res, next) => {
   logger.info('Blog Post Updated', {
     event: 'BLOG_UPDATED',
     blogId: req.params.id,
-    title: updatedPost.title,
-    isPublished: updatedPost.published,
-    userId: req.user.id,
-    correlationId: req.correlationId
+    title: updatedPost.title
   });
 
   res.status(200).json({
@@ -165,14 +150,6 @@ export const updateBlogPost = catchAsync(async (req, res, next) => {
 export const deleteBlogPost = catchAsync(async (req, res, next) => {
   const deletedPost = await prisma.blogPost.delete({
     where: { id: req.params.id },
-  });
-
-  logger.info('Blog Post Deleted', {
-    event: 'BLOG_DELETED',
-    blogId: req.params.id,
-    title: deletedPost.title,
-    userId: req.user.id,
-    correlationId: req.correlationId
   });
 
   res.status(204).json({

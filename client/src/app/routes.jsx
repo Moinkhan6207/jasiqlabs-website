@@ -13,8 +13,11 @@ const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
 const LeadsPage = lazy(() => import('../pages/admin/LeadsPage'));
 const BlogPage = lazy(() => import('../pages/admin/BlogPage'));
 const CareersPage = lazy(() => import('../pages/admin/CareersPage'));
+const JobApplicationsPage = lazy(() => import('../pages/admin/JobApplicationsPage'));
+const PageContentEditor = lazy(() => import('../pages/admin/PageContentEditor'));
 const ContentPage = lazy(() => import('../pages/admin/ContentPage'));
 const SettingsPage = lazy(() => import('../pages/admin/SettingsPage'));
+const SeoSettingsPage = lazy(() => import('../pages/admin/SeoSettingsPage'));
 
 // Legal Pages
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
@@ -50,6 +53,7 @@ import AiResearch from "../pages/products/AiResearch";
 import Careers from "../pages/careers/Careers";
 import BlogList from "../pages/blog/BlogList";
 import BlogPost from "../pages/blog/BlogPost";
+
 
 // Loading component for Suspense fallback
 const Loading = () => (
@@ -183,8 +187,11 @@ export const router = createBrowserRouter([
               { path: "leads", element: <LeadsPage /> },
               { path: "blog", element: <BlogPage /> },
               { path: "careers", element: <CareersPage /> },
+              { path: "careers/:id/applications", element: <JobApplicationsPage /> },
+              { path: "page-content/:pageName", element: <PageContentEditor /> },
               { path: "content/*", element: <ContentPage /> },
               { path: "settings", element: <SettingsPage /> },
+              { path: "seo-settings", element: <SeoSettingsPage /> },
               { index: true, element: <Navigate to="dashboard" replace /> },
             ]
           },

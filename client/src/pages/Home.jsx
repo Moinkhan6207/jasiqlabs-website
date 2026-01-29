@@ -1,15 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import content from "../content/siteContent.json";
 import Seo from "../components/seo/Seo";
 import Button from "../components/ui/Button";
 import Field from "../components/ui/Field";
 import { trackEvent } from "../utils/analytics";
-import { submitLead } from "../utils/api";
+import { submitLead } from "../utils/api";      // Ye purana wala hai
+import { pageContent } from "../services/api";// ✅ pageContent import kiya
 
 export default function Home() {
   const c = content;
   const navigate = useNavigate();
+  
+  // 🟢 1. Dynamic Hero State (Default: JSON Data)
+  const [heroData, setHeroData] = useState({
+    h1: c.home.hero.h1,
+    supportingLine: c.home.hero.supportingLine
+  });
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -17,6 +25,32 @@ export default function Home() {
     interestType: "STUDENT"
   });
   const [status, setStatus] = useState({ state: "idle", message: "" });
+
+  // 🟢 2. Fetch Data from Database on Load
+  // 🟢 Fetch Data from Database on Load
+  useEffect(() => {
+    const fetchDynamicContent = async () => {
+      try {
+        // 1. API Call
+        const response = await pageContent.get('home', 'hero');
+        
+        // 👇 FIX: Sirf 'response.data' likhna hai, '.data.data' nahi
+        const dbData = response.data; 
+        
+        if (dbData) {
+          // 2. State Update
+          setHeroData({
+            h1: dbData.title || c.home.hero.h1,
+            supportingLine: dbData.subtitle || c.home.hero.supportingLine
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load content", error);
+      }
+    };
+
+    fetchDynamicContent();
+  }, []);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -34,12 +68,6 @@ export default function Home() {
     }
   }
 
-  function jumpTo(id, label) {
-    trackEvent("home_hero_cta_click", { target: id });
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
   return (
     <>
       <Seo title={c.seo.home.title} description={c.seo.home.description} />
@@ -49,11 +77,13 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4">
             <span className="bg-gradient-to-r from-primary-600 via-secondary-500 to-primary-600 bg-clip-text text-transparent">
-              {c.home.hero.h1}
+              {/* 🟢 3. Ab yahan State wala data dikhega */}
+              {heroData.h1}
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-            {c.home.hero.supportingLine}
+            {/* 🟢 3. Ab yahan State wala data dikhega */}
+            {heroData.supportingLine}
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
@@ -79,6 +109,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ... BAAKI CODE SAME RAHEGA ... */}
       {/* What We Do */}
       <section className="py-7 bg-white">
         <div className="container mx-auto px-4">
@@ -120,14 +151,10 @@ export default function Home() {
                   <strong className="text-gray-900">What it solves:</strong> {card.solves}
                 </p>
                 
-                {/* 👇 YAHAN CHANGE KIYA HAI */}
                 <Button
                   variant="primary"
                   onClick={() => {
-                    // Analytics track karein
                     trackEvent("division_card_cta_click", { division: card.id });
-                    
-                    // Route according to division ID
                     if (card.id === "realworkstudio") {
                       navigate("/realworkstudio");
                     } else if (card.id === "techworksstudio") {
@@ -186,26 +213,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Trust & Compliance
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
-            {c.home.trustCompliance.title}
-          </h2>
-          <ul className="max-w-3xl mx-auto space-y-4">
-            {c.home.trustCompliance.items.map((x) => (
-              <li 
-                key={x}
-                className="flex items-center space-x-3 text-lg text-gray-700"
-              >
-                <span className="flex-shrink-0 w-6 h-6 bg-secondary-500 rounded-full flex items-center justify-center text-white font-bold">✓</span>
-                <span>{x}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section> */}
 
       {/* Lead Capture Form */}
       <section className="py-7 bg-gradient-to-br from-primary-600 to-secondary-600 text-white">

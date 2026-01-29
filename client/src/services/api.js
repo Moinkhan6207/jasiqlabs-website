@@ -79,20 +79,44 @@ export const careers = {
   update: (id, data) => api.patch(`/api/admin/careers/${id}`, data),
   delete: (id) => api.delete(`/api/admin/careers/${id}`),
   
-  // 👇 NEW: Toggle Application Status (ON/OFF Switch)
+  // NEW: Toggle Application Status (ON/OFF Switch)
   toggleApplicationStatus: (id) => api.patch(`/api/admin/careers/${id}/toggle-apply`),
+  
+  // NEW: Get Job Applications
+  getApplications: (id) => api.get(`/api/admin/careers/${id}/applications`),
 
   // Public Get All (Yahan bhi rakh sakte hain ya publicApi me)
   getPublicAll: () => api.get('/api/public/careers'),
 };
 
-// 7. DASHBOARD ENDPOINTS
+// 7. PAGE CONTENT ENDPOINTS
+export const pageContent = {
+  get: async (pageName, sectionKey) => {
+    const response = await api.get(`/api/content/${pageName}/${sectionKey}`);
+    return response.data;
+  },
+  update: async (data) => {
+    const response = await api.post('/api/content', data);
+    return response.data;
+  },
+};
+
+// 8. DASHBOARD ENDPOINTS
 export const dashboard = {
   getStats: () => api.get('/api/admin/dashboard/stats'),
   getRecentLeads: () => api.get('/api/admin/dashboard/recent-leads'),
 };
 
-// 8. PUBLIC ENDPOINTS (User Side)
+// 8. SEO ENDPOINTS
+export const seo = {
+  getSettings: () => api.get('/api/seo'),
+  
+  // 👇👇👇 YAHAN CHANGE KAREIN (put -> post) 👇👇👇
+  updateSettings: (data) => api.post('/api/seo', data),
+  // 👆👆👆
+};
+
+// 9. PUBLIC ENDPOINTS (User Side)
 export const publicApi = {
   // Contact Form
   submitLead: (leadData) => api.post('/api/public/leads', leadData),  
@@ -112,6 +136,8 @@ const apiService = {
   blog,
   careers,
   dashboard,
+  pageContent,
+  seo,
   public: publicApi, 
 };
 

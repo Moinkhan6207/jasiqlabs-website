@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, X, Briefcase, MapPin, RefreshCw, Eye, Power, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Edit, Trash2, X, Briefcase, MapPin, RefreshCw, Eye, Power, FileText, Users } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 
@@ -22,6 +23,7 @@ const CareersPage = () => {
   };
 
   const [formData, setFormData] = useState(initialForm);
+  const navigate = useNavigate();
 
   const fetchJobs = async () => {
     try {
@@ -216,10 +218,25 @@ const CareersPage = () => {
                     </td>
                     <td className="p-5 text-right">
                       <div className="flex justify-end gap-3">
-                        <button onClick={() => openEditModal(job)} className="text-blue-600 hover:text-blue-800" title="Edit">
+                        <button 
+                          onClick={() => navigate(`/admin/careers/${job.id}/applications`)} 
+                          className="text-indigo-600 hover:text-indigo-800" 
+                          title="View Applications"
+                        >
+                          <Users size={18} />
+                        </button>
+                        <button 
+                          onClick={() => openEditModal(job)} 
+                          className="text-blue-600 hover:text-blue-800" 
+                          title="Edit"
+                        >
                           <Edit size={18} />
                         </button>
-                        <button onClick={() => handleDelete(job.id)} className="text-red-500 hover:text-red-700" title="Delete">
+                        <button 
+                          onClick={() => handleDelete(job.id)} 
+                          className="text-red-500 hover:text-red-700" 
+                          title="Delete"
+                        >
                           <Trash2 size={18} />
                         </button>
                       </div>

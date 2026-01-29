@@ -178,6 +178,11 @@ model PageContent {
   subtitle    String?
   description String?  @db.Text
   content     Json?    // For rich content or additional fields
+  // New fields for About page Mission & Vision sections
+  visionTitle String?
+  visionDesc  String?  @db.Text
+  missionTitle String?
+  missionDesc  String?  @db.Text
   order       Int      @default(0)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())

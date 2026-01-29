@@ -18,7 +18,7 @@ export const protect = catchAsync(async (req, res, next) => {
   else if (req.cookies?.jwt) {
     token = req.cookies.jwt;
   }
-console.log("token", token);
+
   // 2) Check if token exists
   if (!token) {
     return next(
@@ -45,8 +45,7 @@ console.log("token", token);
   }
 
   // 4) Check if user still exists
-  // For now, we'll use a simple check since we're not using a real database
-  // In production, you would fetch the user from the database
+  // ✅ HUMNE AAPKA PURANA LOGIC HI RAKHA HAI TAAKI LOGIN NA TUTE
   const currentUser = {
     id: 'admin-id-123',
     name: 'Admin User',
@@ -59,20 +58,6 @@ console.log("token", token);
       new AppError('The user belonging to this token does no longer exist.', 401)
     );
   }
-
-  // 5) Check if user changed password after the token was issued
-  // This would be implemented if you have password change functionality
-  // if (currentUser.passwordChangedAt) {
-  //   const changedTimestamp = parseInt(
-  //     currentUser.passwordChangedAt.getTime() / 1000,
-  //     10
-  //   );
-  //   if (decoded.iat < changedTimestamp) {
-  //     return next(
-  //       new AppError('User recently changed password! Please log in again.', 401)
-  //     );
-  //   }
-  // }
 
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
@@ -95,6 +80,10 @@ export const restrictTo = (...roles) => {
   };
 };
 
+// 👇👇👇 YE LINE MAINE ADD KI HAI (Jisse Server Error Fix Hoga) 👇👇👇
+export const admin = restrictTo('admin'); 
+// 👆👆👆
+
 /**
  * Only for rendered pages, no errors!
  */
@@ -104,9 +93,6 @@ export const isLoggedIn = async (req, res, next) => {
       // 1) Verify token
       const decoded = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET);
       
-      // 2) Check if user still exists
-      // In a real app, you would fetch the user from the database
-      // const currentUser = await User.findById(decoded.id);
       const currentUser = {
         id: 'admin-id-123',
         name: 'Admin User',
@@ -117,11 +103,6 @@ export const isLoggedIn = async (req, res, next) => {
       if (!currentUser) {
         return next();
       }
-
-      // 3) Check if user changed password after the token was issued
-      // if (currentUser.changedPasswordAfter(decoded.iat)) {
-      //   return next();
-      // }
 
       // THERE IS A LOGGED IN USER
       res.locals.user = currentUser;
