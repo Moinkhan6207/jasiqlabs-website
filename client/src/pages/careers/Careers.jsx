@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
 import careersData from '../../content/careers.json';
-import api from '../../services/api';
+// 👇 1. pageContent ko import karein (Zaroori)
+import api, { pageContent } from '../../services/api'; 
+import Seo from '../../components/seo/Seo';
 import {
   Briefcase, Lightbulb, Users, MapPin, Clock, ArrowRight, CheckCircle2,
   Sparkles, Mail, BookOpen, Sprout, Loader2, X
@@ -13,6 +14,14 @@ const Careers = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   
+  // 👇 2. Hero Section ke liye State banayein (Default: JSON data)
+  const [heroContent, setHeroContent] = useState(hero);
+  
+  // State for dynamic content sections
+  const [whyUsContent, setWhyUsContent] = useState(whyUs);
+  const [whoCanApplyContent, setWhoCanApplyContent] = useState(whoCanApply);
+  const [applyContent, setApplyContent] = useState(apply);
+
   // State for Application Modal
   const [selectedJob, setSelectedJob] = useState(null);
   const [showApplyModal, setShowApplyModal] = useState(false);
@@ -37,7 +46,50 @@ const Careers = () => {
         setLoading(false);
       }
     };
+    
+    // 👇 3. Database se Title aur Subtitle Layein
+    const fetchPageContent = async () => {
+      try {
+        const response = await pageContent.get('careers', 'hero');
+        if (response.data) {
+          setHeroContent(prev => ({
+            ...prev,
+            title: response.data.title || prev.title,
+            subtitle: response.data.subtitle || prev.subtitle,
+            ctaText: prev.ctaText // CTA text wahi rakhein
+          }));
+          
+          // Update other sections from content field
+          if (response.data.content) {
+            const content = response.data.content;
+            
+            // Update Why Us content
+            if (content.whyUs && Array.isArray(content.whyUs)) {
+              setWhyUsContent(content.whyUs);
+            }
+            
+            // Update Who Can Apply content
+            if (content.whoCanApply && Array.isArray(content.whoCanApply)) {
+              setWhoCanApplyContent(content.whoCanApply);
+            }
+            
+            // Update Apply content
+            if (content.applyText || content.applyEmail) {
+              setApplyContent(prev => ({
+                ...prev,
+                text: content.applyText || prev.text,
+                email: content.applyEmail || prev.email
+              }));
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch career page content:", error);
+      }
+    };
+
     fetchJobs();
+    fetchPageContent(); // Call the function
   }, []);
 
   const getCardTheme = (type) => {
@@ -89,10 +141,11 @@ const Careers = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
-      <Helmet>
-        <title>Careers - Join JASIQ Labs</title>
-        <meta name="description" content="Join JASIQ Labs and work on cutting-edge projects." />
-      </Helmet>
+      <Seo 
+        title="Careers - Join JASIQ Labs"
+        description="Join JASIQ Labs and work on cutting-edge projects."
+        pageName="careers"
+      />
 
       {/* 1. HERO SECTION */}
       <section className="relative bg-slate-900 text-white py-24 overflow-hidden">
@@ -103,17 +156,18 @@ const Careers = () => {
             <Sparkles size={14} className="text-yellow-400" />
             <span className="text-xs font-bold uppercase tracking-wider text-indigo-200">We are Hiring</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">{hero.title}</h1>
-          <p className="text-lg md:text-2xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">{hero.subtitle}</p>
+          {/* 👇 4. Use heroContent instead of hero */}
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">{heroContent.title}</h1>
+          <p className="text-lg md:text-2xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">{heroContent.subtitle}</p>
           <a href="#openings">
             <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-full font-bold transition-all shadow-lg flex items-center gap-2 mx-auto">
-              {hero.ctaText} <ArrowRight size={20} />
+              {heroContent.ctaText} <ArrowRight size={20} />
             </button>
           </a>
         </div>
       </section>
 
-      {/* 2. STATS & WHY US (Static) - Code omitted for brevity, keep your existing code here */}
+      {/* 2. STATS & WHY US (Static) - Keep Existing Code Below */}
        <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-3 gap-4 divide-x divide-gray-100">
@@ -134,7 +188,7 @@ const Careers = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {whyUs.map((item, index) => (
+            {whyUsContent.map((item, index) => (
               <div key={index} className="group p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-xl transition-all duration-300">
                 <div className="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 transition-transform">
                   {index === 0 ? <Lightbulb size={28} /> : index === 1 ? <Briefcase size={28} /> : <Users size={28} />}
@@ -156,8 +210,10 @@ const Careers = () => {
             <p className="text-gray-600 max-w-2xl mx-auto">Whether you are just starting or have years of experience, there is a place for you.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {whoCanApply?.map((item, index) => {
-              const theme = getCardTheme(item.iconType);
+            {whoCanApplyContent?.map((item, index) => {
+              // Use static iconType from careersData as fallback, or use index-based mapping
+              const iconType = careersData.whoCanApply[index]?.iconType || ['book', 'sprout', 'briefcase'][index];
+              const theme = getCardTheme(iconType);
               return (
                 <div key={index} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 duration-300">
                   <div className={`w-12 h-12 ${theme.bg} rounded-lg flex items-center justify-center mb-4 ${theme.color}`}>
@@ -263,12 +319,12 @@ const Careers = () => {
           <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-sm p-10 rounded-3xl border border-white/20">
             <Mail className="w-12 h-12 mx-auto mb-6 text-indigo-300" />
             <h2 className="text-3xl font-bold mb-4">Don't see a role for you?</h2>
-            <p className="text-lg text-indigo-100 mb-8">{apply.text}</p>
+            <p className="text-lg text-indigo-100 mb-8">{applyContent.text}</p>
             <a 
-              href={`mailto:${apply.email}`} 
+              href={`mailto:${applyContent.email}`} 
               className="inline-block bg-white text-indigo-900 text-xl font-bold px-10 py-4 rounded-full hover:bg-indigo-50 transition-all shadow-xl hover:scale-105"
             >
-              {apply.email}
+              {applyContent.email}
             </a>
             <p className="mt-6 text-sm text-indigo-300">We usually respond within 48 hours.</p>
           </div>

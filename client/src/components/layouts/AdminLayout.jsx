@@ -11,7 +11,11 @@ import {
   X,
   FileTextIcon,
   Home,
-  Info
+  Info,
+  Phone,
+  UserCheck,
+  Shield,
+  AlertCircle
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -46,6 +50,10 @@ const AdminLayout = () => {
       children: [
         { name: 'Home', href: '/admin/page-content/home', icon: Home },
         { name: 'About', href: '/admin/page-content/about', icon: Info },
+        { name: 'Contact', href: '/admin/page-content/contact', icon: Phone },
+        { name: 'Careers', href: '/admin/page-content/careers', icon: UserCheck },
+        { name: 'Legal', href: '/admin/page-content/legal', icon: Shield },
+        { name: 'System', href: '/admin/page-content/system', icon: AlertCircle },
       ]
     },
     { 

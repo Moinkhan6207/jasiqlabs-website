@@ -20,6 +20,19 @@ const PageContentEditor = () => {
     visionDesc: '',
     missionTitle: '',
     missionDesc: '',
+    // Careers page specific fields
+    whyUs: [
+      { title: '', desc: '' },
+      { title: '', desc: '' },
+      { title: '', desc: '' }
+    ],
+    whoCanApply: [
+      { title: '', desc: '' },
+      { title: '', desc: '' },
+      { title: '', desc: '' }
+    ],
+    applyText: '',
+    applyEmail: ''
   });
 
   // 🟢 EFFECT: Fetch data whenever pageName changes
@@ -42,6 +55,19 @@ const PageContentEditor = () => {
           visionDesc: '',
           missionTitle: '',
           missionDesc: '',
+          // Careers page specific fields
+          whyUs: [
+            { title: '', desc: '' },
+            { title: '', desc: '' },
+            { title: '', desc: '' }
+          ],
+          whoCanApply: [
+            { title: '', desc: '' },
+            { title: '', desc: '' },
+            { title: '', desc: '' }
+          ],
+          applyText: '',
+          applyEmail: ''
         });
 
         // 2. Fetch new data
@@ -58,6 +84,11 @@ const PageContentEditor = () => {
             visionDesc: data.data.visionDesc || '',
             missionTitle: data.data.missionTitle || '',
             missionDesc: data.data.missionDesc || '',
+            // Careers page specific fields from content
+            whyUs: data.data.content?.whyUs || prev.whyUs,
+            whoCanApply: data.data.content?.whoCanApply || prev.whoCanApply,
+            applyText: data.data.content?.applyText || '',
+            applyEmail: data.data.content?.applyEmail || ''
           }));
         }
       } catch (error) {
@@ -80,14 +111,33 @@ const PageContentEditor = () => {
     }));
   };
 
+  // Handle nested array changes for careers sections
+  const handleNestedChange = (section, index, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: prev[section].map((item, i) => 
+        i === index ? { ...item, [field]: value } : item
+      )
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     try {
       setSaving(true);
+      
+      // Prepare content object for careers page
+      const contentData = currentPage === 'careers' ? {
+        whyUs: formData.whyUs,
+        whoCanApply: formData.whoCanApply,
+        applyText: formData.applyText,
+        applyEmail: formData.applyEmail
+      } : {};
+      
       await pageContent.update({
         ...formData,
-        content: {}, // JSON content empty default
+        content: contentData
       });
       
       toast.success('Content updated successfully!');
@@ -115,6 +165,26 @@ const PageContentEditor = () => {
         return {
           title: 'About Page Content Editor',
           description: 'Edit the content for the About Page Hero and Mission sections'
+        };
+      case 'contact':
+        return {
+          title: 'Contact Page Content Editor',
+          description: 'Edit the content for the Contact Page'
+        };
+      case 'careers':
+        return {
+          title: 'Careers Page Content Editor',
+          description: 'Edit the content for the Careers Page'
+        };
+      case 'legal':
+        return {
+          title: 'Legal Page Content Editor',
+          description: 'Edit the content for the Privacy Policy Page'
+        };
+      case 'system':
+        return {
+          title: 'System Page Content Editor',
+          description: 'Edit the content for the 404 Error Page'
         };
       case 'home':
       default:
@@ -249,8 +319,124 @@ const PageContentEditor = () => {
             </div>
           )}
 
-          {/* Description Field - Only for Home Page */}
-          {currentPage === 'home' && (
+          {/* Careers Specific Sections */}
+          {currentPage === 'careers' && (
+            <>
+              {/* Why Us Section */}
+              <div className="border-b border-gray-200 pb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Why Us Section</h3>
+                <div className="space-y-4">
+                  {formData.whyUs.map((item, index) => (
+                    <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                      <h4 className="text-md font-medium text-gray-700 mb-3">Item {index + 1}</h4>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Title {index + 1}
+                          </label>
+                          <input
+                            type="text"
+                            value={item.title}
+                            onChange={(e) => handleNestedChange('whyUs', index, 'title', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder={`Enter title ${index + 1}`}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Description {index + 1}
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={item.desc}
+                            onChange={(e) => handleNestedChange('whyUs', index, 'desc', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder={`Enter description ${index + 1}`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Who Can Apply Section */}
+              <div className="border-b border-gray-200 pb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Who Can Apply Section</h3>
+                <div className="space-y-4">
+                  {formData.whoCanApply.map((item, index) => (
+                    <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                      <h4 className="text-md font-medium text-gray-700 mb-3">Item {index + 1}</h4>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Title {index + 1}
+                          </label>
+                          <input
+                            type="text"
+                            value={item.title}
+                            onChange={(e) => handleNestedChange('whoCanApply', index, 'title', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder={`Enter title ${index + 1}`}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Description {index + 1}
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={item.desc}
+                            onChange={(e) => handleNestedChange('whoCanApply', index, 'desc', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder={`Enter description ${index + 1}`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* How to Apply Section */}
+              <div className="border-b border-gray-200 pb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">How to Apply Section</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="applyText" className="block text-sm font-medium text-gray-700 mb-1">
+                      "Don't see a role?" Text
+                    </label>
+                    <textarea
+                      id="applyText"
+                      name="applyText"
+                      rows={3}
+                      value={formData.applyText}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Enter the text for 'Don't see a role?' section"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="applyEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="applyEmail"
+                      name="applyEmail"
+                      value={formData.applyEmail}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Enter email address"
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Description Field - Only for Home Page and new pages */}
+          {(currentPage === 'home' || currentPage === 'contact' || currentPage === 'careers' || currentPage === 'legal' || currentPage === 'system') && (
             <div>
               <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
                 Description

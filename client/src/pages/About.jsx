@@ -84,7 +84,11 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Seo title={c.seo.about.title} description={c.seo.about.description} />
+      <Seo 
+        title={c.seo.about.title} 
+        description={c.seo.about.description} 
+        pageName="about"
+      />
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-primary-600 to-primary-800 text-white py-20 md:py-28">

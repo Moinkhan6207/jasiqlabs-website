@@ -16,21 +16,42 @@ export default function Seo({
   description = "",
   noIndex = false,
   ogImage = "",
-  canonicalUrl = ""
+  canonicalUrl = "",
+  pageName = ""
 }) {
   const [seoSettings, setSeoSettings] = useState(defaultSeoSettings);
+  const [pageSeoData, setPageSeoData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch SEO settings from the backend on component mount
   useEffect(() => {
-    const fetchSeoSettings = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.seo.getSettings();
-        if (response.data) {
+        // Fetch general SEO settings
+        const seoResponse = await api.seo.getSettings();
+        if (seoResponse.data) {
           setSeoSettings(prev => ({
             ...defaultSeoSettings,
-            ...response.data
+            ...seoResponse.data
           }));
+        }
+
+        // Fetch page-specific SEO data if pageName is provided
+        if (pageName) {
+          try {
+            console.log(`[SEO] Fetching SEO data for page: ${pageName}`);
+            const pageSeoResponse = await api.public.getPageSeo(pageName);
+            console.log(`[SEO] API Response for ${pageName}:`, pageSeoResponse.data);
+            if (pageSeoResponse.data) {
+              console.log(`[SEO] Setting pageSeoData for ${pageName}:`, pageSeoResponse.data);
+              setPageSeoData(pageSeoResponse.data);
+            } else {
+              console.log(`[SEO] No SEO data found for page: ${pageName}`);
+            }
+          } catch (pageError) {
+            console.log(`[SEO] Error fetching SEO data for page: ${pageName}`, pageError);
+            // This is not an error - page might not have SEO data yet
+          }
         }
       } catch (error) {
         console.error('Error fetching SEO settings:', error);
@@ -41,28 +62,52 @@ export default function Seo({
       }
     };
 
-    fetchSeoSettings();
-  }, []);
+    fetchData();
+  }, [pageName]);
 
   // Generate the page title based on the template
   const getPageTitle = () => {
-    if (!title) return seoSettings.siteName;
-    return seoSettings.titleTemplate
-      .replace('{page}', title)
+    // Strictly prioritize database SEO data over prop title when pageName is provided
+    let pageTitle = "";
+    
+    if (pageName && pageSeoData?.metaTitle) {
+      pageTitle = pageSeoData.metaTitle;
+      console.log(`[SEO] Using database title for ${pageName}:`, pageTitle);
+    } else if (title) {
+      pageTitle = title;
+      console.log(`[SEO] Using prop title:`, pageTitle);
+    }
+    
+    if (!pageTitle) return seoSettings.siteName;
+    
+    const finalTitle = seoSettings.titleTemplate
+      .replace('{page}', pageTitle)
       .replace('{siteName}', seoSettings.siteName);
+    
+    console.log(`[SEO] Final page title:`, finalTitle);
+    return finalTitle;
   };
 
-  // Use the provided description or fall back to the default
-  const metaDescription = description || seoSettings.defaultMetaDescription;
-  const ogImageUrl = ogImage || seoSettings.defaultOgImageUrl;
+  // Use dynamic description if available, then prop description, then default
+  const metaDescription = pageSeoData?.metaDescription || description || seoSettings.defaultMetaDescription;
+  
+  // Use dynamic OG image if available, then prop ogImage, then default
+  const ogImageUrl = pageSeoData?.ogImageUrl || ogImage || seoSettings.defaultOgImageUrl;
+  
+  // Use dynamic canonical URL if available, then prop canonicalUrl
+  const finalCanonicalUrl = pageSeoData?.canonicalUrl || canonicalUrl;
+  
+  // Use dynamic robots if available, then calculate from noIndex prop
+  const robotsContent = pageSeoData?.robots || (noIndex ? "noindex, nofollow" : "index, follow");
 
+  // Don't render anything while loading to prevent showing fallback titles
   if (isLoading) return null;
 
   return (
     <Helmet>
       <title>{getPageTitle()}</title>
       <meta name="description" content={metaDescription} />
-      <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
+      <meta name="robots" content={robotsContent} />
       
       {/* Open Graph / Facebook */}
       <meta property="og:type" content="website" />
@@ -81,7 +126,7 @@ export default function Seo({
       <link rel="apple-touch-icon" href={seoSettings.defaultFaviconUrl} />
       
       {/* Canonical URL */}
-      {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      {finalCanonicalUrl && <link rel="canonical" href={finalCanonicalUrl} />}
       
       {/* Additional meta tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1" />

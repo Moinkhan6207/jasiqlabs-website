@@ -114,6 +114,10 @@ export const seo = {
   // 👇👇👇 YAHAN CHANGE KAREIN (put -> post) 👇👇👇
   updateSettings: (data) => api.post('/api/seo', data),
   // 👆👆👆
+  
+  // NEW: Page-specific SEO endpoints
+  getPageSeo: (pageName) => api.get(`/api/seo/${pageName}`),
+  updatePageSeo: (pageName, data) => api.post(`/api/seo/${pageName}`, data),
 };
 
 // 9. PUBLIC ENDPOINTS (User Side)
@@ -127,6 +131,9 @@ export const publicApi = {
 
   // 👇 NEW: Submit Job Application
   submitApplication: (jobId, applicationData) => api.post(`/api/public/careers/${jobId}/apply`, applicationData),
+
+  // 👇 NEW: Get Page SEO Data
+  getPageSeo: (pageName) => api.get(`/api/public/seo/${pageName}`),
 };
 
 // Default Export

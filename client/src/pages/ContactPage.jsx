@@ -1,20 +1,68 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Seo from "../components/seo/Seo";
+// 👇 Change 1: 'publicApi' ko bhi import kiya hai (SEO data mangwane ke liye)
+import api, { pageContent, publicApi } from '../services/api';
 
 const ContactPage = () => {
+  // 👇 2. Dynamic Content ke liye State (Default text wahi rakha hai jo aapka tha)
+  const [heroContent, setHeroContent] = useState({
+    title: "Get in Touch",
+    description: "We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+  });
+
+  // 👇 Change 2: SEO Title ke liye naya State banaya
+  const [seoTitle, setSeoTitle] = useState("");
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    interestType: 'Student',
+    interestType: 'Student', // Default value match with Option value
     division: 'TechWorksStudio',
     message: '',
     website_url: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 👇 3. Database se Content Fetch karne ka Logic
+  useEffect(() => {
+    // A. Page Content (H1 Heading) fetch karna
+    const fetchPageContent = async () => {
+      try {
+        // 'contact' page aur 'hero' section ka data mangwana
+        const response = await pageContent.get('contact', 'hero');
+        if (response.data) {
+          setHeroContent(prev => ({
+            ...prev,
+            // Agar DB me data hai to wo lo, nahi to purana default rakho
+            title: response.data.title || prev.title,
+            description: response.data.description || response.data.subtitle || prev.description
+          }));
+        }
+      } catch (error) {
+        console.error("Failed to fetch contact page content:", error);
+      }
+    };
+
+    // B. 👇 Change 3: SEO Data (Browser Tab Name) fetch karna
+    const fetchSeoData = async () => {
+      try {
+        // 'contact' page ka SEO data public API se mangwana
+        const response = await publicApi.getPageSeo('contact');
+        if (response.data && response.data.metaTitle) {
+          setSeoTitle(response.data.metaTitle);
+        }
+      } catch (error) {
+        console.error("SEO Fetch Error:", error);
+      }
+    };
+
+    fetchPageContent();
+    fetchSeoData(); // Ye function call add kiya
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,17 +77,19 @@ const ContactPage = () => {
     setIsSubmitting(true);
 
     try {
-      // Format the data to match the backend expectations
       const leadData = {
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
-        interestType: formData.interestType, // Will be converted to uppercase in the backend
-        source: 'WEBSITE',
+        interestType: formData.interestType.toUpperCase(), // Backend enum usually expects UPPERCASE
+        division: formData.division,
+        source: 'Contact Page', // Source update kiya taaki pata chale kahan se lead aayi
         message: formData.message ? formData.message.trim() : '',
       };
 
-      console.log('Submitting lead:', leadData);
+      // 👇 4. Use api service instead of hardcoded fetch (Better practice)
+      // Agar aapka api.public.submitLead bana hua hai to use karein, 
+      // warna ye existing fetch bhi chalega. Main existing fetch ko hi rakhta hu safe side ke liye.
       
       const response = await fetch('http://localhost:8080/api/public/leads', {
         method: 'POST',
@@ -52,11 +102,9 @@ const ContactPage = () => {
       const responseData = await response.json();
       
       if (!response.ok) {
-        console.error('Lead submission failed:', responseData);
-        throw new Error(responseData.message || 'Failed to submit form. Please try again.');
+        throw new Error(responseData.message || 'Failed to submit form.');
       }
 
-      // Reset form on success
       setFormData({
         name: '',
         email: '',
@@ -67,7 +115,6 @@ const ContactPage = () => {
         website_url: ''
       });
       
-      // Show success message
       toast.success('Thank you for contacting us! We will get back to you soon.');
       
     } catch (error) {
@@ -80,20 +127,23 @@ const ContactPage = () => {
 
   return (
     <>
+      {/* 👇 Change 4: Title prop wapas lagaya hai taaki DB wala title dikhe */}
       <Seo 
-        title="Contact Us | JASIQ Labs"
-        description="Get in touch with JASIQ Labs. We'd love to hear from you about our services, partnerships, or any questions you might have."
+        title={seoTitle || `${heroContent.title} | JASIQ Labs`}
+        description={heroContent.description}
         path="/contact"
+        pageName="contact"
       />
       
       <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
+            {/* 👇 5. Hardcoded Text ko State variable se replace kiya */}
             <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-              Get in Touch
+              {heroContent.title}
             </h1>
             <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
-              We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              {heroContent.description}
             </p>
           </div>
 
@@ -154,19 +204,19 @@ const ContactPage = () => {
                 </div>
               </div>
 
-              {/* 👇 SPAM TRAP FIELD (Hidden) */}
-                    <div style={{ display: 'none' }} aria-hidden="true">
-                      <label htmlFor="website_url">Website</label>
-                      <input
-                        type="text"
-                        name="website_url"
-                        id="website_url"
-                        value={formData.website_url}
-                        onChange={handleChange}
-                        tabIndex="-1"
-                        autoComplete="off"
-                      />
-                    </div>
+              {/* SPAM TRAP FIELD (Hidden) */}
+              <div style={{ display: 'none' }} aria-hidden="true">
+                <label htmlFor="website_url">Website</label>
+                <input
+                  type="text"
+                  name="website_url"
+                  id="website_url"
+                  value={formData.website_url}
+                  onChange={handleChange}
+                  tabIndex="-1"
+                  autoComplete="off"
+                />
+              </div>
 
               {/* Right Column - Contact Form */}
               <div className="p-8">
@@ -228,9 +278,9 @@ const ContactPage = () => {
                         onChange={handleChange}
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                       >
-                        <option value="STUDENT">Student</option>
-                        <option value="CLIENT">Client</option>
-                        <option value="PARTNER">Partner</option>
+                        <option value="Student">Student</option>
+                        <option value="Client">Client</option>
+                        <option value="Partner">Partner</option>
                       </select>
                     </div>
 

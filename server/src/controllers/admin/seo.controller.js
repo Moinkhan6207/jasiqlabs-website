@@ -58,3 +58,116 @@ export const updateSeoSettings = async (req, res) => {
     res.status(500).json({ error: 'Failed to update SEO settings' });
   }
 };
+
+// NEW: Get page-specific SEO data
+export const getPageSeo = async (req, res) => {
+  try {
+    const { pageName } = req.params;
+    
+    // First find the page by slug
+    const page = await prisma.page.findUnique({
+      where: { slug: pageName },
+      include: { seo: true }
+    });
+    
+    // If page doesn't exist, return empty object with defaults
+    if (!page) {
+      return res.status(200).json({
+        pageSlug: pageName,
+        metaTitle: '',
+        metaDescription: '',
+        canonicalUrl: '',
+        robots: 'index, follow'
+      });
+    }
+    
+    // If page exists but no SEO data, return defaults
+    if (!page.seo) {
+      return res.status(200).json({
+        pageSlug: pageName,
+        metaTitle: '',
+        metaDescription: '',
+        canonicalUrl: '',
+        robots: 'index, follow'
+      });
+    }
+    
+    // Return existing SEO data
+    res.status(200).json({
+      pageSlug: pageName,
+      metaTitle: page.seo.metaTitle || '',
+      metaDescription: page.seo.metaDescription || '',
+      canonicalUrl: page.seo.canonicalUrl || '',
+      robots: page.seo.robots || 'index, follow'
+    });
+  } catch (error) {
+    console.error('Error fetching page SEO:', error);
+    res.status(500).json({ error: 'Failed to fetch page SEO data' });
+  }
+};
+
+// NEW: Update page-specific SEO data
+export const updatePageSeo = async (req, res) => {
+  try {
+    const { pageName } = req.params;
+    const { metaTitle, metaDescription, canonicalUrl, robots } = req.body;
+    
+    // Find or create the page first
+    let page = await prisma.page.findUnique({
+      where: { slug: pageName }
+    });
+    
+    if (!page) {
+      // Create the page if it doesn't exist
+      page = await prisma.page.create({
+        data: {
+          slug: pageName,
+          routePath: `/${pageName}`,
+          pageType: 'PUBLIC',
+          isIndexable: true
+        }
+      });
+    }
+    
+    // Update or create SEO data
+    const data = {
+      metaTitle,
+      metaDescription,
+      canonicalUrl,
+      robots
+    };
+    
+    // Check if SEO data already exists for this page
+    const existingSeo = await prisma.pageSeo.findUnique({
+      where: { pageId: page.id }
+    });
+    
+    let pageSeo;
+    if (existingSeo) {
+      // Update existing SEO data
+      pageSeo = await prisma.pageSeo.update({
+        where: { pageId: page.id },
+        data: data
+      });
+    } else {
+      // Create new SEO data
+      pageSeo = await prisma.pageSeo.create({
+        data: {
+          pageId: page.id,
+          ...data
+        }
+      });
+    }
+    
+    res.status(200).json({
+      pageSlug: pageName,
+      metaTitle: pageSeo.metaTitle || '',
+      metaDescription: pageSeo.metaDescription || '',
+      canonicalUrl: pageSeo.canonicalUrl || '',
+      robots: pageSeo.robots || 'index, follow'
+    });
+  } catch (error) {
+    console.error('Error updating page SEO:', error);
+    res.status(500).json({ error: 'Failed to update page SEO data' });
+  }
+};

@@ -70,7 +70,11 @@ export default function Home() {
 
   return (
     <>
-      <Seo title={c.seo.home.title} description={c.seo.home.description} />
+      <Seo 
+        title={c.seo.home.title} 
+        description={c.seo.home.description} 
+        pageName="home"
+      />
 
       {/* Hero Section */}
       <section className="min-h-[60vh] flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-10">

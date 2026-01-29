@@ -1,6 +1,6 @@
 import express from 'express';
 // Note: .js extension lagana zaroori hai
-import { getSeoSettings, updateSeoSettings } from '../controllers/admin/seo.controller.js';
+import { getSeoSettings, updateSeoSettings, getPageSeo, updatePageSeo } from '../controllers/admin/seo.controller.js';
 import { protect, admin } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -11,5 +11,9 @@ router.get('/', getSeoSettings);
 // Protected admin routes
 // Humne yahan POST kar diya hai taaki Postman me asani ho
 router.post('/', protect, admin, updateSeoSettings);
+
+// Page-specific SEO routes
+router.get('/:pageName', protect, admin, getPageSeo);
+router.post('/:pageName', protect, admin, updatePageSeo);
 
 export default router;
