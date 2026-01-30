@@ -120,7 +120,31 @@ export const seo = {
   updatePageSeo: (pageName, data) => api.post(`/api/seo/${pageName}`, data),
 };
 
-// 9. PUBLIC ENDPOINTS (User Side)
+// 9. DIVISION CONTENT ENDPOINTS (Programs, Services, Products)
+export const divisionContent = {
+  // Programs (RealWorkStudio)
+  getPrograms: () => api.get('/api/admin/divisions/PROGRAM'),
+  getProgram: (id) => api.get(`/api/admin/divisions/PROGRAM/${id}`),
+  createProgram: (data) => api.post('/api/admin/divisions/PROGRAM', data),
+  updateProgram: (id, data) => api.patch(`/api/admin/divisions/PROGRAM/${id}`, data),
+  deleteProgram: (id) => api.delete(`/api/admin/divisions/PROGRAM/${id}`),
+
+  // Services (TechWorksStudio)
+  getServices: () => api.get('/api/admin/divisions/SERVICE'),
+  getService: (id) => api.get(`/api/admin/divisions/SERVICE/${id}`),
+  createService: (data) => api.post('/api/admin/divisions/SERVICE', data),
+  updateService: (id, data) => api.patch(`/api/admin/divisions/SERVICE/${id}`, data),
+  deleteService: (id) => api.delete(`/api/admin/divisions/SERVICE/${id}`),
+
+  // Products (Products & AI)
+  getProducts: () => api.get('/api/admin/divisions/PRODUCT'),
+  getProduct: (id) => api.get(`/api/admin/divisions/PRODUCT/${id}`),
+  createProduct: (data) => api.post('/api/admin/divisions/PRODUCT', data),
+  updateProduct: (id, data) => api.patch(`/api/admin/divisions/PRODUCT/${id}`, data),
+  deleteProduct: (id) => api.delete(`/api/admin/divisions/PRODUCT/${id}`),
+};
+
+// 10. PUBLIC ENDPOINTS (User Side)
 export const publicApi = {
   // Contact Form
   submitLead: (leadData) => api.post('/api/public/leads', leadData),  
@@ -134,6 +158,14 @@ export const publicApi = {
 
   // 👇 NEW: Get Page SEO Data
   getPageSeo: (pageName) => api.get(`/api/public/seo/${pageName}`),
+
+  // 👇 NEW: Get Service by slug
+  getServiceBySlug: (slug) => api.get(`/api/public/services/${slug}`),
+
+  // 👇 NEW: Get all programs, services, and products
+  getPrograms: () => api.get('/api/public/programs'),
+  getServices: () => api.get('/api/public/services'),
+  getProducts: () => api.get('/api/public/products'),
 };
 
 // Default Export
@@ -145,6 +177,7 @@ const apiService = {
   dashboard,
   pageContent,
   seo,
+  divisionContent,
   public: publicApi, 
 };
 

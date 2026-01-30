@@ -18,6 +18,9 @@ const PageContentEditor = lazy(() => import('../pages/admin/PageContentEditor'))
 const ContentPage = lazy(() => import('../pages/admin/ContentPage'));
 const SettingsPage = lazy(() => import('../pages/admin/SettingsPage'));
 const SeoSettingsPage = lazy(() => import('../pages/admin/SeoSettingsPage'));
+const ProgramsPage = lazy(() => import('../pages/admin/ProgramsPage'));
+const ServicesPage = lazy(() => import('../pages/admin/ServicesPage'));
+const ProductsPage = lazy(() => import('../pages/admin/ProductsPage'));
 
 // Legal Pages
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
@@ -192,6 +195,9 @@ export const router = createBrowserRouter([
               { path: "content/*", element: <ContentPage /> },
               { path: "settings", element: <SettingsPage /> },
               { path: "seo-settings", element: <SeoSettingsPage /> },
+              { path: "programs", element: <ProgramsPage /> },
+              { path: "services", element: <ServicesPage /> },
+              { path: "products", element: <ProductsPage /> },
               { index: true, element: <Navigate to="dashboard" replace /> },
             ]
           },

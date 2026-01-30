@@ -79,22 +79,29 @@ const AdminLayout = () => {
       ],
     },
     {
-      key: '/admin/divisions/program',
-      icon: <BookOutlined />,
-      label: 'Programs',
-      onClick: () => navigate('/admin/divisions/program'),
-    },
-    {
-      key: '/admin/divisions/service',
-      icon: <ToolOutlined />,
-      label: 'Services',
-      onClick: () => navigate('/admin/divisions/service'),
-    },
-    {
-      key: '/admin/divisions/product',
+      key: 'business',
       icon: <ShopOutlined />,
-      label: 'Products',
-      onClick: () => navigate('/admin/divisions/product'),
+      label: 'Business Modules',
+      children: [
+        {
+          key: '/admin/programs',
+          icon: <BookOutlined />,
+          label: 'Programs',
+          onClick: () => navigate('/admin/programs'),
+        },
+        {
+          key: '/admin/services',
+          icon: <ToolOutlined />,
+          label: 'Services',
+          onClick: () => navigate('/admin/services'),
+        },
+        {
+          key: '/admin/products',
+          icon: <ShopOutlined />,
+          label: 'Products',
+          onClick: () => navigate('/admin/products'),
+        },
+      ],
     },
     {
       key: '/admin/leads',

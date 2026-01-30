@@ -15,7 +15,12 @@ import {
   Phone,
   UserCheck,
   Shield,
-  AlertCircle
+  AlertCircle,
+  // 👇 New Icons Import kiye hain
+  GraduationCap, // Programs ke liye
+  Wrench,        // Services ke liye
+  Package,       // Products ke liye
+  Layers         // Business Group ke liye
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -42,7 +47,18 @@ const AdminLayout = () => {
     { name: 'Blog Posts', href: '/admin/blog', icon: FileText, current: location.pathname === '/admin/blog' },
     { name: 'Careers', href: '/admin/careers', icon: Briefcase, current: location.pathname === '/admin/careers' },
     
-    // 👇 Ye wo section hai jo Mobile me gayab ho raha tha
+    // 👇 NAYA SECTION ADD KIYA HAI: Business Modules
+    { 
+      name: 'Business Modules', 
+      icon: Layers,
+      current: location.pathname.startsWith('/admin/programs') || location.pathname.startsWith('/admin/services') || location.pathname.startsWith('/admin/products'),
+      children: [
+        { name: 'Programs', href: '/admin/programs', icon: GraduationCap }, // RealWorkStudio
+        { name: 'Services', href: '/admin/services', icon: Wrench },        // TechWorkStudio
+        { name: 'Products', href: '/admin/products', icon: Package },       // Products & AI
+      ]
+    },
+
     { 
       name: 'Page Content', 
       icon: FileTextIcon,
@@ -67,12 +83,12 @@ const AdminLayout = () => {
     },
   ];
 
-  // 👇 Ye Function Mobile aur Desktop dono ke liye same Buttons banayega
+  // Function to render nav items (Same logic as before)
   const renderNavItems = (isMobile) => {
     return navigation.map((item) => (
       <div key={item.name}>
         {item.children ? (
-          // Agar Sub-menu hai (Jaise Page Content -> Home/About)
+          // Agar Sub-menu hai (Jaise Page Content ya Business Modules)
           <div className="space-y-1 mt-2 mb-2">
             <div className="px-2 pt-2 pb-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               {item.name}
@@ -81,7 +97,7 @@ const AdminLayout = () => {
               <Link
                 key={child.name}
                 to={child.href}
-                onClick={() => isMobile && setSidebarOpen(false)} // Mobile me click karne per menu band ho
+                onClick={() => isMobile && setSidebarOpen(false)} 
                 className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                   location.pathname === child.href
                     ? 'bg-blue-50 text-blue-600'
@@ -99,7 +115,7 @@ const AdminLayout = () => {
             ))}
           </div>
         ) : (
-          // Agar simple link hai (Jaise Dashboard)
+          // Agar simple link hai
           <Link
             to={item.href}
             onClick={() => isMobile && setSidebarOpen(false)}
@@ -124,7 +140,7 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      {/* 🟢 Mobile Sidebar (Ab ye fixed hai) */}
+      {/* 🟢 Mobile Sidebar */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="fixed inset-0 bg-gray-600 opacity-75" onClick={() => setSidebarOpen(false)}></div>
@@ -144,7 +160,6 @@ const AdminLayout = () => {
                 <h1 className="text-xl font-bold text-gray-900">JASIQ Labs</h1>
               </div>
               <nav className="mt-5 px-2 space-y-1">
-                {/* Yahan hum function call kar rahe hain taaki same buttons bane */}
                 {renderNavItems(true)}
               </nav>
             </div>
@@ -168,7 +183,6 @@ const AdminLayout = () => {
               <h1 className="text-xl font-bold text-gray-900">JASIQ Labs</h1>
             </div>
             <nav className="mt-5 flex-1 px-2 space-y-1 bg-white">
-              {/* Desktop ke liye same function call (false matlab mobile nahi hai) */}
               {renderNavItems(false)}
             </nav>
           </div>
