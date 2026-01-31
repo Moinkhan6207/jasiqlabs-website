@@ -12,6 +12,9 @@ const ServicesPage = () => {
     name: '',
     description: '',
     type: '',
+    problem: '',
+    approach: '',
+    outcome: '',
     status: 'Active'
   });
 
@@ -37,6 +40,9 @@ const ServicesPage = () => {
       name: '',
       description: '',
       type: '',
+      problem: '',
+      approach: '',
+      outcome: '',
       status: 'Active'
     });
     setEditingService(null);
@@ -49,6 +55,9 @@ const ServicesPage = () => {
         name: service.name || '',
         description: service.description || '',
         type: service.metadata?.type || '',
+        problem: service.metadata?.problem || '',
+        approach: service.metadata?.approach || '',
+        outcome: service.metadata?.outcome || '',
         status: service.status || 'Active'
       });
     } else {
@@ -71,7 +80,10 @@ const ServicesPage = () => {
         status: formData.status,
         features: [],
         metadata: {
-          type: formData.type
+          type: formData.type,
+          problem: formData.problem,
+          approach: formData.approach,
+          outcome: formData.outcome
         }
       };
 
@@ -233,8 +245,8 @@ const ServicesPage = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-3xl max-h-[85vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">
                 {editingService ? 'Edit Service' : 'Add New Service'}
@@ -247,8 +259,8 @@ const ServicesPage = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="md:col-span-2">
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   Service Name *
                 </label>
@@ -263,22 +275,6 @@ const ServicesPage = () => {
                   placeholder="e.g., Web Development"
                 />
                 <p className="text-xs text-gray-500 mt-1">Slug will be auto-generated from the name</p>
-              </div>
-
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                  Description *
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Detailed description of the service"
-                />
               </div>
 
               <div>
@@ -314,7 +310,68 @@ const ServicesPage = () => {
                 </select>
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4">
+              <div className="md:col-span-2">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                  Description *
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Detailed description of the service"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="problem" className="block text-sm font-medium text-gray-700 mb-1">
+                  Problem Statement
+                </label>
+                <textarea
+                  id="problem"
+                  name="problem"
+                  value={formData.problem}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Describe the problem this service solves"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="approach" className="block text-sm font-medium text-gray-700 mb-1">
+                  Our Approach
+                </label>
+                <textarea
+                  id="approach"
+                  name="approach"
+                  value={formData.approach}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Describe your approach to solving this problem"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="outcome" className="block text-sm font-medium text-gray-700 mb-1">
+                  Outcome/Result
+                </label>
+                <textarea
+                  id="outcome"
+                  name="outcome"
+                  value={formData.outcome}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Describe the expected outcomes and results"
+                />
+              </div>
+
+              <div className="md:col-span-2 flex justify-end space-x-3 pt-4">
                 <button
                   type="button"
                   onClick={handleCloseModal}

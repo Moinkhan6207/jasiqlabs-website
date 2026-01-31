@@ -164,32 +164,11 @@ const AdminDashboard = () => {
             <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Leads</h3>
           </div>
           <div className="overflow-x-auto" style={{ minHeight: '300px' }}> 
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Type</th> {/* 🟢 Added Interest Type Column for clarity */}
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status (Action)</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+            <table className="min-w-full divide-y divide-gray-200"><thead className="bg-gray-50"><tr><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Type</th><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status (Action)</th><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th></tr></thead><tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-12 text-center">
-                       <div className="flex justify-center items-center flex-col">
-                          <RefreshCw className="animate-spin h-8 w-8 text-blue-500 mb-2"/>
-                          <span className="text-gray-500 text-sm">Fetching leads...</span>
-                       </div>
-                    </td>
-                  </tr>
+                  <tr><td colSpan="5" className="px-6 py-12 text-center"><div className="flex justify-center items-center flex-col"><RefreshCw className="animate-spin h-8 w-8 text-blue-500 mb-2"/><span className="text-gray-500 text-sm">Fetching leads...</span></div></td></tr>
                 ) : leads.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-10 text-center text-gray-500">
-                      No leads found.
-                    </td>
-                  </tr>
+                  <tr><td colSpan="5" className="px-6 py-10 text-center text-gray-500">No leads found.</td></tr>
                 ) : (
                   leads.slice(0, 10).map((lead) => (
                     <tr key={lead._id || lead.id} className="hover:bg-gray-50 transition-colors">
@@ -234,8 +213,7 @@ const AdminDashboard = () => {
                     </tr>
                   ))
                 )}
-              </tbody>
-            </table>
+              </tbody></table>
           </div>
         </div>
       </div>

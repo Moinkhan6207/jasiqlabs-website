@@ -125,3 +125,45 @@ export const getProducts = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+/**
+ * Get a single product by ID
+ * @route GET /api/public/products/:id
+ * @access Public
+ */
+export const getProductById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const product = await prisma.divisionContent.findFirst({
+    where: {
+      id: id,
+      type: 'PRODUCT'
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      description: true,
+      features: true,
+      coverImage: true,
+      icon: true,
+      status: true,
+      metadata: true,
+      seoTitle: true,
+      seoDesc: true,
+      createdAt: true,
+      updatedAt: true
+    }
+  });
+
+  if (!product) {
+    return next(new AppError('Product not found', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      product
+    }
+  });
+});

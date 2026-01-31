@@ -36,6 +36,10 @@ import {
   updateLeadStatus, // 👈 FIX 1: Ye Import Miss kar diya tha aapne
   exportLeadsToCSV,
 } from '../controllers/admin/lead.controller.js';
+import {
+  getSystemSettings,
+  updateSystemSettings,
+} from '../controllers/admin/system.controller.js';
 
 const router = express.Router();
 
@@ -88,5 +92,10 @@ router.get('/leads', getLeads);
 router.get('/leads/export', exportLeadsToCSV);
 // 👇 FIX 2: Ye Route Add kiya (Status Update ke liye)
 router.patch('/leads/:id/status', updateLeadStatus);
+
+// System Settings Routes
+router.route('/system-settings')
+  .get(getSystemSettings)
+  .put(updateSystemSettings);
 
 export default router;

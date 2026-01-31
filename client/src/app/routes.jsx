@@ -4,6 +4,7 @@ import { AuthProvider } from '../contexts/AuthContext';
 import Layout from "../components/layout/Layout";
 import Home from "../pages/Home";
 import About from "../pages/About";
+import MaintenanceLayout from './App';
 
 // Lazy load components for better performance
 const ContactPage = lazy(() => import('../pages/ContactPage'));
@@ -21,6 +22,9 @@ const SeoSettingsPage = lazy(() => import('../pages/admin/SeoSettingsPage'));
 const ProgramsPage = lazy(() => import('../pages/admin/ProgramsPage'));
 const ServicesPage = lazy(() => import('../pages/admin/ServicesPage'));
 const ProductsPage = lazy(() => import('../pages/admin/ProductsPage'));
+const SystemPage = lazy(() => import('../pages/admin/SystemPage'));
+const NotFound = lazy(() => import('../pages/NotFound'));
+const ThankYou = lazy(() => import('../pages/ThankYou'));
 
 // Legal Pages
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
@@ -95,12 +99,15 @@ const AdminLayoutWrapper = ({ children }) => (
 // Create the router configuration
 export const router = createBrowserRouter([
   {
-    element: <AppLayout />,
+    element: <MaintenanceLayout />,
     children: [
       {
-        path: "/",
-        element: <Layout />,
+        element: <AuthProvider><Outlet /></AuthProvider>,
         children: [
+          {
+            path: "/",
+            element: <Layout />,
+            children: [
           // --- Main Website Pages ---
           { index: true, element: <Home /> },
           { path: "about", element: <About /> },
@@ -117,6 +124,7 @@ export const router = createBrowserRouter([
           { path: "careers", element: <Careers /> },
           { path: "blog", element: <BlogList /> },
           { path: "blog/:id", element: <BlogPost /> },
+          { path: "thank-you", element: <ThankYou /> },
 
           // --- Legal Pages ---
           { path: "legal/privacy-policy", element: <PrivacyPolicy /> },
@@ -198,6 +206,7 @@ export const router = createBrowserRouter([
               { path: "programs", element: <ProgramsPage /> },
               { path: "services", element: <ServicesPage /> },
               { path: "products", element: <ProductsPage /> },
+              { path: "system", element: <SystemPage /> },
               { index: true, element: <Navigate to="dashboard" replace /> },
             ]
           },
@@ -211,7 +220,13 @@ export const router = createBrowserRouter([
       // 404 - Not Found
       {
         path: "*",
-        element: <Navigate to="/" replace />
+        element: (
+          <Suspense fallback={<Loading />}>
+            <NotFound />
+          </Suspense>
+        )
+      }
+        ],
       }
     ],
   },

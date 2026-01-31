@@ -20,7 +20,8 @@ import {
   GraduationCap, // Programs ke liye
   Wrench,        // Services ke liye
   Package,       // Products ke liye
-  Layers         // Business Group ke liye
+  Layers,        // Business Group ke liye
+  Power          // System Settings ke liye
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -75,10 +76,11 @@ const AdminLayout = () => {
     { 
       name: 'Settings', 
       icon: Settings, 
-      current: location.pathname.startsWith('/admin/settings') || location.pathname === '/admin/seo-settings',
+      current: location.pathname.startsWith('/admin/settings') || location.pathname === '/admin/seo-settings' || location.pathname === '/admin/system',
       children: [
         { name: 'General', href: '/admin/settings', icon: Settings },
         { name: 'SEO Settings', href: '/admin/seo-settings', icon: FileText },
+        { name: 'System Settings', href: '/admin/system', icon: Power },
       ]
     },
   ];

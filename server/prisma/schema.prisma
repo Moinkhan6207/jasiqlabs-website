@@ -223,6 +223,14 @@ model GlobalConfig {
 }
 
 
+model SystemSetting {
+  id             String   @id @default(cuid())
+  maintenanceMode Boolean @default(false)
+  thankYouPage   Json?    // { title: String, message: String }
+  notFoundPage   Json?    // { title: String, message: String }
+  updatedAt      DateTime @updatedAt
+}
+
 // 👇 NEW MODEL: Job Applications store karne ke liye
 model JobApplication {
   id          String     @id @default(uuid())

@@ -1,20 +1,49 @@
 import { Helmet } from "react-helmet-async";
-import { useParams, Link } from "react-router-dom";
-import content from "../../content/products.json";
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Check, ExternalLink, Mail } from "lucide-react";
+import { publicApi } from "../../services/api";
+import { toast } from "react-hot-toast";
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const product = content.productList.find((p) => p.id === id);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await publicApi.getProductById(id);
+        setProduct(response.data?.data?.product);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        toast.error('Failed to load product details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchProduct();
+    }
+  }, [id]);
 
   const statusColors = {
-    Active: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200' },
-    Beta: { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-200' },
-    ComingSoon: { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200' },
+    Research: { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-200' },
+    MVP: { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200' },
+    Live: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200' },
     default: { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-200' }
   };
 
   const status = statusColors[product?.status] || statusColors.default;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -43,7 +72,7 @@ export default function ProductDetail() {
     <div className="bg-white">
       <Helmet>
         <title>{product.name} — JASIQ Labs</title>
-        <meta name="description" content={product.shortDesc} />
+        <meta name="description" content={product.description || product.seoDesc} />
       </Helmet>
 
       {/* Product Header with Gradient */}
@@ -65,7 +94,7 @@ export default function ProductDetail() {
               </span>
             </div>
             
-            <p className="text-xl text-indigo-100 mb-8">{product.shortDesc}</p>
+            <p className="text-xl text-indigo-100 mb-8">{product.description}</p>
             
             {product.website && (
               <a 
@@ -87,28 +116,28 @@ export default function ProductDetail() {
         <div className="max-w-4xl mx-auto">
           {/* Problem & Solution Section */}
           <div className="grid md:grid-cols-2 gap-8 mb-16">
-            <div className="bg-indigo-50 p-6 rounded-xl">
+            <div className="bg-red-50 border border-red-200 p-6 rounded-xl">
               <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mr-3">
+                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 mr-3">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">The Problem</h2>
               </div>
-              <p className="text-gray-700">{product.detail.problem}</p>
+              <p className="text-gray-700">{product.metadata?.problem || 'No problem statement available'}</p>
             </div>
             
-            <div className="bg-green-50 p-6 rounded-xl">
+            <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h2 className="text-xl font-bold text-gray-900">Our Solution</h2>
+                <h2 className="text-xl font-bold text-gray-900">The Solution</h2>
               </div>
-              <p className="text-gray-700">{product.detail.solution}</p>
+              <p className="text-gray-700">{product.metadata?.solution || 'No solution statement available'}</p>
             </div>
           </div>
 
@@ -132,33 +161,62 @@ export default function ProductDetail() {
           </div>
 
           {/* Target Audience */}
-          {product.target && (
-            <div className="bg-gray-50 p-6 rounded-xl mb-12">
-              <h3 className="text-lg font-medium text-gray-900 mb-3">Ideal For</h3>
-              <p className="text-gray-700">{product.target}</p>
+          {product.metadata?.targetUsers && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-6 rounded-xl mb-12">
+              <div className="flex items-center mb-3">
+                <div className="flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Built For: {product.metadata.targetUsers}</h3>
+              </div>
+              <p className="text-gray-600 text-sm">This product is specifically designed to meet the needs of {product.metadata.targetUsers.toLowerCase()}.</p>
             </div>
           )}
 
           {/* CTA Section */}
-          <div className="bg-indigo-50 rounded-xl p-8 text-center">
+          <div className="bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-200 rounded-xl p-8 text-center">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">Interested in {product.name}?</h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Get in touch with our team to learn more about how {product.name} can benefit your business.
+              {product.status === 'Live' 
+                ? `Ready to experience ${product.name}? Get started now or schedule a demo to see it in action.`
+                : `Be the first to know when ${product.name} launches. Join our waitlist for exclusive updates and early access.`
+              }
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a
-                href="mailto:contact@jasiqlabs.com?subject=Inquiry about a product"
-                className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-colors"
-              >
-                <Mail className="-ml-1 mr-2 h-5 w-5" />
-                Contact Sales
-              </a>
-              <a
-                href="#"
-                className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition-colors"
-              >
-                Schedule a Demo
-              </a>
+              {product.status === 'Live' ? (
+                <>
+                  <a
+                    href="#"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 shadow-sm transition-colors"
+                  >
+                    Try Now
+                  </a>
+                  <a
+                    href="mailto:contact@jasiqlabs.com?subject=Demo request for ${product.name}"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition-colors"
+                  >
+                    Schedule a Demo
+                  </a>
+                </>
+              ) : (
+                <>
+                  <a
+                    href="mailto:contact@jasiqlabs.com?subject=Waitlist for ${product.name}"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 shadow-sm transition-colors"
+                  >
+                    <Mail className="-ml-1 mr-2 h-5 w-5" />
+                    Join Waitlist
+                  </a>
+                  <a
+                    href="#"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition-colors"
+                  >
+                    Learn More
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>

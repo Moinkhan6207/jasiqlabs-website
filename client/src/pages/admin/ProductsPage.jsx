@@ -197,17 +197,17 @@ const ProductsPage = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-500 max-w-xs truncate">
-                        {product.metadata?.problem || 'N/A'}
+                        {product.metadata?.problem || '-'}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-500 max-w-xs truncate">
-                        {product.metadata?.solution || 'N/A'}
+                        {product.metadata?.solution || '-'}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-500 max-w-xs truncate">
-                        {product.metadata?.targetUsers || 'N/A'}
+                        {product.metadata?.targetUsers || '-'}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

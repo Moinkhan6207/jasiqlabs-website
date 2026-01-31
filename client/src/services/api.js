@@ -144,7 +144,13 @@ export const divisionContent = {
   deleteProduct: (id) => api.delete(`/api/admin/divisions/PRODUCT/${id}`),
 };
 
-// 10. PUBLIC ENDPOINTS (User Side)
+// 10. SYSTEM SETTINGS ENDPOINTS
+export const systemSettings = {
+  get: () => api.get('/api/admin/system-settings'),
+  update: (settings) => api.put('/api/admin/system-settings', settings),
+};
+
+// 11. PUBLIC ENDPOINTS (User Side)
 export const publicApi = {
   // Contact Form
   submitLead: (leadData) => api.post('/api/public/leads', leadData),  
@@ -166,7 +172,11 @@ export const publicApi = {
   getPrograms: () => api.get('/api/public/programs'),
   getServices: () => api.get('/api/public/services'),
   getProducts: () => api.get('/api/public/products'),
+  getProductById: (id) => api.get(`/api/public/products/${id}`),
 };
+
+// Export the raw api instance for direct use
+export { api };
 
 // Default Export
 const apiService = {
@@ -178,6 +188,7 @@ const apiService = {
   pageContent,
   seo,
   divisionContent,
+  systemSettings,
   public: publicApi, 
 };
 

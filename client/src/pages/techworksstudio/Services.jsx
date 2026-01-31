@@ -32,10 +32,13 @@ export default function Services() {
     const mappedData = {
       id: service.id,
       title: service.name,
-      for: service.type || 'Businesses and Startups',
-      problemSolved: service.description || 'Custom solutions for your needs',
-      approach: 'Agile methodology with modern tech stack',
-      outcome: 'Scalable, maintainable, and performant solutions'
+      for: service.metadata?.type || 'Businesses and Startups',
+      problemSolved: service.metadata?.problem || service.description || 'Custom solutions for your needs',
+      approach: service.metadata?.approach || 'Agile methodology with modern tech stack',
+      outcome: service.metadata?.outcome || 'Scalable, maintainable, and performant solutions',
+      hasProblem: !!service.metadata?.problem,
+      hasApproach: !!service.metadata?.approach,
+      hasOutcome: !!service.metadata?.outcome
     };
     
     return <ServiceCard key={service.id} data={mappedData} />;
