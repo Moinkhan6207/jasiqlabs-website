@@ -1,9 +1,58 @@
 import { Helmet } from "react-helmet-async";
+import { useEffect, useState } from "react";
 import content from "../../content/products.json";
 import { ArrowRight, CheckCircle } from "lucide-react";
+import { pageContent } from "../../services/api";
 
 export default function ProductsHome() {
   const c = content;
+
+  const [heroContent, setHeroContent] = useState({
+    title: c.home.hero.title,
+    subtitle: c.home.hero.subtitle,
+    ctaText: c.home.hero.ctaText,
+    ctaLink: c.home.hero.ctaLink
+  });
+
+  useEffect(() => {
+    const fetchHeroContent = async () => {
+      try {
+        const response = await pageContent.get('products', 'products_hero');
+
+        const apiResponse = response.data || response;
+        const backendData = apiResponse.data || apiResponse;
+
+        if (backendData) {
+          let newTitle = null;
+          let newSubtitle = null;
+          let newCta = null;
+
+          if (backendData.content) {
+            newTitle = backendData.content.title;
+            newSubtitle = backendData.content.subtitle;
+            newCta = backendData.content.description;
+          } else if (backendData.title) {
+            newTitle = backendData.title;
+            newSubtitle = backendData.subtitle;
+            newCta = backendData.description;
+          }
+
+          if (newTitle) {
+            setHeroContent(prev => ({
+              ...prev,
+              title: newTitle,
+              subtitle: newSubtitle || prev.subtitle,
+              ctaText: newCta || prev.ctaText
+            }));
+          }
+        }
+      } catch (error) {
+        console.log('Using fallback content for Products hero section');
+      }
+    };
+
+    fetchHeroContent();
+  }, []);
 
   return (
     <>
@@ -22,16 +71,16 @@ export default function ProductsHome() {
         </div>
         <div className="container mx-auto px-4 relative z-10 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-            {c.home.hero.title}
+            {heroContent.title}
           </h1>
           <p className="text-xl md:text-2xl text-indigo-100 max-w-3xl mx-auto mb-8">
-            {c.home.hero.subtitle}
+            {heroContent.subtitle}
           </p>
           <a
-            href={c.home.hero.ctaLink}
+            href={heroContent.ctaLink}
             className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-indigo-700 bg-white hover:bg-indigo-50 md:py-4 md:text-lg md:px-10 transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg"
           >
-            {c.home.hero.ctaText}
+            {heroContent.ctaText}
             <ArrowRight className="ml-2 h-5 w-5" />
           </a>
         </div>

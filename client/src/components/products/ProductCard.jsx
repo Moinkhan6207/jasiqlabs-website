@@ -3,6 +3,9 @@ import { ArrowRight } from "lucide-react";
 
 export default function ProductCard({ product }) {
   const statusColors = {
+    Live: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200' },
+    MVP: { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200' },
+    Research: { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-200' },
     Active: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200' },
     Beta: { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-200' },
     ComingSoon: { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200' },

@@ -10,9 +10,15 @@ const ProductsPage = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
+    subtitle: '',
+    fullDescription: '',
     problem: '',
     solution: '',
+    featuresText: '',
     targetUsers: '',
+    website: '',
+    coverImage: '',
+    icon: '',
     status: 'Research'
   });
 
@@ -39,9 +45,15 @@ const ProductsPage = () => {
   const resetForm = () => {
     setFormData({
       name: '',
+      subtitle: '',
+      fullDescription: '',
       problem: '',
       solution: '',
+      featuresText: '',
       targetUsers: '',
+      website: '',
+      coverImage: '',
+      icon: '',
       status: 'Research'
     });
     setEditingProduct(null);
@@ -52,9 +64,15 @@ const ProductsPage = () => {
       setEditingProduct(product);
       setFormData({
         name: product.name || '',
+        subtitle: product.description || '',
+        fullDescription: product.metadata?.fullDescription || '',
         problem: product.metadata?.problem || '',
         solution: product.metadata?.solution || '',
+        featuresText: Array.isArray(product.features) ? product.features.join('\n') : '',
         targetUsers: product.metadata?.targetUsers || '',
+        website: product.metadata?.website || '',
+        coverImage: product.coverImage || '',
+        icon: product.icon || '',
         status: product.status || 'Research'
       });
     } else {
@@ -71,15 +89,24 @@ const ProductsPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const features = (formData.featuresText || '')
+        .split('\n')
+        .map(s => s.trim())
+        .filter(Boolean);
+
       const submitData = {
         name: formData.name,
-        description: `${formData.problem} - ${formData.solution}`, // Combine problem and solution for description field
+        description: formData.subtitle,
         status: formData.status,
-        features: [],
+        features,
+        coverImage: formData.coverImage || null,
+        icon: formData.icon || null,
         metadata: {
           problem: formData.problem,
           solution: formData.solution,
-          targetUsers: formData.targetUsers
+          targetUsers: formData.targetUsers,
+          website: formData.website,
+          fullDescription: formData.fullDescription
         }
       };
 
@@ -240,7 +267,7 @@ const ProductsPage = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">
                 {editingProduct ? 'Edit Product' : 'Add New Product'}
@@ -267,6 +294,37 @@ const ProductsPage = () => {
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g., OmniShop"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="subtitle" className="block text-sm font-medium text-gray-700 mb-1">
+                  Product Subtitle (Shown on Listing) *
+                </label>
+                <input
+                  type="text"
+                  id="subtitle"
+                  name="subtitle"
+                  value={formData.subtitle}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Short one-line subtitle"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="fullDescription" className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Description (Shown on Detail Page)
+                </label>
+                <textarea
+                  id="fullDescription"
+                  name="fullDescription"
+                  value={formData.fullDescription}
+                  onChange={handleChange}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Detailed description for the product detail page"
                 />
               </div>
 
@@ -315,6 +373,66 @@ const ProductsPage = () => {
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g., Small businesses, Enterprise, Developers"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="featuresText" className="block text-sm font-medium text-gray-700 mb-1">
+                  Key Features (One per line)
+                </label>
+                <textarea
+                  id="featuresText"
+                  name="featuresText"
+                  value={formData.featuresText}
+                  onChange={handleChange}
+                  rows={5}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Feature 1\nFeature 2\nFeature 3"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-1">
+                  Website URL
+                </label>
+                <input
+                  type="text"
+                  id="website"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="https://..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700 mb-1">
+                  Cover Image URL (Detail Page)
+                </label>
+                <input
+                  type="text"
+                  id="coverImage"
+                  name="coverImage"
+                  value={formData.coverImage}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="https://..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="icon" className="block text-sm font-medium text-gray-700 mb-1">
+                  Icon Image URL (Listing Card)
+                </label>
+                <input
+                  type="text"
+                  id="icon"
+                  name="icon"
+                  value={formData.icon}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="https://..."
                 />
               </div>
 

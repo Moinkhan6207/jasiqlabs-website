@@ -15,8 +15,15 @@ export default function Home() {
   // 1. Dynamic Hero State (Default: JSON Data)
   const [heroData, setHeroData] = useState({
     h1: c.home.hero.h1,
-    supportingLine: c.home.hero.supportingLine
+    supportingLine: c.home.hero.supportingLine,
+    buttons: c.home.hero.buttons,
   });
+
+  const [homeWhatWeDo, setHomeWhatWeDo] = useState(c.home.whatWeDo);
+  const [homeDivisions, setHomeDivisions] = useState(c.home.divisions);
+  const [homeWhy, setHomeWhy] = useState(c.home.why);
+  const [homeWhoWeWorkWith, setHomeWhoWeWorkWith] = useState(c.home.whoWeWorkWith);
+  const [homeLeadCapture, setHomeLeadCapture] = useState(c.home.leadCapture);
 
   const [form, setForm] = useState({
     name: "",
@@ -30,49 +37,78 @@ export default function Home() {
   useEffect(() => {
     const fetchDynamicContent = async () => {
       try {
-        const response = await pageContent.get('home', 'hero');
-        
-        // Debug: Log the full response structure
-        console.log('🔍 DEBUG: Full API Response:', response);
-        
-        // Robust Data Extraction
-        // The pageContent.get() method returns response.data, so 'response' here is already { success: true, data: {...} }
-        const apiResponse = response || {};
-        const backendData = apiResponse.data;
+        const extractContent = (response) => {
+          const apiResponse = response || {};
+          const backendData = apiResponse.data;
+          if (!backendData) return null;
+          if (backendData.content) return backendData.content;
+          return backendData;
+        };
 
-        console.log('🔍 DEBUG: API Response structure:', apiResponse);
-        console.log('🔍 DEBUG: Backend data:', backendData);
+        const [
+          heroRes,
+          whatWeDoRes,
+          divisionsRes,
+          whyRes,
+          whoWeWorkWithRes,
+          leadCaptureRes,
+        ] = await Promise.all([
+          pageContent.get('home', 'hero'),
+          pageContent.get('home', 'what_we_do'),
+          pageContent.get('home', 'divisions'),
+          pageContent.get('home', 'why'),
+          pageContent.get('home', 'who_we_work_with'),
+          pageContent.get('home', 'lead_capture'),
+        ]);
 
-        let title = null;
-        let subtitle = null;
+        const heroContent = extractContent(heroRes);
+        const whatWeDoContent = extractContent(whatWeDoRes);
+        const divisionsContent = extractContent(divisionsRes);
+        const whyContent = extractContent(whyRes);
+        const whoWeWorkWithContent = extractContent(whoWeWorkWithRes);
+        const leadCaptureContent = extractContent(leadCaptureRes);
 
-        if (backendData) {
-            // Check Path 1: Nested in 'content' (Likely structure based on Blog experience)
-            if (backendData.content && backendData.content.title) {
-                title = backendData.content.title;
-                subtitle = backendData.content.subtitle;
-                console.log('🔍 DEBUG: Found data in nested content structure:', { title, subtitle });
-            } 
-            // Check Path 2: Flat structure
-            else if (backendData.title) {
-                title = backendData.title;
-                subtitle = backendData.subtitle;
-                console.log('🔍 DEBUG: Found data in flat structure:', { title, subtitle });
-            } else {
-                console.log('🔍 DEBUG: No valid data structure found in backendData');
-            }
-        } else {
-            console.log('🔍 DEBUG: No backendData found');
+        if (heroContent?.title) {
+          setHeroData({
+            h1: heroContent.title,
+            supportingLine: heroContent.subtitle || c.home.hero.supportingLine,
+            buttons: heroContent.buttons || c.home.hero.buttons,
+          });
         }
 
-        if (title) {
-          console.log('🔍 DEBUG: Updating heroData with:', { h1: title, supportingLine: subtitle || c.home.hero.supportingLine });
-          setHeroData({
-            h1: title,
-            supportingLine: subtitle || c.home.hero.supportingLine
+        if (whatWeDoContent?.title || Array.isArray(whatWeDoContent?.items)) {
+          setHomeWhatWeDo({
+            title: whatWeDoContent.title || c.home.whatWeDo.title,
+            items: Array.isArray(whatWeDoContent.items) ? whatWeDoContent.items : c.home.whatWeDo.items,
           });
-        } else {
-          console.log('🔍 DEBUG: No title found, keeping default heroData');
+        }
+
+        if (divisionsContent?.title || Array.isArray(divisionsContent?.cards)) {
+          setHomeDivisions({
+            title: divisionsContent.title || c.home.divisions.title,
+            cards: Array.isArray(divisionsContent.cards) ? divisionsContent.cards : c.home.divisions.cards,
+          });
+        }
+
+        if (whyContent?.title || Array.isArray(whyContent?.points)) {
+          setHomeWhy({
+            title: whyContent.title || c.home.why.title,
+            points: Array.isArray(whyContent.points) ? whyContent.points : c.home.why.points,
+          });
+        }
+
+        if (whoWeWorkWithContent?.title || Array.isArray(whoWeWorkWithContent?.items)) {
+          setHomeWhoWeWorkWith({
+            title: whoWeWorkWithContent.title || c.home.whoWeWorkWith.title,
+            items: Array.isArray(whoWeWorkWithContent.items) ? whoWeWorkWithContent.items : c.home.whoWeWorkWith.items,
+          });
+        }
+
+        if (leadCaptureContent?.title || leadCaptureContent?.supportingLine) {
+          setHomeLeadCapture({
+            title: leadCaptureContent.title || c.home.leadCapture.title,
+            supportingLine: leadCaptureContent.supportingLine || c.home.leadCapture.supportingLine,
+          });
         }
       } catch (error) {
         console.error("Failed to load content", error);
@@ -123,19 +159,19 @@ export default function Home() {
               variant="primary"
               onClick={() => navigate("/realworkstudio")}
             >
-              {c.home.hero.buttons.training}
+              {heroData.buttons.training}
             </Button>
             <Button 
               variant="secondary"
               onClick={() => navigate("/techworksstudio")}
             >
-              {c.home.hero.buttons.services}
+              {heroData.buttons.services}
             </Button>
             <Button 
               variant="outline"
               onClick={() => navigate("/products")}
             >
-              {c.home.hero.buttons.products}
+              {heroData.buttons.products}
             </Button>
           </div>
         </div>
@@ -146,10 +182,10 @@ export default function Home() {
       <section className="py-7 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
-            {c.home.whatWeDo.title}
+            {homeWhatWeDo.title}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {c.home.whatWeDo.items.map((item) => (
+            {homeWhatWeDo.items.map((item) => (
               <article 
                 key={item.title} 
                 className="bg-white border border-gray-200 rounded-xl p-6 shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
@@ -166,10 +202,10 @@ export default function Home() {
       <section className="py-7 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
-            {c.home.divisions.title}
+            {homeDivisions.title}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {c.home.divisions.cards.map((card) => (
+            {homeDivisions.cards.map((card) => (
               <article 
                 key={card.id} 
                 id={card.id} 
@@ -211,10 +247,10 @@ export default function Home() {
       <section className="py-7 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
-            {c.home.why.title}
+            {homeWhy.title}
           </h2>
           <ul className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-            {c.home.why.points.map((p) => (
+            {homeWhy.points.map((p) => (
               <li 
                 key={p}
                 className="flex items-center space-x-3 text-lg text-gray-700"
@@ -231,10 +267,10 @@ export default function Home() {
       <section className="py-7 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-900">
-            {c.home.whoWeWorkWith.title}
+            {homeWhoWeWorkWith.title}
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
-            {c.home.whoWeWorkWith.items.map((x) => (
+            {homeWhoWeWorkWith.items.map((x) => (
               <span 
                 key={x} 
                 className="px-6 py-3 bg-white border border-gray-200 rounded-full text-gray-700 font-medium shadow-md hover:shadow-lg transition-shadow"
@@ -251,10 +287,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
-              {c.home.leadCapture.title}
+              {homeLeadCapture.title}
             </h2>
             <p className="text-xl text-center mb-8 text-primary-100">
-              {c.home.leadCapture.supportingLine}
+              {homeLeadCapture.supportingLine}
             </p>
 
             <form 

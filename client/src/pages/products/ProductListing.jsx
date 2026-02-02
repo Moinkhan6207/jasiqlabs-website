@@ -33,8 +33,8 @@ export default function ProductListing() {
       id: product.id,
       name: product.name,
       shortDesc: product.description,
-      status: product.isMVP ? 'Beta' : 'Active',
-      target: product.targetUsers,
+      status: product.status,
+      target: product.metadata?.targetUsers,
       icon: product.icon
     };
     

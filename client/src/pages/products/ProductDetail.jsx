@@ -10,6 +10,14 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const features =
+    product?.detail?.features ||
+    product?.features ||
+    product?.metadata?.features ||
+    [];
+
+  const fullDescription = product?.metadata?.fullDescription || '';
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -96,9 +104,9 @@ export default function ProductDetail() {
             
             <p className="text-xl text-indigo-100 mb-8">{product.description}</p>
             
-            {product.website && (
+            {(product.metadata?.website || product.website) && (
               <a 
-                href={product.website} 
+                href={product.metadata?.website || product.website} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-white hover:bg-indigo-50 shadow-sm"
@@ -114,6 +122,19 @@ export default function ProductDetail() {
       {/* Product Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
+          {product.coverImage && (
+            <div className="w-full overflow-hidden rounded-2xl border border-gray-100 shadow-sm mb-12">
+              <img src={product.coverImage} alt={product.name} className="w-full h-64 md:h-96 object-cover" />
+            </div>
+          )}
+
+          {fullDescription && (
+            <div className="bg-white border border-gray-100 rounded-xl p-6 mb-12">
+              <h2 className="text-xl font-bold text-gray-900 mb-3">About {product.name}</h2>
+              <p className="text-gray-700 leading-relaxed">{fullDescription}</p>
+            </div>
+          )}
+
           {/* Problem & Solution Section */}
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             <div className="bg-red-50 border border-red-200 p-6 rounded-xl">
@@ -149,7 +170,7 @@ export default function ProductDetail() {
             </div>
             
             <div className="grid md:grid-cols-2 gap-6">
-              {product.detail.features.map((feature, index) => (
+              {(Array.isArray(features) ? features : []).map((feature, index) => (
                 <div key={index} className="flex items-start">
                   <div className="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mr-3 mt-0.5">
                     <Check className="h-4 w-4" />
@@ -194,7 +215,7 @@ export default function ProductDetail() {
                     Try Now
                   </a>
                   <a
-                    href="mailto:contact@jasiqlabs.com?subject=Demo request for ${product.name}"
+                    href={`mailto:contact@jasiqlabs.com?subject=Demo request for ${product.name}`}
                     className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition-colors"
                   >
                     Schedule a Demo
@@ -203,7 +224,7 @@ export default function ProductDetail() {
               ) : (
                 <>
                   <a
-                    href="mailto:contact@jasiqlabs.com?subject=Waitlist for ${product.name}"
+                    href={`mailto:contact@jasiqlabs.com?subject=Waitlist for ${product.name}`}
                     className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 shadow-sm transition-colors"
                   >
                     <Mail className="-ml-1 mr-2 h-5 w-5" />

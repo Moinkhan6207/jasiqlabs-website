@@ -71,6 +71,8 @@ const AdminLayout = () => {
         { name: 'Blog', href: '/admin/page-content/blog', icon: FileText },
         { name: 'Contact', href: '/admin/page-content/contact', icon: Phone },
         { name: 'RealWork Studio', href: '/admin/page-content/realworkstudio', icon: MonitorPlay },
+        { name: 'TechWork Studio', href: '/admin/page-content/techworksstudio', icon: Wrench },
+        { name: 'Products', href: '/admin/page-content/products', icon: Package },
         { name: 'Careers', href: '/admin/page-content/careers', icon: UserCheck },
         { name: 'Legal', href: '/admin/page-content/legal', icon: Shield },
         { name: 'System', href: '/admin/page-content/system', icon: AlertCircle },

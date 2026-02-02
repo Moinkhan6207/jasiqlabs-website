@@ -10,6 +10,41 @@ const BlogPost = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const decodeHtmlEntities = (value) => {
+    if (typeof value !== 'string') return '';
+    if (!value.includes('&')) return value;
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = value;
+    return textarea.value;
+  };
+
+  const escapeHtml = (value) => {
+    if (typeof value !== 'string') return '';
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  };
+
+  const normalizePostHtml = (value) => {
+    if (typeof value !== 'string') return '';
+
+    const decoded = decodeHtmlEntities(value);
+    const hasHtmlTags = /<\s*\/?\s*[a-z][\s\S]*>/i.test(decoded);
+    if (hasHtmlTags) return decoded;
+
+    const text = decoded.replace(/\r\n/g, '\n');
+    const paragraphs = text
+      .split(/\n\s*\n+/)
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br/>')}</p>`);
+
+    return paragraphs.join('');
+  };
+
   useEffect(() => {
     const loadPost = async () => {
       setLoading(true);
@@ -73,7 +108,7 @@ const BlogPost = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-20">
       <Helmet>
         <title>{post.metaTitle || post.title} | JASIQ Labs</title>
         <meta name="description" content={post.metaDesc || post.summary} />
@@ -128,7 +163,7 @@ const BlogPost = () => {
               prose-p:text-gray-700 prose-p:leading-relaxed 
               prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline
               prose-img:rounded-xl prose-img:shadow-md"
-              dangerouslySetInnerHTML={{ __html: post.content }}
+              dangerouslySetInnerHTML={{ __html: normalizePostHtml(post.content) }}
             />
 
             {/* Author Footer */}

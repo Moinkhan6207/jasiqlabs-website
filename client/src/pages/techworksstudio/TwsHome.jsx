@@ -1,5 +1,7 @@
 import { Helmet } from "react-helmet-async";
+import { useEffect, useState } from "react";
 import content from "../../content/techworksstudio.json";
+import { pageContent } from "../../services/api";
 import HeroSection from "../../components/techworksstudio/HeroSection";
 import Button from "../../components/ui/Button";
 import { Link } from "react-router-dom";
@@ -7,6 +9,53 @@ import { CheckCircle2 } from "lucide-react";
 
 export default function TwsHome() {
   const c = content;
+
+  const [heroContent, setHeroContent] = useState({
+    title: c.home.hero.title,
+    subtitle: c.home.hero.subtitle,
+    ctaText: c.home.hero.ctaText,
+    ctaLink: c.home.hero.ctaLink
+  });
+
+  useEffect(() => {
+    const fetchHeroContent = async () => {
+      try {
+        const response = await pageContent.get('techworksstudio', 'tws_hero');
+
+        const apiResponse = response.data || response;
+        const backendData = apiResponse.data || apiResponse;
+
+        if (backendData) {
+          let newTitle = null;
+          let newSubtitle = null;
+          let newCta = null;
+
+          if (backendData.content) {
+            newTitle = backendData.content.title;
+            newSubtitle = backendData.content.subtitle;
+            newCta = backendData.content.description;
+          } else if (backendData.title) {
+            newTitle = backendData.title;
+            newSubtitle = backendData.subtitle;
+            newCta = backendData.description;
+          }
+
+          if (newTitle) {
+            setHeroContent(prev => ({
+              ...prev,
+              title: newTitle,
+              subtitle: newSubtitle || prev.subtitle,
+              ctaText: newCta || prev.ctaText
+            }));
+          }
+        }
+      } catch (error) {
+        console.log('Using fallback content for TechWork Studio hero section');
+      }
+    };
+
+    fetchHeroContent();
+  }, []);
 
   return (
     <>
@@ -19,10 +68,10 @@ export default function TwsHome() {
       </Helmet>
 
       <HeroSection
-        title={c.home.hero.title}
-        subtitle={c.home.hero.subtitle}
-        ctaText={c.home.hero.ctaText}
-        ctaLink={c.home.hero.ctaLink}
+        title={heroContent.title}
+        subtitle={heroContent.subtitle}
+        ctaText={heroContent.ctaText}
+        ctaLink={heroContent.ctaLink}
       />
 
       {/* What We Do */}

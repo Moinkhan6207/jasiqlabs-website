@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../db/prisma.js';
 import AppError from '../../utils/appError.js';
 import catchAsync from '../../utils/catchAsync.js';
 import slugify from 'slugify';
-
-const prisma = new PrismaClient();
 
 /**
  * Get all division contents by type (PROGRAM, SERVICE, or PRODUCT)
@@ -72,7 +70,18 @@ export const getDivisionContent = catchAsync(async (req, res, next) => {
  */
 export const createDivisionContent = catchAsync(async (req, res, next) => {
   const { type } = req.params;
-  const { name, description, features = [], status = 'DRAFT' } = req.body;
+  const {
+    name,
+    description,
+    features = [],
+    status = 'DRAFT',
+    coverImage = null,
+    icon = null,
+    metadata = null,
+    seoTitle = null,
+    seoDesc = null,
+    order = 0,
+  } = req.body;
   
   if (!name) {
     return next(new AppError('Name is required', 400));
@@ -88,7 +97,12 @@ export const createDivisionContent = catchAsync(async (req, res, next) => {
       description: description || '',
       features,
       status,
-      order: 0, // Will be updated later if needed
+      coverImage,
+      icon,
+      metadata,
+      seoTitle,
+      seoDesc,
+      order,
     },
   });
 

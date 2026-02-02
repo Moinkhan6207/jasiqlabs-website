@@ -41,6 +41,57 @@ export default function About() {
     visionDesc: "To be the leading force in technological innovation, transforming ideas into impactful solutions that drive progress and create sustainable value for our clients and communities worldwide."
   });
 
+  const [storyData, setStoryData] = useState({
+    title: c.about.storyTitle,
+    paragraphs: [
+      c.about.storyText,
+      "Our journey has been marked by continuous learning, innovation, and a relentless pursuit of excellence. From our humble beginnings to becoming a trusted technology partner, we've remained committed to delivering exceptional value to our clients while fostering a culture of integrity and innovation.",
+    ],
+  });
+
+  const [differentData, setDifferentData] = useState({
+    title: c.about.differentTitle,
+    subtitle: "We stand out from the crowd with our unique approach and unwavering commitment to excellence.",
+    items: (c.about.differentItems || []).map((item, index) => ({
+      title: item,
+      desc: c.about.differentDescriptions && c.about.differentDescriptions[index]
+        ? c.about.differentDescriptions[index]
+        : 'We deliver exceptional value through innovative solutions and dedicated service.',
+    })),
+  });
+
+  const [cultureData, setCultureData] = useState({
+    title: c.about.cultureTitle,
+    subtitle: "Our culture is built on a foundation of shared values that guide our decisions and actions every day.",
+    items: (c.about.cultureItems || []).map((item) => {
+      const [t, d] = String(item).split(':');
+      return {
+        title: (t || '').trim(),
+        desc: (d || 'We believe in the power of collaboration and innovation.').trim(),
+      };
+    }),
+  });
+
+  const [leadershipData, setLeadershipData] = useState({
+    leadershipTitle: c.about.leadershipTitle,
+    leadershipParagraphs: [
+      c.about.leadershipText,
+      "Our leadership team brings together decades of combined experience in technology, business strategy, and innovation to guide our company's vision and growth.",
+    ],
+    complianceTitle: c.about.complianceTitle,
+    complianceParagraphs: [
+      c.about.complianceText,
+      "We are committed to maintaining the highest standards of ethical business practices, data protection, and regulatory compliance across all our operations.",
+    ],
+  });
+
+  const [ctaData, setCtaData] = useState({
+    title: 'Ready to start your next project?',
+    subtitle: 'Get in touch with our team to discuss how we can help bring your ideas to life.',
+    buttonText: 'Contact Us Today',
+    buttonLink: '/contact',
+  });
+
   useEffect(() => {
     setIsMounted(true);
     return () => setIsMounted(false);
@@ -50,64 +101,123 @@ export default function About() {
   useEffect(() => {
     const fetchDynamicContent = async () => {
       try {
-        // 1. Fetch Hero Data
-        const response = await pageContent.get('about', 'hero');
-        
-        // Debug: Log the full response structure
-        console.log('🔍 DEBUG: About page API Response:', response);
-        
-        // Robust Data Extraction
-        const apiResponse = response || {};
-        const backendData = apiResponse.data;
+        const extractContent = (response) => {
+          const backendData = response?.data;
+          if (!backendData) return null;
+          if (backendData.content) return backendData.content;
+          return backendData;
+        };
 
-        console.log('🔍 DEBUG: About page API Response structure:', apiResponse);
-        console.log('🔍 DEBUG: About page backend data:', backendData);
+        const [
+          heroRes,
+          storyRes,
+          differentRes,
+          cultureRes,
+          leadershipRes,
+          ctaRes,
+        ] = await Promise.all([
+          pageContent.get('about', 'hero'),
+          pageContent.get('about', 'story'),
+          pageContent.get('about', 'different'),
+          pageContent.get('about', 'culture'),
+          pageContent.get('about', 'leadership'),
+          pageContent.get('about', 'cta'),
+        ]);
 
-        let title = null;
-        let subtitle = null;
-        let missionTitle = null;
-        let missionDesc = null;
-        let visionTitle = null;
-        let visionDesc = null;
+        const heroContent = extractContent(heroRes);
+        const storyContent = extractContent(storyRes);
+        const differentContent = extractContent(differentRes);
+        const cultureContent = extractContent(cultureRes);
+        const leadershipContent = extractContent(leadershipRes);
+        const ctaContent = extractContent(ctaRes);
 
-        if (backendData) {
-            // Priority 1: Nested in content
-            if (backendData.content) {
-                title = backendData.content.title;
-                subtitle = backendData.content.subtitle;
-                missionTitle = backendData.content.missionTitle;
-                missionDesc = backendData.content.missionDesc;
-                visionTitle = backendData.content.visionTitle;
-                visionDesc = backendData.content.visionDesc;
-                console.log('🔍 DEBUG: Found data in nested content structure');
-            } 
-            // Priority 2: Flat structure
-            else {
-                title = backendData.title;
-                subtitle = backendData.subtitle;
-                missionTitle = backendData.missionTitle;
-                missionDesc = backendData.missionDesc;
-                visionTitle = backendData.visionTitle;
-                visionDesc = backendData.visionDesc;
-                console.log('🔍 DEBUG: Found data in flat structure');
-            }
-        }
-
-        if (title) {
-          console.log('🔍 DEBUG: Updating About page heroData with:', { title, subtitle });
+        if (heroContent?.title || heroContent?.subtitle || heroContent?.missionTitle || heroContent?.visionTitle) {
           setHeroData({
-            title: title || c.about.h1,
-            subtitle: subtitle || "Empowering innovation through technology, training, and transformative solutions."
+            title: heroContent.title || c.about.h1,
+            subtitle: heroContent.subtitle || "Empowering innovation through technology, training, and transformative solutions.",
+          });
+
+          setMissionData({
+            missionTitle: heroContent.missionTitle || c.about.missionTitle,
+            missionDesc: heroContent.missionDesc || c.about.missionText,
+            visionTitle: heroContent.visionTitle || "Our Vision",
+            visionDesc: heroContent.visionDesc || "To be the leading force in technological innovation, transforming ideas into impactful solutions that drive progress and create sustainable value for our clients and communities worldwide.",
           });
         }
 
-        if (missionTitle || missionDesc || visionTitle || visionDesc) {
-          console.log('🔍 DEBUG: Updating About page missionData');
-          setMissionData({
-            missionTitle: missionTitle || c.about.missionTitle,
-            missionDesc: missionDesc || c.about.missionText,
-            visionTitle: visionTitle || "Our Vision",
-            visionDesc: visionDesc || "To be the leading force in technological innovation, transforming ideas into impactful solutions that drive progress and create sustainable value for our clients and communities worldwide."
+        if (storyContent?.title || Array.isArray(storyContent?.paragraphs)) {
+          setStoryData({
+            title: storyContent.title || c.about.storyTitle,
+            paragraphs: Array.isArray(storyContent.paragraphs) && storyContent.paragraphs.length > 0
+              ? storyContent.paragraphs
+              : storyData.paragraphs,
+          });
+        }
+
+        if (differentContent?.title || Array.isArray(differentContent?.items)) {
+          const items = Array.isArray(differentContent.items) ? differentContent.items : [];
+          const normalizedItems = items.map((it) => {
+            if (typeof it === 'string') {
+              return {
+                title: it,
+                desc: 'We deliver exceptional value through innovative solutions and dedicated service.',
+              };
+            }
+            return {
+              title: it?.title || '',
+              desc: it?.desc || 'We deliver exceptional value through innovative solutions and dedicated service.',
+            };
+          });
+
+          setDifferentData({
+            title: differentContent.title || c.about.differentTitle,
+            subtitle: differentContent.subtitle || differentData.subtitle,
+            items: normalizedItems.length > 0 ? normalizedItems : differentData.items,
+          });
+        }
+
+        if (cultureContent?.title || Array.isArray(cultureContent?.items)) {
+          const items = Array.isArray(cultureContent.items) ? cultureContent.items : [];
+          const normalizedItems = items.map((it) => {
+            if (typeof it === 'string') {
+              const [t, d] = String(it).split(':');
+              return {
+                title: (t || '').trim(),
+                desc: (d || 'We believe in the power of collaboration and innovation.').trim(),
+              };
+            }
+            return {
+              title: it?.title || '',
+              desc: it?.desc || 'We believe in the power of collaboration and innovation.',
+            };
+          });
+
+          setCultureData({
+            title: cultureContent.title || c.about.cultureTitle,
+            subtitle: cultureContent.subtitle || cultureData.subtitle,
+            items: normalizedItems.length > 0 ? normalizedItems : cultureData.items,
+          });
+        }
+
+        if (leadershipContent?.leadershipTitle || leadershipContent?.complianceTitle || Array.isArray(leadershipContent?.leadershipParagraphs) || Array.isArray(leadershipContent?.complianceParagraphs)) {
+          setLeadershipData({
+            leadershipTitle: leadershipContent.leadershipTitle || c.about.leadershipTitle,
+            leadershipParagraphs: Array.isArray(leadershipContent.leadershipParagraphs) && leadershipContent.leadershipParagraphs.length > 0
+              ? leadershipContent.leadershipParagraphs
+              : leadershipData.leadershipParagraphs,
+            complianceTitle: leadershipContent.complianceTitle || c.about.complianceTitle,
+            complianceParagraphs: Array.isArray(leadershipContent.complianceParagraphs) && leadershipContent.complianceParagraphs.length > 0
+              ? leadershipContent.complianceParagraphs
+              : leadershipData.complianceParagraphs,
+          });
+        }
+
+        if (ctaContent?.title || ctaContent?.subtitle || ctaContent?.buttonText || ctaContent?.buttonLink) {
+          setCtaData({
+            title: ctaContent.title || ctaData.title,
+            subtitle: ctaContent.subtitle || ctaData.subtitle,
+            buttonText: ctaContent.buttonText || ctaData.buttonText,
+            buttonLink: ctaContent.buttonLink || ctaData.buttonLink,
           });
         }
       } catch (error) {
@@ -179,20 +289,17 @@ export default function About() {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">{c.about.storyTitle}</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">{storyData.title}</h2>
             <div className="w-24 h-1 bg-primary-500 mx-auto"></div>
           </div>
           
           <div className="bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto">
             <div className="prose max-w-none text-gray-600">
-              <p className="text-lg mb-6">
-                {c.about.storyText}
-              </p>
-              <p className="text-lg">
-                Our journey has been marked by continuous learning, innovation, and a relentless pursuit of excellence. 
-                From our humble beginnings to becoming a trusted technology partner, we've remained committed to delivering 
-                exceptional value to our clients while fostering a culture of integrity and innovation.
-              </p>
+              {(storyData.paragraphs || []).map((p, idx) => (
+                <p key={idx} className={idx === 0 ? "text-lg mb-6" : "text-lg"}>
+                  {p}
+                </p>
+              ))}
             </div>
           </div>
         </div>
@@ -202,15 +309,15 @@ export default function About() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">{c.about.differentTitle}</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">{differentData.title}</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              We stand out from the crowd with our unique approach and unwavering commitment to excellence.
+              {differentData.subtitle}
             </p>
             <div className="w-24 h-1 bg-primary-500 mx-auto mt-4"></div>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {c.about.differentItems.map((item, index) => (
+            {differentData.items.map((item, index) => (
               <div 
                 key={index} 
                 className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-300"
@@ -221,12 +328,10 @@ export default function About() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">{item}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
                 </div>
                 <p className="text-gray-600 pl-10">
-                  {c.about.differentDescriptions && c.about.differentDescriptions[index] 
-                    ? c.about.differentDescriptions[index] 
-                    : 'We deliver exceptional value through innovative solutions and dedicated service.'}
+                  {item.desc}
                 </p>
               </div>
             ))}
@@ -238,15 +343,15 @@ export default function About() {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">{c.about.cultureTitle}</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">{cultureData.title}</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Our culture is built on a foundation of shared values that guide our decisions and actions every day.
+              {cultureData.subtitle}
             </p>
             <div className="w-24 h-1 bg-primary-500 mx-auto mt-4"></div>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {c.about.cultureItems.map((item, index) => (
+            {cultureData.items.map((item, index) => (
               <div 
                 key={index} 
                 className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center"
@@ -254,9 +359,9 @@ export default function About() {
                 <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CultureIcon className="w-8 h-8 text-primary-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{item.split(':')[0]}</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{item.title}</h3>
                 <p className="text-gray-600">
-                  {item.split(':')[1] || 'We believe in the power of collaboration and innovation.'}
+                  {item.desc}
                 </p>
               </div>
             ))}
@@ -269,24 +374,20 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">{c.about.leadershipTitle}</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">{leadershipData.leadershipTitle}</h2>
               <div className="prose max-w-none text-gray-600 space-y-4">
-                <p>{c.about.leadershipText}</p>
-                <p>
-                  Our leadership team brings together decades of combined experience in technology, business strategy, 
-                  and innovation to guide our company's vision and growth.
-                </p>
+                {(leadershipData.leadershipParagraphs || []).map((p, idx) => (
+                  <p key={idx}>{p}</p>
+                ))}
               </div>
             </div>
             
             <div className="bg-gray-50 p-8 rounded-xl">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">{c.about.complianceTitle}</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">{leadershipData.complianceTitle}</h3>
               <div className="prose max-w-none text-gray-600 space-y-4">
-                <p>{c.about.complianceText}</p>
-                <p>
-                  We are committed to maintaining the highest standards of ethical business practices, 
-                  data protection, and regulatory compliance across all our operations.
-                </p>
+                {(leadershipData.complianceParagraphs || []).map((p, idx) => (
+                  <p key={idx}>{p}</p>
+                ))}
               </div>
             </div>
           </div>
@@ -296,15 +397,15 @@ export default function About() {
       {/* CTA Section */}
       <section className="bg-primary-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to start your next project?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">{ctaData.title}</h2>
           <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Get in touch with our team to discuss how we can help bring your ideas to life.
+            {ctaData.subtitle}
           </p>
           <a 
-            href="/contact" 
+            href={ctaData.buttonLink} 
             className="inline-block bg-white text-primary-700 font-semibold px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors duration-300"
           >
-            Contact Us Today
+            {ctaData.buttonText}
           </a>
         </div>
       </section>

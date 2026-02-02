@@ -7,6 +7,8 @@ import AboutPageEditor from '../../components/admin/pages/AboutPageEditor';
 import ContactPageEditor from '../../components/admin/pages/ContactPageEditor';
 import CareersPageEditor from '../../components/admin/pages/CareersPageEditor';
 import RealWorkPageEditor from '../../components/admin/pages/RealWorkPageEditor';
+import TechWorkPageEditor from '../../components/admin/pages/TechWorkPageEditor';
+import ProductsPageEditor from '../../components/admin/pages/ProductsPageEditor';
 
 const PageContentEditor = () => {
   const { pageName } = useParams();
@@ -19,6 +21,16 @@ const PageContentEditor = () => {
         return {
           title: 'RealWork Studio Content Editor',
           description: 'Edit the content for the RealWork Studio Home Page Hero Section'
+        };
+      case 'techworksstudio':
+        return {
+          title: 'TechWork Studio Content Editor',
+          description: 'Edit the content for the TechWork Studio Home Page Hero Section'
+        };
+      case 'products':
+        return {
+          title: 'Products Content Editor',
+          description: 'Edit the content for the Products Home Page Hero Section'
         };
       case 'about':
         return {
@@ -66,6 +78,10 @@ const PageContentEditor = () => {
     switch (currentPage) {
       case 'realworkstudio':
         return <RealWorkPageEditor />;
+      case 'techworksstudio':
+        return <TechWorkPageEditor />;
+      case 'products':
+        return <ProductsPageEditor />;
       case 'legal':
         return <LegalPageManager />;
       case 'blog':
