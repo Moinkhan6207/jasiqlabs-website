@@ -5,14 +5,14 @@ import Seo from "../components/seo/Seo";
 import Button from "../components/ui/Button";
 import Field from "../components/ui/Field";
 import { trackEvent } from "../utils/analytics";
-import { submitLead } from "../utils/api";      // Ye purana wala hai
-import { pageContent } from "../services/api";// ✅ pageContent import kiya
+import { submitLead } from "../utils/api";
+import { pageContent } from "../services/api";
 
 export default function Home() {
   const c = content;
   const navigate = useNavigate();
   
-  // 🟢 1. Dynamic Hero State (Default: JSON Data)
+  // 1. Dynamic Hero State (Default: JSON Data)
   const [heroData, setHeroData] = useState({
     h1: c.home.hero.h1,
     supportingLine: c.home.hero.supportingLine
@@ -26,23 +26,53 @@ export default function Home() {
   });
   const [status, setStatus] = useState({ state: "idle", message: "" });
 
-  // 🟢 2. Fetch Data from Database on Load
-  // 🟢 Fetch Data from Database on Load
+  // 2. Fetch Data from Database on Load
   useEffect(() => {
     const fetchDynamicContent = async () => {
       try {
-        // 1. API Call
         const response = await pageContent.get('home', 'hero');
         
-        // 👇 FIX: Sirf 'response.data' likhna hai, '.data.data' nahi
-        const dbData = response.data; 
+        // Debug: Log the full response structure
+        console.log('🔍 DEBUG: Full API Response:', response);
         
-        if (dbData) {
-          // 2. State Update
+        // Robust Data Extraction
+        // The pageContent.get() method returns response.data, so 'response' here is already { success: true, data: {...} }
+        const apiResponse = response || {};
+        const backendData = apiResponse.data;
+
+        console.log('🔍 DEBUG: API Response structure:', apiResponse);
+        console.log('🔍 DEBUG: Backend data:', backendData);
+
+        let title = null;
+        let subtitle = null;
+
+        if (backendData) {
+            // Check Path 1: Nested in 'content' (Likely structure based on Blog experience)
+            if (backendData.content && backendData.content.title) {
+                title = backendData.content.title;
+                subtitle = backendData.content.subtitle;
+                console.log('🔍 DEBUG: Found data in nested content structure:', { title, subtitle });
+            } 
+            // Check Path 2: Flat structure
+            else if (backendData.title) {
+                title = backendData.title;
+                subtitle = backendData.subtitle;
+                console.log('🔍 DEBUG: Found data in flat structure:', { title, subtitle });
+            } else {
+                console.log('🔍 DEBUG: No valid data structure found in backendData');
+            }
+        } else {
+            console.log('🔍 DEBUG: No backendData found');
+        }
+
+        if (title) {
+          console.log('🔍 DEBUG: Updating heroData with:', { h1: title, supportingLine: subtitle || c.home.hero.supportingLine });
           setHeroData({
-            h1: dbData.title || c.home.hero.h1,
-            supportingLine: dbData.subtitle || c.home.hero.supportingLine
+            h1: title,
+            supportingLine: subtitle || c.home.hero.supportingLine
           });
+        } else {
+          console.log('🔍 DEBUG: No title found, keeping default heroData');
         }
       } catch (error) {
         console.error("Failed to load content", error);
@@ -81,12 +111,10 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4">
             <span className="bg-gradient-to-r from-primary-600 via-secondary-500 to-primary-600 bg-clip-text text-transparent">
-              {/* 🟢 3. Ab yahan State wala data dikhega */}
               {heroData.h1}
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-            {/* 🟢 3. Ab yahan State wala data dikhega */}
             {heroData.supportingLine}
           </p>
 
@@ -113,7 +141,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ... BAAKI CODE SAME RAHEGA ... */}
+      {/* ... Rest of the file remains exactly the same ... */}
       {/* What We Do */}
       <section className="py-7 bg-white">
         <div className="container mx-auto px-4">

@@ -2,24 +2,22 @@ import { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Seo from "../components/seo/Seo";
-// 👇 Change 1: 'publicApi' ko bhi import kiya hai (SEO data mangwane ke liye)
 import api, { pageContent, publicApi } from '../services/api';
 
 const ContactPage = () => {
-  // 👇 2. Dynamic Content ke liye State (Default text wahi rakha hai jo aapka tha)
+  // 1. Dynamic Content State
   const [heroContent, setHeroContent] = useState({
     title: "Get in Touch",
     description: "We'd love to hear from you. Send us a message and we'll respond as soon as possible."
   });
 
-  // 👇 Change 2: SEO Title ke liye naya State banaya
   const [seoTitle, setSeoTitle] = useState("");
 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    interestType: 'Student', // Default value match with Option value
+    interestType: 'Student', 
     division: 'TechWorksStudio',
     message: '',
     website_url: ''
@@ -27,30 +25,52 @@ const ContactPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 👇 3. Database se Content Fetch karne ka Logic
+  // 2. Database Fetch Logic
   useEffect(() => {
-    // A. Page Content (H1 Heading) fetch karna
+    // A. Page Content Fetching
     const fetchPageContent = async () => {
       try {
-        // 'contact' page aur 'hero' section ka data mangwana
+        console.log("🔍 Fetching Contact Page Content...");
         const response = await pageContent.get('contact', 'hero');
-        if (response.data) {
-          setHeroContent(prev => ({
-            ...prev,
-            // Agar DB me data hai to wo lo, nahi to purana default rakho
-            title: response.data.title || prev.title,
-            description: response.data.description || response.data.subtitle || prev.description
-          }));
+        
+        // 🛠️ FIX IS HERE: Simple Extraction
+        // Console log confirm karta hai ki 'response' ke andar hi 'data' hai.
+        // Hamein bas wahi chahiye.
+        const backendData = response.data; 
+
+        console.log("📂 Correctly Extracted Data:", backendData);
+
+        let newTitle = null;
+        let newDesc = null;
+
+        if (backendData) {
+            // Check 1: Nested 'content' object (Standard structure)
+            if (backendData.content) {
+                newTitle = backendData.content.title;
+                newDesc = backendData.content.description || backendData.content.subtitle;
+            } 
+            // Check 2: Flat structure (Fallback)
+            else if (backendData.title) {
+                newTitle = backendData.title;
+                newDesc = backendData.description || backendData.subtitle;
+            }
+        }
+
+        if (newTitle) {
+            setHeroContent(prev => ({
+                ...prev,
+                title: newTitle,
+                description: newDesc || prev.description
+            }));
         }
       } catch (error) {
-        console.error("Failed to fetch contact page content:", error);
+        console.error("🔥 Failed to fetch contact page content:", error);
       }
     };
 
-    // B. 👇 Change 3: SEO Data (Browser Tab Name) fetch karna
+    // B. SEO Data Fetching
     const fetchSeoData = async () => {
       try {
-        // 'contact' page ka SEO data public API se mangwana
         const response = await publicApi.getPageSeo('contact');
         if (response.data && response.data.metaTitle) {
           setSeoTitle(response.data.metaTitle);
@@ -61,7 +81,7 @@ const ContactPage = () => {
     };
 
     fetchPageContent();
-    fetchSeoData(); // Ye function call add kiya
+    fetchSeoData();
   }, []);
 
   const handleChange = (e) => {
@@ -81,15 +101,11 @@ const ContactPage = () => {
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
-        interestType: formData.interestType.toUpperCase(), // Backend enum usually expects UPPERCASE
+        interestType: formData.interestType.toUpperCase(),
         division: formData.division,
-        source: 'Contact Page', // Source update kiya taaki pata chale kahan se lead aayi
+        source: 'Contact Page',
         message: formData.message ? formData.message.trim() : '',
       };
-
-      // 👇 4. Use api service instead of hardcoded fetch (Better practice)
-      // Agar aapka api.public.submitLead bana hua hai to use karein, 
-      // warna ye existing fetch bhi chalega. Main existing fetch ko hi rakhta hu safe side ke liye.
       
       const response = await fetch('http://localhost:8080/api/public/leads', {
         method: 'POST',
@@ -127,7 +143,6 @@ const ContactPage = () => {
 
   return (
     <>
-      {/* 👇 Change 4: Title prop wapas lagaya hai taaki DB wala title dikhe */}
       <Seo 
         title={seoTitle || `${heroContent.title} | JASIQ Labs`}
         description={heroContent.description}
@@ -138,7 +153,6 @@ const ContactPage = () => {
       <div className="min-h-screen bg-gray-50 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            {/* 👇 5. Hardcoded Text ko State variable se replace kiya */}
             <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
               {heroContent.title}
             </h1>
@@ -204,7 +218,6 @@ const ContactPage = () => {
                 </div>
               </div>
 
-              {/* SPAM TRAP FIELD (Hidden) */}
               <div style={{ display: 'none' }} aria-hidden="true">
                 <label htmlFor="website_url">Website</label>
                 <input
@@ -218,7 +231,6 @@ const ContactPage = () => {
                 />
               </div>
 
-              {/* Right Column - Contact Form */}
               <div className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

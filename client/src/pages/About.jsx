@@ -51,23 +51,63 @@ export default function About() {
     const fetchDynamicContent = async () => {
       try {
         // 1. Fetch Hero Data
-        const heroResponse = await pageContent.get('about', 'hero');
-        const heroDbData = heroResponse.data; 
+        const response = await pageContent.get('about', 'hero');
         
-        if (heroDbData) {
+        // Debug: Log the full response structure
+        console.log('🔍 DEBUG: About page API Response:', response);
+        
+        // Robust Data Extraction
+        const apiResponse = response || {};
+        const backendData = apiResponse.data;
+
+        console.log('🔍 DEBUG: About page API Response structure:', apiResponse);
+        console.log('🔍 DEBUG: About page backend data:', backendData);
+
+        let title = null;
+        let subtitle = null;
+        let missionTitle = null;
+        let missionDesc = null;
+        let visionTitle = null;
+        let visionDesc = null;
+
+        if (backendData) {
+            // Priority 1: Nested in content
+            if (backendData.content) {
+                title = backendData.content.title;
+                subtitle = backendData.content.subtitle;
+                missionTitle = backendData.content.missionTitle;
+                missionDesc = backendData.content.missionDesc;
+                visionTitle = backendData.content.visionTitle;
+                visionDesc = backendData.content.visionDesc;
+                console.log('🔍 DEBUG: Found data in nested content structure');
+            } 
+            // Priority 2: Flat structure
+            else {
+                title = backendData.title;
+                subtitle = backendData.subtitle;
+                missionTitle = backendData.missionTitle;
+                missionDesc = backendData.missionDesc;
+                visionTitle = backendData.visionTitle;
+                visionDesc = backendData.visionDesc;
+                console.log('🔍 DEBUG: Found data in flat structure');
+            }
+        }
+
+        if (title) {
+          console.log('🔍 DEBUG: Updating About page heroData with:', { title, subtitle });
           setHeroData({
-            title: heroDbData.title || c.about.h1,
-            subtitle: heroDbData.subtitle || "Empowering innovation through technology, training, and transformative solutions."
+            title: title || c.about.h1,
+            subtitle: subtitle || "Empowering innovation through technology, training, and transformative solutions."
           });
         }
 
-        // 2. Fetch Mission Data (assuming it's stored in the same 'hero' section for now)
-        if (heroDbData) {
+        if (missionTitle || missionDesc || visionTitle || visionDesc) {
+          console.log('🔍 DEBUG: Updating About page missionData');
           setMissionData({
-            missionTitle: heroDbData.missionTitle || c.about.missionTitle,
-            missionDesc: heroDbData.missionDesc || c.about.missionText,
-            visionTitle: heroDbData.visionTitle || "Our Vision",
-            visionDesc: heroDbData.visionDesc || "To be the leading force in technological innovation, transforming ideas into impactful solutions that drive progress and create sustainable value for our clients and communities worldwide."
+            missionTitle: missionTitle || c.about.missionTitle,
+            missionDesc: missionDesc || c.about.missionText,
+            visionTitle: visionTitle || "Our Vision",
+            visionDesc: visionDesc || "To be the leading force in technological innovation, transforming ideas into impactful solutions that drive progress and create sustainable value for our clients and communities worldwide."
           });
         }
       } catch (error) {

@@ -4,6 +4,7 @@ import content from "../content/siteContent.json";
 import Seo from "../components/seo/Seo";
 import { submitLead } from "../utils/api";
 import { trackEvent } from "../utils/analytics";
+import { pageContent } from "../services/api";
 
 export default function Contact() {
   const c = content;
@@ -17,9 +18,69 @@ export default function Contact() {
   const [status, setStatus] = useState({ state: "idle", message: "" });
   const [isMounted, setIsMounted] = useState(false);
 
+  // 🟢 Dynamic Hero State (Default: JSON Data)
+  const [heroData, setHeroData] = useState({
+    title: "Contact Us",
+    subtitle: "Have questions or want to learn more? We're here to help.",
+    description: "We are here to help you with your queries. Reach out to us through any of the following channels."
+  });
+
   useEffect(() => {
     setIsMounted(true);
     return () => setIsMounted(false);
+  }, []);
+
+  // 🟢 Fetch Data from Database on Load
+  useEffect(() => {
+    const fetchDynamicContent = async () => {
+      try {
+        const response = await pageContent.get('contact', 'hero');
+        
+        // Debug: Log the full response structure
+        console.log('🔍 DEBUG: Contact page API Response:', response);
+        
+        // Robust Data Extraction
+        const apiResponse = response || {};
+        const backendData = apiResponse.data;
+
+        console.log('🔍 DEBUG: Contact page API Response structure:', apiResponse);
+        console.log('🔍 DEBUG: Contact page backend data:', backendData);
+
+        let title = null;
+        let subtitle = null;
+        let description = null;
+
+        if (backendData) {
+            // Priority 1: Nested in content
+            if (backendData.content) {
+                title = backendData.content.title;
+                subtitle = backendData.content.subtitle;
+                description = backendData.content.description;
+                console.log('🔍 DEBUG: Found data in nested content structure');
+            } 
+            // Priority 2: Flat structure
+            else {
+                title = backendData.title;
+                subtitle = backendData.subtitle;
+                description = backendData.description;
+                console.log('🔍 DEBUG: Found data in flat structure');
+            }
+        }
+
+        if (title || subtitle || description) {
+          console.log('🔍 DEBUG: Updating Contact page heroData with:', { title, subtitle, description });
+          setHeroData({
+            title: title || "Contact Us",
+            subtitle: subtitle || "Have questions or want to learn more? We're here to help.",
+            description: description || "We are here to help you with your queries. Reach out to us through any of the following channels."
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load Contact page content", error);
+      }
+    };
+
+    fetchDynamicContent();
   }, []);
 
   async function onSubmit(e) {
@@ -64,10 +125,12 @@ export default function Contact() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${isMounted ? fadeInUpActive : fadeInUp}`}>
-              Contact Us
+              {/* 🟢 Dynamic Hero Title */}
+              {heroData.title}
             </h1>
             <p className={`text-xl text-primary-100 max-w-2xl mx-auto ${isMounted ? fadeInUpActive : fadeInUp}`} style={{ transitionDelay: '100ms' }}>
-              Have questions or want to learn more? We're here to help.
+              {/* 🟢 Dynamic Hero Subtitle */}
+              {heroData.subtitle}
             </p>
           </div>
         </div>
@@ -82,7 +145,8 @@ export default function Contact() {
               <div className="bg-primary-700 text-white p-8 md:p-12">
                 <h2 className="text-2xl md:text-3xl font-bold mb-6">Get in Touch</h2>
                 <p className="text-primary-100 mb-8">
-                  We are here to help you with your queries. Reach out to us through any of the following channels.
+                  {/* 🟢 Dynamic Description */}
+                  {heroData.description}
                 </p>
                 
                 <div className="space-y-6">

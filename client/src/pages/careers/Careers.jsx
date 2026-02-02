@@ -51,37 +51,75 @@ const Careers = () => {
     const fetchPageContent = async () => {
       try {
         const response = await pageContent.get('careers', 'hero');
-        if (response.data) {
+        
+        // Debug: Log the full response structure
+        console.log('🔍 DEBUG: Careers page API Response:', response);
+        
+        // Robust Data Extraction
+        const apiResponse = response || {};
+        const backendData = apiResponse.data;
+
+        console.log('🔍 DEBUG: Careers page API Response structure:', apiResponse);
+        console.log('🔍 DEBUG: Careers page backend data:', backendData);
+
+        let title = null;
+        let subtitle = null;
+        let whyUs = null;
+        let whoCanApply = null;
+        let applyText = null;
+        let applyEmail = null;
+
+        if (backendData) {
+            // Priority 1: Nested in content
+            if (backendData.content) {
+                title = backendData.content.title;
+                subtitle = backendData.content.subtitle;
+                whyUs = backendData.content.whyUs;
+                whoCanApply = backendData.content.whoCanApply;
+                applyText = backendData.content.applyText;
+                applyEmail = backendData.content.applyEmail;
+                console.log('🔍 DEBUG: Found data in nested content structure');
+            } 
+            // Priority 2: Flat structure
+            else {
+                title = backendData.title;
+                subtitle = backendData.subtitle;
+                whyUs = backendData.whyUs;
+                whoCanApply = backendData.whoCanApply;
+                applyText = backendData.applyText;
+                applyEmail = backendData.applyEmail;
+                console.log('🔍 DEBUG: Found data in flat structure');
+            }
+        }
+
+        if (title || subtitle) {
+          console.log('🔍 DEBUG: Updating Careers page heroContent with:', { title, subtitle });
           setHeroContent(prev => ({
             ...prev,
-            title: response.data.title || prev.title,
-            subtitle: response.data.subtitle || prev.subtitle,
+            title: title || prev.title,
+            subtitle: subtitle || prev.subtitle,
             ctaText: prev.ctaText // CTA text wahi rakhein
           }));
-          
-          // Update other sections from content field
-          if (response.data.content) {
-            const content = response.data.content;
-            
-            // Update Why Us content
-            if (content.whyUs && Array.isArray(content.whyUs)) {
-              setWhyUsContent(content.whyUs);
-            }
-            
-            // Update Who Can Apply content
-            if (content.whoCanApply && Array.isArray(content.whoCanApply)) {
-              setWhoCanApplyContent(content.whoCanApply);
-            }
-            
-            // Update Apply content
-            if (content.applyText || content.applyEmail) {
-              setApplyContent(prev => ({
-                ...prev,
-                text: content.applyText || prev.text,
-                email: content.applyEmail || prev.email
-              }));
-            }
-          }
+        }
+        
+        // Update other sections if data exists
+        if (whyUs && Array.isArray(whyUs)) {
+          console.log('🔍 DEBUG: Updating Careers page whyUsContent');
+          setWhyUsContent(whyUs);
+        }
+        
+        if (whoCanApply && Array.isArray(whoCanApply)) {
+          console.log('🔍 DEBUG: Updating Careers page whoCanApplyContent');
+          setWhoCanApplyContent(whoCanApply);
+        }
+        
+        if (applyText || applyEmail) {
+          console.log('🔍 DEBUG: Updating Careers page applyContent');
+          setApplyContent(prev => ({
+            ...prev,
+            text: applyText || prev.text,
+            email: applyEmail || prev.email
+          }));
         }
       } catch (error) {
         console.error("Failed to fetch career page content:", error);

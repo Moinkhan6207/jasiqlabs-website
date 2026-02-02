@@ -16,23 +16,48 @@ export default function RwsHome() {
     ctaLink: c.home.hero.ctaLink
   });
   
-  // Top 3 programs ko filter karke nikal rahe hain
   const featuredPrograms = c.programs.list.slice(0, 3);
 
   // Fetch dynamic content from API
   useEffect(() => {
     const fetchHeroContent = async () => {
       try {
-        const response = await pageContent.get('realworkstudio', 'hero');
-        if (response && response.content) {
-          setHeroContent(prevContent => ({
-            ...prevContent,
-            ...response.content
-          }));
+        const response = await pageContent.get('realworkstudio', 'rws_hero');
+        
+        // 🟢 Robust Data Extraction Logic
+        const apiResponse = response.data || response;
+        const backendData = apiResponse.data || apiResponse;
+
+        if (backendData) {
+            let newTitle = null;
+            let newSubtitle = null;
+            let newCta = null;
+
+            // Check nested content
+            if (backendData.content) {
+                newTitle = backendData.content.title;
+                newSubtitle = backendData.content.subtitle;
+                // Description field is used as CTA Text in Editor
+                newCta = backendData.content.description; 
+            } 
+            // Check flat structure
+            else if (backendData.title) {
+                newTitle = backendData.title;
+                newSubtitle = backendData.subtitle;
+                newCta = backendData.description;
+            }
+
+            if (newTitle) {
+                setHeroContent(prev => ({
+                    ...prev,
+                    title: newTitle,
+                    subtitle: newSubtitle || prev.subtitle,
+                    ctaText: newCta || prev.ctaText
+                }));
+            }
         }
       } catch (error) {
         console.log('Using fallback content for RealWork Studio hero section');
-        // Fallback to default content already set in state
       }
     };
 
@@ -78,6 +103,9 @@ export default function RwsHome() {
         </div>
       </section>
 
+      {/* ... Rest of the component remains exactly same ... */}
+      {/* (Only showing up to HeroSection is needed for fix, but keep full file in your code) */}
+      
       {/* Who Should Join */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -121,7 +149,6 @@ export default function RwsHome() {
 
       {/* Track Preview - MODERN GLOW VERSION */}
       <section className="py-28 bg-slate-50 relative overflow-hidden">
-        {/* Background Decorative Blurs */}
         <div className="absolute top-20 left-0 w-72 h-72 bg-primary-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
         <div className="absolute top-20 right-0 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
         
@@ -145,7 +172,6 @@ export default function RwsHome() {
                 key={track.id}
                 className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 overflow-hidden"
               >
-                {/* Top Colored Bar */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-purple-600 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
 
                 <div className="w-14 h-14 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl flex items-center justify-center mb-6 text-primary-600 group-hover:scale-110 transition-transform duration-300">
@@ -202,9 +228,3 @@ export default function RwsHome() {
     </>
   );
 }
-
-
-
-
-
-
