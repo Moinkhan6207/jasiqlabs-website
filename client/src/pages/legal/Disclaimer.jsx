@@ -1,26 +1,77 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  AlertTriangle, 
-  ShieldAlert, 
-  Briefcase, 
-  ExternalLink, 
-  FileWarning, 
-  Scale, 
-  Mail,
-  Info
+  AlertTriangle, ShieldAlert, Briefcase, ExternalLink, FileWarning, Scale, Mail, Info, Loader2
 } from 'lucide-react';
-import content from "../../content/siteContent.json";
 import Seo from "../../components/seo/Seo";
+import { pageContent } from "../../services/api";
 
 export default function Disclaimer() {
-  const c = content;
-  // Safe access to content
-  const seoTitle = c?.seo?.disclaimer?.title || "Legal Disclaimer - JASIQ Labs";
-  const seoDesc = c?.seo?.disclaimer?.description || "Read our legal disclaimer regarding the use of this website.";
+  const [dbData, setDbData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // 1. Safe Fallback Content (Default Hardcoded)
+  const defaultContent = {
+    title: "Legal Disclaimer",
+    lastUpdated: "January 7, 2025",
+    intro: "Please read this information carefully regarding the use of our website and services.",
+    importantNoticeText: "The information provided on the JASIQ Labs website is for general informational purposes only. All information is provided in good faith, however, we make no representation or warranty regarding the accuracy or completeness of any information on the site.",
+    noWarrantyText: "The information is provided by JASIQ Labs and while we endeavor to keep the information up to date and correct, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability with respect to the website.",
+    professionalDisclaimerText: "The information contained on this website is not intended as, and shall not be understood or construed as, professional advice. While the information provided relates to legal, financial, or other professional matters, the information is not intended as professional advice.",
+    externalLinksText: "The website may contain links to external websites that are not provided or maintained by JASIQ Labs. We do not guarantee the accuracy, relevance, timeliness, or completeness of any information on these external websites.",
+    errorsText: "While we have made every attempt to ensure that the information contained in this site has been obtained from reliable sources, JASIQ Labs is not responsible for any errors or omissions or for the results obtained from the use of this information.",
+    fairUseText: "This website may contain copyrighted material not specifically authorized by the copyright owner. We make such material available to advance understanding of technology and business.",
+    contactEmail: "legal@jasiqlabs.com"
+  };
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const res = await pageContent.get('legal_disclaimer', 'content');
+        
+        let validData = null;
+        if (res?.data?.content) validData = res.data.content;
+        else if (res?.content) validData = res.content;
+        
+        if (validData) {
+          setDbData(validData);
+        }
+      } catch (error) {
+        console.error('Error fetching disclaimer:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContent();
+  }, []);
+
+  // 2. Safe Merge Logic
+  const content = {
+    title: dbData?.title || defaultContent.title,
+    lastUpdated: dbData?.lastUpdated || defaultContent.lastUpdated,
+    intro: dbData?.intro || defaultContent.intro,
+    importantNoticeText: dbData?.importantNoticeText || defaultContent.importantNoticeText,
+    noWarrantyText: dbData?.noWarrantyText || defaultContent.noWarrantyText,
+    professionalDisclaimerText: dbData?.professionalDisclaimerText || defaultContent.professionalDisclaimerText,
+    externalLinksText: dbData?.externalLinksText || defaultContent.externalLinksText,
+    errorsText: dbData?.errorsText || defaultContent.errorsText,
+    fairUseText: dbData?.fairUseText || defaultContent.fairUseText,
+    contactEmail: dbData?.contactEmail || defaultContent.contactEmail
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+            <Loader2 className="w-8 h-8 text-amber-600 animate-spin" />
+            <span className="text-gray-600">Loading Disclaimer...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      <Seo title={seoTitle} description={seoDesc} />
+      <Seo title={`${content.title} - JASIQ Labs`} description="Legal Disclaimer" />
       
       <div className="min-h-screen bg-gray-50 font-sans pb-20">
         
@@ -31,13 +82,13 @@ export default function Disclaimer() {
               <AlertTriangle className="w-8 h-8 text-amber-600" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-              Legal Disclaimer
+              {content.title}
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Please read this information carefully regarding the use of our website and services.
+              {content.intro}
             </p>
             <p className="text-sm text-gray-500 mt-6 font-medium italic">
-              Last Updated: January 7, 2025
+              Last Updated: {content.lastUpdated}
             </p>
           </div>
         </div>
@@ -45,15 +96,14 @@ export default function Disclaimer() {
         {/* --- Main Content Area --- */}
         <div className="container mx-auto px-4 max-w-4xl -mt-8">
 
-          {/* 1. Important Notice Box (Summary) */}
+          {/* 1. Important Notice Box */}
           <div className="bg-white rounded-xl shadow-lg border-l-4 border-amber-500 p-8 mb-8 relative z-10">
             <div className="flex items-center gap-3 mb-4">
               <Info className="w-6 h-6 text-amber-600" />
               <h3 className="text-xl font-bold text-gray-900">Important Notice</h3>
             </div>
             <p className="text-gray-700 leading-relaxed">
-              The information provided on the JASIQ Labs website is for <span className="font-semibold">general informational purposes only</span>. 
-              All information is provided in good faith, however, we make no representation or warranty regarding the accuracy or completeness of any information on the site.
+              {content.importantNoticeText}
             </p>
           </div>
 
@@ -64,10 +114,7 @@ export default function Disclaimer() {
               <h2 className="text-2xl font-bold text-gray-800">No Warranty</h2>
             </div>
             <p className="text-gray-600 leading-relaxed">
-              The information is provided by JASIQ Labs and while we endeavor to keep the information up to date 
-              and correct, we make no representations or warranties of any kind, express or implied, about the 
-              completeness, accuracy, reliability, suitability, or availability with respect to the website or 
-              the information, products, services, or related graphics contained on the website for any purpose.
+              {content.noWarrantyText}
             </p>
           </div>
 
@@ -78,37 +125,29 @@ export default function Disclaimer() {
               <h2 className="text-2xl font-bold text-gray-800">Professional Disclaimer</h2>
             </div>
             <p className="text-gray-600 leading-relaxed">
-              The information contained on this website is not intended as, and shall not be understood or 
-              construed as, professional advice. While the information provided relates to legal, financial, 
-              or other professional matters, the information is not intended as professional advice and should 
-              not be relied upon as such.
+              {content.professionalDisclaimerText}
             </p>
           </div>
 
-          {/* 4. External Links & Errors Grid */}
+          {/* 4. Grid Sections */}
           <div className="grid md:grid-cols-2 gap-6 mb-6">
-            {/* External Links */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 h-full">
               <div className="flex items-center gap-3 mb-4">
                 <ExternalLink className="w-6 h-6 text-gray-700" />
                 <h2 className="text-xl font-bold text-gray-800">External Links</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-sm">
-                The website may contain links to external websites that are not provided or maintained by JASIQ Labs. 
-                We do not guarantee the accuracy, relevance, timeliness, or completeness of any information on these external websites.
+                {content.externalLinksText}
               </p>
             </div>
 
-            {/* Errors and Omissions */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 h-full">
               <div className="flex items-center gap-3 mb-4">
                 <FileWarning className="w-6 h-6 text-gray-700" />
                 <h2 className="text-xl font-bold text-gray-800">Errors & Omissions</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-sm">
-                While we have made every attempt to ensure that the information contained in this site has been 
-                obtained from reliable sources, JASIQ Labs is not responsible for any errors or omissions or for 
-                the results obtained from the use of this information.
+                {content.errorsText}
               </p>
             </div>
           </div>
@@ -120,9 +159,7 @@ export default function Disclaimer() {
               <h2 className="text-2xl font-bold text-gray-800">Fair Use Disclaimer</h2>
             </div>
             <p className="text-gray-600 leading-relaxed">
-              This website may contain copyrighted material not specifically authorized by the copyright owner. 
-              We make such material available to advance understanding of technology and business. We believe this 
-              constitutes a "fair use" as provided for in section 107 of the US Copyright Law.
+              {content.fairUseText}
             </p>
           </div>
 
@@ -134,10 +171,10 @@ export default function Disclaimer() {
               If you have any questions about this Disclaimer, please contact us at:
             </p>
             <a 
-              href="mailto:legal@jasiqlabs.com" 
+              href={`mailto:${content.contactEmail}`}
               className="inline-block text-blue-600 font-semibold hover:text-blue-800 hover:underline transition-colors"
             >
-              legal@jasiqlabs.com
+              {content.contactEmail}
             </a>
           </div>
 
@@ -146,11 +183,3 @@ export default function Disclaimer() {
     </>
   );
 }
-
-
-
-
-
-
-
-

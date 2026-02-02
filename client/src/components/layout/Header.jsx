@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { Lock } from "lucide-react";
 import { trackEvent } from "../../utils/analytics";
 
 export default function Header() {
@@ -140,6 +141,16 @@ export default function Header() {
               onClick={() => trackEvent("nav_contact_click")}
             >
               Contact
+            </Link>
+
+            {/* Admin Login */}
+            <Link
+              to="/admin/dashboard"
+              className="p-2 text-gray-500 hover:text-blue-600 transition-colors"
+              title="Admin Access"
+              onClick={() => trackEvent("nav_admin_click")}
+            >
+              <Lock className="w-5 h-5" />
             </Link>
           </nav>
 
@@ -285,6 +296,19 @@ export default function Header() {
               }}
             >
               Contact
+            </Link>
+
+            {/* Admin Login - Mobile */}
+            <Link
+              to="/admin/dashboard"
+              className="flex items-center justify-center px-4 py-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+              onClick={() => {
+                trackEvent("nav_admin_click");
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              <Lock className="w-5 h-5 mr-2" />
+              Admin Access
             </Link>
           </nav>
         </div>

@@ -1,28 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, ArrowLeft } from 'lucide-react';
-import api from '../services/api';
+import { api, pageContent } from '../services/api';
 
 const NotFound = () => {
   const navigate = useNavigate();
-  const [settings, setSettings] = useState({
-    title: 'Page Not Found',
-    message: 'The page you\'re looking for doesn\'t exist or has been moved.'
+  const [content, setContent] = useState({
+    title: '404 Page Not Found',
+    subtitle: 'The page you\'re looking for doesn\'t exist or has been moved.'
   });
 
   useEffect(() => {
-    fetchSettings();
+    fetchContent();
   }, []);
 
-  const fetchSettings = async () => {
+  const fetchContent = async () => {
     try {
+      // First, try to fetch from Page Content API (CMS)
+      const pageContentData = await pageContent.get('system', 'hero');
+      
+      if (pageContentData && pageContentData.title) {
+        setContent({
+          title: pageContentData.title,
+          subtitle: pageContentData.subtitle || pageContentData.description || 'The page you\'re looking for doesn\'t exist or has been moved.'
+        });
+        return;
+      }
+    } catch (error) {
+      console.log('Page content not found, falling back to system settings');
+    }
+
+    try {
+      // Fallback to system settings
       const response = await api.get('/api/public/system-settings');
       if (response.data?.notFoundPage) {
-        setSettings(response.data.notFoundPage);
+        setContent({
+          title: response.data.notFoundPage.title || '404 Page Not Found',
+          subtitle: response.data.notFoundPage.message || 'The page you\'re looking for doesn\'t exist or has been moved.'
+        });
       }
     } catch (error) {
       console.error('Error fetching system settings:', error);
-      // Use default values if API fails
+      // Use default values if both APIs fail
     }
   };
 
@@ -34,10 +53,10 @@ const NotFound = () => {
             <span className="text-4xl font-bold text-red-600">404</span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {settings.title}
+            {content.title}
           </h1>
           <p className="text-gray-600 mb-8">
-            {settings.message}
+            {content.subtitle}
           </p>
         </div>
 

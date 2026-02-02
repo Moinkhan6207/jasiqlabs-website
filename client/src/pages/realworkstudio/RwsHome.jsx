@@ -1,5 +1,7 @@
 import { Helmet } from "react-helmet-async";
+import { useState, useEffect } from "react";
 import content from "../../content/realworkstudio.json";
+import { pageContent } from "../../services/api";
 import HeroSection from "../../components/realworkstudio/HeroSection";
 import Button from "../../components/ui/Button";
 import { Link } from "react-router-dom";
@@ -7,8 +9,35 @@ import { ArrowRight, Code2, Sparkles } from "lucide-react";
 
 export default function RwsHome() {
   const c = content;
+  const [heroContent, setHeroContent] = useState({
+    title: c.home.hero.title,
+    subtitle: c.home.hero.subtitle,
+    ctaText: c.home.hero.ctaText,
+    ctaLink: c.home.hero.ctaLink
+  });
+  
   // Top 3 programs ko filter karke nikal rahe hain
   const featuredPrograms = c.programs.list.slice(0, 3);
+
+  // Fetch dynamic content from API
+  useEffect(() => {
+    const fetchHeroContent = async () => {
+      try {
+        const response = await pageContent.get('realworkstudio', 'hero');
+        if (response && response.content) {
+          setHeroContent(prevContent => ({
+            ...prevContent,
+            ...response.content
+          }));
+        }
+      } catch (error) {
+        console.log('Using fallback content for RealWork Studio hero section');
+        // Fallback to default content already set in state
+      }
+    };
+
+    fetchHeroContent();
+  }, []);
 
   return (
     <>
@@ -21,10 +50,10 @@ export default function RwsHome() {
       </Helmet>
 
       <HeroSection
-        title={c.home.hero.title}
-        subtitle={c.home.hero.subtitle}
-        ctaText={c.home.hero.ctaText}
-        ctaLink={c.home.hero.ctaLink}
+        title={heroContent.title}
+        subtitle={heroContent.subtitle}
+        ctaText={heroContent.ctaText}
+        ctaLink={heroContent.ctaLink}
       />
 
       {/* What Is RealWorkStudio */}

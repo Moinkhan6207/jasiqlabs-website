@@ -16,6 +16,7 @@ import {
   UserCheck,
   Shield,
   AlertCircle,
+  MonitorPlay, // RealWork Studio icon
   // 👇 New Icons Import kiye hain
   GraduationCap, // Programs ke liye
   Wrench,        // Services ke liye
@@ -67,7 +68,9 @@ const AdminLayout = () => {
       children: [
         { name: 'Home', href: '/admin/page-content/home', icon: Home },
         { name: 'About', href: '/admin/page-content/about', icon: Info },
+        { name: 'Blog', href: '/admin/page-content/blog', icon: FileText },
         { name: 'Contact', href: '/admin/page-content/contact', icon: Phone },
+        { name: 'RealWork Studio', href: '/admin/page-content/realworkstudio', icon: MonitorPlay },
         { name: 'Careers', href: '/admin/page-content/careers', icon: UserCheck },
         { name: 'Legal', href: '/admin/page-content/legal', icon: Shield },
         { name: 'System', href: '/admin/page-content/system', icon: AlertCircle },

@@ -14,6 +14,7 @@ import {
   ToolOutlined,
   GlobalOutlined,
   SettingOutlined, // ✅ FIX 1: Missing Import Added
+  MonitorPlay, // ✅ NEW: Import for RealWork Studio
 } from '@ant-design/icons';
 // ✅ FIX 2: Correct Path (contexts instead of context)
 import { useAuth } from '../../contexts/AuthContext';
@@ -75,6 +76,17 @@ const AdminLayout = () => {
           key: '/admin/content/contact',
           label: 'Contact',
           onClick: () => navigate('/admin/content/contact'),
+        },
+        {
+          key: '/admin/content/realworkstudio',
+          label: 'RealWork Studio',
+          onClick: () => navigate('/admin/content/realworkstudio'),
+          icon: <MonitorPlay />,
+        },
+        {
+          key: '/admin/content/blog',
+          label: 'Blog Page',
+          onClick: () => navigate('/admin/content/blog'),
         },
       ],
     },

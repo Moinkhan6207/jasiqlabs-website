@@ -9,9 +9,7 @@ import "./index.css";
 injectGA(import.meta.env.VITE_GA_MEASUREMENT_ID);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <App />
-    </HelmetProvider>
-  </React.StrictMode>
+  <HelmetProvider>
+    <App />
+  </HelmetProvider>
 );

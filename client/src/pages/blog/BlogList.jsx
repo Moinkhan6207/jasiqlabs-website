@@ -1,36 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { publicApi } from '../../services/api'; // ✅ API Import
-import blogDataJson from '../../content/blog.json'; // ✅ JSON File Import
+import { publicApi, pageContent } from '../../services/api'; 
+import blogDataJson from '../../content/blog.json'; 
 import { Calendar, User, ArrowRight, Mail, Tag, RefreshCw } from 'lucide-react';
 
 const BlogList = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Default values (Fallback)
+  const [blogContent, setBlogContent] = useState({
+    blogTitle: 'JASIQ Insights',
+    blogSubtitle: 'Tutorials, career advice, and engineering thoughts for the modern developer.',
+    newsletterTitle: 'Join our Weekly Developer Newsletter',
+    newsletterDesc: 'Get the latest tech trends, MERN stack tips, and internship updates directly in your inbox. No spam, ever.'
+  });
 
-  // --- LOGIC SECTION: Data Fetching & Merging ---
+  // 1. Fetch Blog Posts (List of articles)
   useEffect(() => {
     const fetchAndMergePosts = async () => {
       try {
-        // 1. API se Database Posts layein
         const response = await publicApi.getBlogPosts();
-        const dbPosts = response.data?.data?.posts || [];
-
-        // 2. Dono ko Merge karein (Database Posts + JSON Posts)
+        // Check both paths to be safe
+        const dbPosts = response.data?.data?.posts || response.data?.posts || [];
         const allPosts = [...dbPosts, ...blogDataJson];
 
-        // 3. Date ke hisaab se Sort karein (Newest First)
         const sortedPosts = allPosts.sort((a, b) => {
           const dateA = new Date(a.createdAt || a.date);
           const dateB = new Date(b.createdAt || b.date);
-          return dateB - dateA; // Descending order
+          return dateB - dateA; 
         });
 
         setPosts(sortedPosts);
       } catch (error) {
         console.error("Error fetching blogs:", error);
-        // Agar API fail ho jaye, to kam se kam JSON wala data dikha do
         setPosts(blogDataJson);
       } finally {
         setLoading(false);
@@ -40,18 +44,47 @@ const BlogList = () => {
     fetchAndMergePosts();
   }, []);
 
-  // Helper function to format date cleanly (Handles both ISO and simple dates)
+  // 2. Fetch Blog Page Content (Hero Title, Newsletter, etc.)
+  // 🟢 THIS IS THE FIX 🟢
+  useEffect(() => {
+    const fetchBlogContent = async () => {
+      try {
+        const response = await pageContent.get('blog', 'hero');
+        
+        // Console log ke hisaab se 'response' hi main object hai, ya 'response.data' inner object hai.
+        // Hum safe side rehne ke liye check kar rahe hain.
+        
+        // Step 1: Inner Data object nikalo
+        const apiData = response.data || response; 
+
+        // Step 2: Content object check karo (Directly under data, no extra .data)
+        if (apiData?.content) {
+           const c = apiData.content;
+           
+           setBlogContent({
+             blogTitle: c.blogTitle || 'JASIQ Insights',
+             blogSubtitle: c.blogSubtitle || 'Tutorials, career advice, and engineering thoughts for the modern developer.',
+             newsletterTitle: c.newsletterTitle || 'Join our Weekly Developer Newsletter',
+             newsletterDesc: c.newsletterDesc || 'Get the latest tech trends, MERN stack tips, and internship updates directly in your inbox. No spam, ever.'
+           });
+        }
+      } catch (error) {
+        console.error("Error fetching blog content:", error);
+      }
+    };
+
+    fetchBlogContent();
+  }, []);
+
   const formatDate = (dateInput) => {
     if (!dateInput) return '';
     const date = new Date(dateInput);
-    // Check if date is valid
     if (isNaN(date.getTime())) return dateInput; 
     return date.toLocaleDateString('en-US', {
       year: 'numeric', month: 'long', day: 'numeric'
     });
   };
 
-  // --- LOADING STATE ---
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -60,16 +93,13 @@ const BlogList = () => {
     );
   }
 
-  // Safety Check
   if (!posts || posts.length === 0) {
     return <div className="text-center py-20 bg-gray-50">No posts found.</div>;
   }
 
-  // --- SEPARATION LOGIC ---
   const featuredPost = posts[0];
   const otherPosts = posts.slice(1);
 
-  // --- DESIGN SECTION (Old UI Restored) ---
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <Helmet>
@@ -78,25 +108,24 @@ const BlogList = () => {
       </Helmet>
 
       {/* 1. Header Section */}
-      <div className="bg-white border-b border-gray-200 pt-16 pb-12 text-center shadow-sm">
+      <div className="bg-white border-b border-gray-200 pt-20 pb-12 text-center shadow-sm">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-          JASIQ Insights
+          {blogContent.blogTitle}
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto px-4 leading-relaxed">
-          Tutorials, career advice, and engineering thoughts for the modern developer.
+          {blogContent.blogSubtitle}
         </p>
       </div>
 
       <div className="container mx-auto px-4 -mt-8">
         
-        {/* 2. ✨ FEATURED POST (Bada wala Card) */}
+        {/* 2. ✨ FEATURED POST */}
         <div className="mb-16 relative z-10">
           <Link to={`/blog/${featuredPost.slug}`} className="group block">
             <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden md:flex">
               
               {/* Left: Image or Gradient */}
               <div className={`md:w-5/12 min-h-[250px] flex items-center justify-center p-8 relative overflow-hidden ${!featuredPost.coverImage ? 'bg-gradient-to-br from-indigo-600 to-blue-800' : 'bg-gray-100'}`}>
-                
                 {featuredPost.coverImage ? (
                   <img 
                     src={featuredPost.coverImage} 
@@ -155,10 +184,10 @@ const BlogList = () => {
             <div className="mb-6 md:mb-0 max-w-lg">
               <h3 className="text-2xl font-bold mb-3 flex items-center gap-3">
                 <Mail className="w-6 h-6 text-indigo-400" /> 
-                Join our Weekly Developer Newsletter
+                {blogContent.newsletterTitle}
               </h3>
               <p className="text-slate-300">
-                Get the latest tech trends, MERN stack tips, and internship updates directly in your inbox. No spam, ever.
+                {blogContent.newsletterDesc}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -174,7 +203,7 @@ const BlogList = () => {
           </div>
         </div>
 
-        {/* 4. 📝 LATEST ARTICLES GRID (Other Posts) */}
+        {/* 4. 📝 LATEST ARTICLES GRID */}
         {otherPosts.length > 0 && (
           <div className="mb-8">
             <div className="flex items-center mb-8">
@@ -186,7 +215,6 @@ const BlogList = () => {
               {otherPosts.map((post) => (
                 <Link key={post.id} to={`/blog/${post.slug}`} className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden flex flex-col h-full hover:-translate-y-1">
                   
-                  {/* Grid Image */}
                   {post.coverImage && (
                     <div className="h-48 overflow-hidden bg-gray-100">
                       <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -194,24 +222,20 @@ const BlogList = () => {
                   )}
 
                   <div className="p-6 flex flex-col h-full">
-                    {/* Category */}
                     <div className="mb-4">
                       <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
                         {post.category || 'Tech'}
                       </span>
                     </div>
 
-                    {/* Title */}
                     <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors line-clamp-2">
                       {post.title}
                     </h3>
 
-                    {/* Summary */}
                     <p className="text-gray-600 mb-4 text-sm line-clamp-3 flex-grow">
                       {post.summary}
                     </p>
 
-                    {/* Footer Info */}
                     <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                       <span className="flex items-center">
                         <User size={14} className="mr-1" /> {post.author || 'Admin'}
