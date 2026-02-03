@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   LogOut, 
   LayoutDashboard, 
@@ -27,21 +28,13 @@ import {
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    navigate('/admin/login');
-  };
-
-  // Check if user is authenticated
+  // AuthContext handles redirect to login if not authenticated
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
-      navigate('/admin/login');
-    }
-  }, [navigate]);
+    // No manual redirect needed - AuthContext handles it
+  }, []);
 
   const navigation = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard, current: location.pathname === '/admin/dashboard' },
@@ -171,7 +164,7 @@ const AdminLayout = () => {
               </nav>
             </div>
             <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-              <button onClick={handleLogout} className="flex-shrink-0 w-full group block">
+              <button onClick={logout} className="flex-shrink-0 w-full group block">
                 <div className="flex items-center">
                   <div><LogOut className="h-6 w-6 text-gray-400 group-hover:text-gray-500" /></div>
                   <div className="ml-3"><p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Sign out</p></div>
@@ -194,7 +187,7 @@ const AdminLayout = () => {
             </nav>
           </div>
           <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-            <button onClick={handleLogout} className="flex-shrink-0 w-full group block">
+            <button onClick={logout} className="flex-shrink-0 w-full group block">
               <div className="flex items-center">
                 <div><LogOut className="h-6 w-6 text-gray-400 group-hover:text-gray-500" /></div>
                 <div className="ml-3"><p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Sign out</p></div>

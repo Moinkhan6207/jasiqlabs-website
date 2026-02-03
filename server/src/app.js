@@ -113,7 +113,7 @@ app.use('/api/admin', protect, adminRoutes);
 app.use('/api/content', pageContentRoutes);
 
 // SEO Management Routes
-app.use('/api/seo', protect, seoRoutes);
+app.use('/api/seo', seoRoutes);
 
 // SEO Public Routes
 app.use("/", robotsRouter);

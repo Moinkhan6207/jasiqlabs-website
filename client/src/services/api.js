@@ -109,7 +109,7 @@ export const dashboard = {
 
 // 8. SEO ENDPOINTS
 export const seo = {
-  getSettings: () => api.get('/api/seo'),
+  getSettings: () => api.get('/api/public/seo/defaults'),
   
   // 👇👇👇 YAHAN CHANGE KAREIN (put -> post) 👇👇👇
   updateSettings: (data) => api.post('/api/seo', data),

@@ -25,6 +25,14 @@ export default function Seo({
 
   // Fetch SEO settings from the backend on component mount
   useEffect(() => {
+    const isAdminRoute = typeof window !== 'undefined' && window.location?.pathname?.startsWith('/admin');
+    if (isAdminRoute) {
+      setSeoSettings(defaultSeoSettings);
+      setPageSeoData(null);
+      setIsLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       try {
         // Fetch general SEO settings
@@ -39,22 +47,15 @@ export default function Seo({
         // Fetch page-specific SEO data if pageName is provided
         if (pageName) {
           try {
-            console.log(`[SEO] Fetching SEO data for page: ${pageName}`);
             const pageSeoResponse = await api.public.getPageSeo(pageName);
-            console.log(`[SEO] API Response for ${pageName}:`, pageSeoResponse.data);
             if (pageSeoResponse.data) {
-              console.log(`[SEO] Setting pageSeoData for ${pageName}:`, pageSeoResponse.data);
               setPageSeoData(pageSeoResponse.data);
-            } else {
-              console.log(`[SEO] No SEO data found for page: ${pageName}`);
             }
           } catch (pageError) {
-            console.log(`[SEO] Error fetching SEO data for page: ${pageName}`, pageError);
             // This is not an error - page might not have SEO data yet
           }
         }
       } catch (error) {
-        console.error('Error fetching SEO settings:', error);
         // Use default settings if there's an error
         setSeoSettings(defaultSeoSettings);
       } finally {
@@ -72,10 +73,8 @@ export default function Seo({
     
     if (pageName && pageSeoData?.metaTitle) {
       pageTitle = pageSeoData.metaTitle;
-      console.log(`[SEO] Using database title for ${pageName}:`, pageTitle);
     } else if (title) {
       pageTitle = title;
-      console.log(`[SEO] Using prop title:`, pageTitle);
     }
     
     if (!pageTitle) return seoSettings.siteName;
@@ -84,7 +83,6 @@ export default function Seo({
       .replace('{page}', pageTitle)
       .replace('{siteName}', seoSettings.siteName);
     
-    console.log(`[SEO] Final page title:`, finalTitle);
     return finalTitle;
   };
 

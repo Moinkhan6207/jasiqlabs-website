@@ -1,17 +1,35 @@
 import { prisma } from "../db/prisma.js";
 
 export async function getSeoDefaults(_req, res) {
-  const defaults = await prisma.seoSettings.findFirst();
-  if (!defaults) {
-    return res.status(404).json({ error: "SEO defaults not found" });
+  try {
+    const defaults = await prisma.seoSettings.findFirst();
+    if (!defaults) {
+      return res.json({
+        siteName: "",
+        titleTemplate: "%s",
+        defaultMetaDescription: "",
+        defaultOgImageUrl: "",
+        defaultFaviconUrl: "",
+      });
+    }
+
+    return res.json({
+      siteName: defaults.siteName,
+      titleTemplate: defaults.titleTemplate,
+      defaultMetaDescription: defaults.defaultMetaDescription,
+      defaultOgImageUrl: defaults.defaultOgImageUrl,
+      defaultFaviconUrl: defaults.defaultFaviconUrl,
+    });
+  } catch (error) {
+    console.error("Error fetching SEO defaults:", error);
+    return res.json({
+      siteName: "",
+      titleTemplate: "%s",
+      defaultMetaDescription: "",
+      defaultOgImageUrl: "",
+      defaultFaviconUrl: "",
+    });
   }
-  return res.json({
-    siteName: defaults.siteName,
-    titleTemplate: defaults.titleTemplate,
-    defaultMetaDescription: defaults.defaultMetaDescription,
-    defaultOgImageUrl: defaults.defaultOgImageUrl,
-    defaultFaviconUrl: defaults.defaultFaviconUrl
-  });
 }
 
 export async function getPageSeo(req, res) {
@@ -31,7 +49,16 @@ export async function getPageSeo(req, res) {
     });
 
     if (!page) {
-      return res.status(404).json({ error: "Page not found" });
+      return res.json({
+        pageName,
+        metaTitle: null,
+        metaDescription: null,
+        canonicalUrl: null,
+        ogTitle: null,
+        ogDescription: null,
+        ogImageUrl: null,
+        robots: null,
+      });
     }
 
     // If page has SEO data, return it
@@ -62,6 +89,15 @@ export async function getPageSeo(req, res) {
 
   } catch (error) {
     console.error("Error fetching page SEO:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.json({
+      pageName,
+      metaTitle: null,
+      metaDescription: null,
+      canonicalUrl: null,
+      ogTitle: null,
+      ogDescription: null,
+      ogImageUrl: null,
+      robots: null,
+    });
   }
 }
