@@ -52,7 +52,13 @@ const app = express();
 // 1) CORS SETUP
 // ==========================================
 const corsOptions = {
-  origin: true,
+  origin: (origin, callback) => {
+    if (!origin || env.CORS_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],

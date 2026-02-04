@@ -7,7 +7,10 @@ export const env = {
     PORT: process.env.PORT ? Number(process.env.PORT) : 8080,
     DATABASE_URL: process.env.DATABASE_URL,
     SITE_URL: process.env.SITE_URL || "https://jasiqlabs.com",
-    CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:5173"
+    CORS_ORIGINS: (process.env.CORS_ORIGIN || "http://localhost:5173")
+      .split(',')
+      .map(origin => origin.trim().replace(/^"|"$/g, ''))
+      .filter(Boolean)
   };
   
   if (!env.DATABASE_URL) {
