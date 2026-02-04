@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Backend URL from environment variables
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 // Create axios instance
 const api = axios.create({
@@ -40,7 +40,7 @@ api.interceptors.response.use(
 // 3. AUTH ENDPOINTS
 export const auth = {
   login: async (credentials) => {
-    const response = await api.post('/api/admin/auth/login', credentials);
+    const response = await api.post('/admin/auth/login', credentials);
     return response.data; 
   },
   logout: () => {
@@ -48,131 +48,131 @@ export const auth = {
     localStorage.removeItem('adminToken');
     return Promise.resolve(); 
   },
-  getCurrentUser: () => api.get('/api/admin/auth/me'),
+  getCurrentUser: () => api.get('/admin/auth/me'),
 };
 
 // 4. LEADS ENDPOINTS (Admin Side)
 export const leads = {
-  getAll: () => api.get('/api/admin/leads'),
-  getById: (id) => api.get(`/api/admin/leads/${id}`),
-  updateStatus: (id, status) => api.patch(`/api/admin/leads/${id}/status`, { status }),
+  getAll: () => api.get('/admin/leads'),
+  getById: (id) => api.get(`/admin/leads/${id}`),
+  updateStatus: (id, status) => api.patch(`/admin/leads/${id}/status`, { status }),
   exportLeads: () => 
-    api.get('/api/admin/leads/export', { 
+    api.get('/admin/leads/export', { 
       responseType: 'blob',
     }),
 };
 
 // 5. BLOG ENDPOINTS
 export const blog = {
-  getAll: () => api.get('/api/admin/blog'),
-  getById: (id) => api.get(`/api/admin/blog/${id}`),
-  create: (data) => api.post('/api/admin/blog', data),
-  update: (id, data) => api.patch(`/api/admin/blog/${id}`, data),
-  delete: (id) => api.delete(`/api/admin/blog/${id}`),
+  getAll: () => api.get('/admin/blog'),
+  getById: (id) => api.get(`/admin/blog/${id}`),
+  create: (data) => api.post('/admin/blog', data),
+  update: (id, data) => api.patch(`/admin/blog/${id}`, data),
+  delete: (id) => api.delete(`/admin/blog/${id}`),
 };
 
 // 6. CAREERS ENDPOINTS (Admin Side)
 export const careers = {
-  getAll: () => api.get('/api/admin/careers'),
-  getById: (id) => api.get(`/api/admin/careers/${id}`),
-  create: (data) => api.post('/api/admin/careers', data),
-  update: (id, data) => api.patch(`/api/admin/careers/${id}`, data),
-  delete: (id) => api.delete(`/api/admin/careers/${id}`),
+  getAll: () => api.get('/admin/careers'),
+  getById: (id) => api.get(`/admin/careers/${id}`),
+  create: (data) => api.post('/admin/careers', data),
+  update: (id, data) => api.patch(`/admin/careers/${id}`, data),
+  delete: (id) => api.delete(`/admin/careers/${id}`),
   
   // NEW: Toggle Application Status (ON/OFF Switch)
-  toggleApplicationStatus: (id) => api.patch(`/api/admin/careers/${id}/toggle-apply`),
+  toggleApplicationStatus: (id) => api.patch(`/admin/careers/${id}/toggle-apply`),
   
   // NEW: Get Job Applications
-  getApplications: (id) => api.get(`/api/admin/careers/${id}/applications`),
+  getApplications: (id) => api.get(`/admin/careers/${id}/applications`),
 
   // Public Get All (Yahan bhi rakh sakte hain ya publicApi me)
-  getPublicAll: () => api.get('/api/public/careers'),
+  getPublicAll: () => api.get('/public/careers'),
 };
 
 // 7. PAGE CONTENT ENDPOINTS
 export const pageContent = {
   get: async (pageName, sectionKey) => {
-    const response = await api.get(`/api/content/${pageName}/${sectionKey}`);
+    const response = await api.get(`/content/${pageName}/${sectionKey}`);
     return response.data;
   },
   update: async (data) => {
-    const response = await api.post('/api/content', data);
+    const response = await api.post('/content', data);
     return response.data;
   },
 };
 
 // 8. DASHBOARD ENDPOINTS
 export const dashboard = {
-  getStats: () => api.get('/api/admin/dashboard/stats'),
-  getRecentLeads: () => api.get('/api/admin/dashboard/recent-leads'),
+  getStats: () => api.get('/admin/dashboard/stats'),
+  getRecentLeads: () => api.get('/admin/dashboard/recent-leads'),
 };
 
 // 8. SEO ENDPOINTS
 export const seo = {
-  getSettings: () => api.get('/api/public/seo/defaults'),
+  getSettings: () => api.get('/public/seo/defaults'),
   
   // 👇👇👇 YAHAN CHANGE KAREIN (put -> post) 👇👇👇
-  updateSettings: (data) => api.post('/api/seo', data),
+  updateSettings: (data) => api.post('/seo', data),
   // 👆👆👆
   
   // NEW: Page-specific SEO endpoints
-  getPageSeo: (pageName) => api.get(`/api/seo/${pageName}`),
-  updatePageSeo: (pageName, data) => api.post(`/api/seo/${pageName}`, data),
+  getPageSeo: (pageName) => api.get(`/seo/${pageName}`),
+  updatePageSeo: (pageName, data) => api.post(`/seo/${pageName}`, data),
 };
 
 // 9. DIVISION CONTENT ENDPOINTS (Programs, Services, Products)
 export const divisionContent = {
   // Programs (RealWorkStudio)
-  getPrograms: () => api.get('/api/admin/divisions/PROGRAM'),
-  getProgram: (id) => api.get(`/api/admin/divisions/PROGRAM/${id}`),
-  createProgram: (data) => api.post('/api/admin/divisions/PROGRAM', data),
-  updateProgram: (id, data) => api.patch(`/api/admin/divisions/PROGRAM/${id}`, data),
-  deleteProgram: (id) => api.delete(`/api/admin/divisions/PROGRAM/${id}`),
+  getPrograms: () => api.get('/admin/divisions/PROGRAM'),
+  getProgram: (id) => api.get(`/admin/divisions/PROGRAM/${id}`),
+  createProgram: (data) => api.post('/admin/divisions/PROGRAM', data),
+  updateProgram: (id, data) => api.patch(`/admin/divisions/PROGRAM/${id}`, data),
+  deleteProgram: (id) => api.delete(`/admin/divisions/PROGRAM/${id}`),
 
   // Services (TechWorksStudio)
-  getServices: () => api.get('/api/admin/divisions/SERVICE'),
-  getService: (id) => api.get(`/api/admin/divisions/SERVICE/${id}`),
-  createService: (data) => api.post('/api/admin/divisions/SERVICE', data),
-  updateService: (id, data) => api.patch(`/api/admin/divisions/SERVICE/${id}`, data),
-  deleteService: (id) => api.delete(`/api/admin/divisions/SERVICE/${id}`),
+  getServices: () => api.get('/admin/divisions/SERVICE'),
+  getService: (id) => api.get(`/admin/divisions/SERVICE/${id}`),
+  createService: (data) => api.post('/admin/divisions/SERVICE', data),
+  updateService: (id, data) => api.patch(`/admin/divisions/SERVICE/${id}`, data),
+  deleteService: (id) => api.delete(`/admin/divisions/SERVICE/${id}`),
 
   // Products (Products & AI)
-  getProducts: () => api.get('/api/admin/divisions/PRODUCT'),
-  getProduct: (id) => api.get(`/api/admin/divisions/PRODUCT/${id}`),
-  createProduct: (data) => api.post('/api/admin/divisions/PRODUCT', data),
-  updateProduct: (id, data) => api.patch(`/api/admin/divisions/PRODUCT/${id}`, data),
-  deleteProduct: (id) => api.delete(`/api/admin/divisions/PRODUCT/${id}`),
+  getProducts: () => api.get('/admin/divisions/PRODUCT'),
+  getProduct: (id) => api.get(`/admin/divisions/PRODUCT/${id}`),
+  createProduct: (data) => api.post('/admin/divisions/PRODUCT', data),
+  updateProduct: (id, data) => api.patch(`/admin/divisions/PRODUCT/${id}`, data),
+  deleteProduct: (id) => api.delete(`/admin/divisions/PRODUCT/${id}`),
 };
 
 // 10. SYSTEM SETTINGS ENDPOINTS
 export const systemSettings = {
-  get: () => api.get('/api/admin/system-settings'),
-  update: (settings) => api.put('/api/admin/system-settings', settings),
+  get: () => api.get('/admin/system-settings'),
+  update: (settings) => api.put('/admin/system-settings', settings),
 };
 
 // 11. PUBLIC ENDPOINTS (User Side)
 export const publicApi = {
   // Contact Form
-  submitLead: (leadData) => api.post('/api/public/leads', leadData),  
+  submitLead: (leadData) => api.post('/public/leads', leadData),  
 
   // Blog Public URLs
-  getBlogPosts: () => api.get('/api/public/blog'), 
-  getBlogPostById: (id) => api.get(`/api/public/blog/${id}`),
+  getBlogPosts: () => api.get('/public/blog'), 
+  getBlogPostById: (id) => api.get(`/public/blog/${id}`),
 
   // 👇 NEW: Submit Job Application
-  submitApplication: (jobId, applicationData) => api.post(`/api/public/careers/${jobId}/apply`, applicationData),
+  submitApplication: (jobId, applicationData) => api.post(`/public/careers/${jobId}/apply`, applicationData),
 
   // 👇 NEW: Get Page SEO Data
-  getPageSeo: (pageName) => api.get(`/api/public/seo/${pageName}`),
+  getPageSeo: (pageName) => api.get(`/public/seo/${pageName}`),
 
   // 👇 NEW: Get Service by slug
-  getServiceBySlug: (slug) => api.get(`/api/public/services/${slug}`),
+  getServiceBySlug: (slug) => api.get(`/public/services/${slug}`),
 
   // 👇 NEW: Get all programs, services, and products
-  getPrograms: () => api.get('/api/public/programs'),
-  getServices: () => api.get('/api/public/services'),
-  getProducts: () => api.get('/api/public/products'),
-  getProductById: (id) => api.get(`/api/public/products/${id}`),
+  getPrograms: () => api.get('/public/programs'),
+  getServices: () => api.get('/public/services'),
+  getProducts: () => api.get('/public/products'),
+  getProductById: (id) => api.get(`/public/products/${id}`),
 };
 
 // Export the raw api instance for direct use
