@@ -207,7 +207,7 @@ const Careers = () => {
 
       {/* 2. STATS & WHY US (Static) - Keep Existing Code Below */}
        <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6">
           <div className="grid grid-cols-3 gap-4 divide-x divide-gray-100">
             {stats.map((stat, idx) => (
               <div key={idx} className="text-center">
@@ -218,17 +218,17 @@ const Careers = () => {
           </div>
         </div>
       </div>
-       <section className="py-20 bg-white">
+       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Developers Choose Us</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">We build an environment where your code actually goes to production.</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {whyUsContent.map((item, index) => (
-              <div key={index} className="group p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-xl transition-all duration-300">
-                <div className="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 transition-transform">
+              <div key={index} className="group p-6 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-xl transition-all duration-300">
+                <div className="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 mb-4 group-hover:scale-110 transition-transform">
                   {index === 0 ? <Lightbulb size={28} /> : index === 1 ? <Briefcase size={28} /> : <Users size={28} />}
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-gray-900">{item.title}</h3>
@@ -241,20 +241,20 @@ const Careers = () => {
 
 
       {/* 3. WHO CAN APPLY */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Who Are We Looking For?</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Whether you are just starting or have years of experience, there is a place for you.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {whoCanApplyContent?.map((item, index) => {
               // Use static iconType from careersData as fallback, or use index-based mapping
               const iconType = careersData.whoCanApply[index]?.iconType || ['book', 'sprout', 'briefcase'][index];
               const theme = getCardTheme(iconType);
               return (
-                <div key={index} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 duration-300">
-                  <div className={`w-12 h-12 ${theme.bg} rounded-lg flex items-center justify-center mb-4 ${theme.color}`}>
+                <div key={index} className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 duration-300">
+                  <div className={`w-12 h-12 ${theme.bg} rounded-lg flex items-center justify-center mb-3 ${theme.color}`}>
                     <theme.Icon size={24} />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{item.title}</h3>
@@ -267,13 +267,13 @@ const Careers = () => {
       </section>
 
       {/* 4. PERKS */}
-      <section className="py-20 bg-slate-50 border-y border-gray-200">
+      <section className="py-12 bg-slate-50 border-y border-gray-200">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">Perks & Benefits</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">Perks & Benefits</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {perks.map((perk, idx) => (
-              <div key={idx} className="bg-white p-4 rounded-xl text-center shadow-sm border border-gray-100 hover:border-indigo-200 transition-colors">
-                <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-3" />
+              <div key={idx} className="bg-white p-3 rounded-xl text-center shadow-sm border border-gray-100 hover:border-indigo-200 transition-colors">
+                <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
                 <span className="font-medium text-gray-700 text-sm">{perk}</span>
               </div>
             ))}
@@ -282,15 +282,15 @@ const Careers = () => {
       </section>
 
       {/* 5. OPEN POSITIONS */}
-      <section id="openings" className="py-24 bg-white">
+      <section id="openings" className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center mb-16">
+          <div className="flex items-center justify-center mb-10">
             <span className="h-px w-12 bg-gray-300 mr-4"></span>
             <h2 className="text-3xl font-bold text-gray-900">Current Openings</h2>
             <span className="h-px w-12 bg-gray-300 ml-4"></span>
           </div>
 
-          <div className="max-w-4xl mx-auto space-y-6">
+          <div className="max-w-4xl mx-auto space-y-4">
             {loading && (
               <div className="flex justify-center py-10">
                 <Loader2 className="animate-spin text-indigo-600 w-8 h-8" />
@@ -304,7 +304,7 @@ const Careers = () => {
             )}
 
             {!loading && jobs.map((job) => (
-              <div key={job.id} className="bg-white border border-gray-200 p-8 rounded-2xl hover:shadow-lg hover:border-indigo-300 transition-all group">
+              <div key={job.id} className="bg-white border border-gray-200 p-6 rounded-2xl hover:shadow-lg hover:border-indigo-300 transition-all group">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
@@ -352,12 +352,12 @@ const Careers = () => {
       </section>
 
       {/* 6. HOW TO APPLY (Footer CTA) */}
-      <section className="py-20 bg-indigo-900 text-white text-center">
+      <section className="py-16 bg-indigo-900 text-white text-center">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-sm p-10 rounded-3xl border border-white/20">
-            <Mail className="w-12 h-12 mx-auto mb-6 text-indigo-300" />
+          <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-sm p-8 rounded-3xl border border-white/20">
+            <Mail className="w-12 h-12 mx-auto mb-4 text-indigo-300" />
             <h2 className="text-3xl font-bold mb-4">Don't see a role for you?</h2>
-            <p className="text-lg text-indigo-100 mb-8">{applyContent.text}</p>
+            <p className="text-lg text-indigo-100 mb-6">{applyContent.text}</p>
             <a 
               href={`mailto:${applyContent.email}`} 
               className="inline-block bg-white text-indigo-900 text-xl font-bold px-10 py-4 rounded-full hover:bg-indigo-50 transition-all shadow-xl hover:scale-105"

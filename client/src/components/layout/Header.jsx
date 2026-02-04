@@ -18,6 +18,7 @@ export default function Header() {
   const handleDivisionClick = (division) => {
     trackEvent("nav_division_click", { division });
     setIsMobileMenuOpen(false);
+    setIsDivisionsOpen(false);
   };
 
   return (
@@ -27,10 +28,17 @@ export default function Header() {
           {/* Logo */}
           <Link 
             to="/" 
-            className="text-2xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
             onClick={() => trackEvent("nav_home_click")}
           >
-            JASIQ Labs
+            <img 
+              src="/favicon.webp" 
+              alt="JASIQ Labs" 
+              className="h-8 w-auto"
+            />
+            <span className="text-2xl font-bold text-primary-600 hover:text-primary-700 transition-colors">
+              JASIQ Labs
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -60,11 +68,7 @@ export default function Header() {
             </Link>
 
             {/* Divisions Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setIsDivisionsOpen(true)}
-              onMouseLeave={() => setIsDivisionsOpen(false)}
-            >
+            <div className="relative">
               <button
                 type="button"
                 className={`px-3 py-2 text-sm font-medium transition-colors ${
@@ -72,29 +76,30 @@ export default function Header() {
                     ? "text-primary-600"
                     : "text-gray-700 hover:text-primary-600"
                 }`}
+                onClick={() => setIsDivisionsOpen(!isDivisionsOpen)}
               >
                 Divisions
-                <span className="ml-1">▼</span>
+                <span className="ml-1">{isDivisionsOpen ? "▲" : "▼"}</span>
               </button>
 
               {isDivisionsOpen && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
                   <a
-                    href="/#realworkstudio"
+                    href="/realworkstudio"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                     onClick={() => handleDivisionClick("realworkstudio")}
                   >
                     RealWorkStudio
                   </a>
                   <a
-                    href="/#techworksstudio"
+                    href="/techworksstudio"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                     onClick={() => handleDivisionClick("techworksstudio")}
                   >
                     TechWorksStudio
                   </a>
                   <a
-                    href="/#products"
+                    href="/products"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                     onClick={() => handleDivisionClick("products")}
                   >

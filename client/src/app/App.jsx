@@ -18,7 +18,7 @@ export default function MaintenanceLayout() {
 
   const fetchSystemSettings = async () => {
     try {
-      const response = await api.get('/api/public/system-settings');
+      const response = await api.get('/public/system-settings');
       setMaintenanceMode(response.data?.maintenanceMode || false);
     } catch (error) {
       console.error('Error fetching system settings:', error);

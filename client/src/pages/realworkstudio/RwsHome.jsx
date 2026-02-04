@@ -82,7 +82,7 @@ export default function RwsHome() {
       />
 
       {/* What Is RealWorkStudio */}
-      <section className="py-10 bg-white">
+      <section className="pt-12 pb-6 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">
             What is RealWorkStudio?
@@ -107,7 +107,7 @@ export default function RwsHome() {
       {/* (Only showing up to HeroSection is needed for fix, but keep full file in your code) */}
       
       {/* Who Should Join */}
-      <section className="py-20 bg-gray-50">
+      <section className="pt-12 pb-6 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">
             Who Should Join?
@@ -126,7 +126,7 @@ export default function RwsHome() {
       </section>
 
       {/* Differentiators */}
-      <section className="py-20 bg-white">
+      <section className="pt-12 pb-6 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">
             Why Choose RealWorkStudio?
@@ -148,7 +148,7 @@ export default function RwsHome() {
       </section>
 
       {/* Track Preview - MODERN GLOW VERSION */}
-      <section className="py-28 bg-slate-50 relative overflow-hidden">
+      <section className="pt-16 pb-8 bg-slate-50 relative overflow-hidden">
         <div className="absolute top-20 left-0 w-72 h-72 bg-primary-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
         <div className="absolute top-20 right-0 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
         
@@ -208,7 +208,7 @@ export default function RwsHome() {
       </section>
 
       {/* Trust Section */}
-      <section className="py-20 bg-primary-600 text-white">
+      <section className="pt-6 pb-12 bg-primary-600 text-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12">
             Why Trust RealWorkStudio?

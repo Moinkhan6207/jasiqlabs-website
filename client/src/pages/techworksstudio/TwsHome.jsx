@@ -75,7 +75,7 @@ export default function TwsHome() {
       />
 
       {/* What We Do */}
-      <section className="py-20 bg-white">
+      <section className="pt-20 pb-12 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">
             What We Do
@@ -98,7 +98,7 @@ export default function TwsHome() {
       </section>
 
       {/* Who We Work With */}
-      <section className="py-20 bg-gray-50">
+      <section className="pt-20 pb-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">
             Who We Work With
@@ -117,7 +117,7 @@ export default function TwsHome() {
       </section>
 
       {/* Why Us */}
-      <section className="py-20 bg-white">
+      <section className="pt-20 pb-12 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">
             Why Choose TechWorksStudio?
@@ -137,7 +137,7 @@ export default function TwsHome() {
       </section>
 
       {/* Services Preview */}
-      <section className="py-20 bg-gray-50">
+      <section className="pt-20 pb-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">
             Our Services
@@ -164,7 +164,7 @@ export default function TwsHome() {
       </section>
 
       {/* Lead CTA */}
-      <section className="py-20 bg-gradient-to-br from-primary-600 to-secondary-600 text-white">
+      <section className="pt-12 pb-20 bg-gradient-to-br from-primary-600 to-secondary-600 text-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">

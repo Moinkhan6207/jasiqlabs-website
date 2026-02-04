@@ -15,7 +15,7 @@ export default function InternshipModel() {
         />
       </Helmet>
 
-      <section className="bg-gradient-to-br from-primary-600 to-secondary-600 text-white py-20">
+      <section className="bg-gradient-to-br from-primary-600 to-secondary-600 text-white pt-20 pb-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -29,7 +29,7 @@ export default function InternshipModel() {
       </section>
 
       {/* Steps */}
-      <section className="py-20 bg-white">
+      <section className="pt-12 pb-6 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
@@ -41,7 +41,7 @@ export default function InternshipModel() {
       </section>
 
       {/* Training vs Internship */}
-      <section className="py-20 bg-gray-50">
+      <section className="pt-12 pb-6 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
@@ -73,7 +73,7 @@ export default function InternshipModel() {
       </section>
 
       {/* Certificate Criteria */}
-      <section className="py-20 bg-white">
+      <section className="pt-12 pb-6 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">

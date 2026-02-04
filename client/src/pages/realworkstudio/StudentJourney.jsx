@@ -15,7 +15,7 @@ export default function StudentJourney() {
         />
       </Helmet>
 
-      <section className="bg-gradient-to-br from-primary-600 to-secondary-600 text-white py-20">
+      <section className="bg-gradient-to-br from-primary-600 to-secondary-600 text-white pt-16 pb-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -28,7 +28,7 @@ export default function StudentJourney() {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <StepFlow steps={c.studentJourney} />

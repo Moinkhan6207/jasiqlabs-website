@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { pageContent } from '../../../services/api';
+import RichTextEditor from '../common/RichTextEditor';
 
 const AboutPageEditor = () => {
   const navigate = useNavigate();
@@ -296,67 +297,24 @@ const AboutPageEditor = () => {
 
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <h4 className="text-md font-medium text-gray-700">Leadership</h4>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-              <input
-                type="text"
-                value={leadershipData.leadershipTitle}
-                onChange={(e) => setLeadershipData(prev => ({ ...prev, leadershipTitle: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="space-y-3">
-              {(leadershipData.leadershipParagraphs || []).map((p, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <input
-                    type="text"
-                    value={p}
-                    onChange={(e) => updateListItem(setLeadershipData, idx, 'leadershipParagraphs', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Paragraph"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeObjectListItem(setLeadershipData, 'leadershipParagraphs', idx)}
-                    className="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={() => addObjectListItem(setLeadershipData, 'leadershipParagraphs', '')}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Add paragraph
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-4">
             <h4 className="text-md font-medium text-gray-700">Compliance</h4>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-              <input
-                type="text"
+              <RichTextEditor
                 value={leadershipData.complianceTitle}
-                onChange={(e) => setLeadershipData(prev => ({ ...prev, complianceTitle: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(value) => setLeadershipData(prev => ({ ...prev, complianceTitle: value }))}
+                placeholder="Enter compliance title"
+                label="Title"
               />
             </div>
 
             <div className="space-y-3">
               {(leadershipData.complianceParagraphs || []).map((p, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <input
-                    type="text"
+                <div key={idx} className="space-y-2">
+                  <RichTextEditor
                     value={p}
-                    onChange={(e) => updateListItem(setLeadershipData, idx, 'complianceParagraphs', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Paragraph"
+                    onChange={(value) => updateListItem(setLeadershipData, idx, 'complianceParagraphs', value)}
+                    placeholder={`Paragraph ${idx + 1}`}
+                    label={`Paragraph ${idx + 1}`}
                   />
                   <button
                     type="button"
@@ -376,6 +334,45 @@ const AboutPageEditor = () => {
               </button>
             </div>
           </div>
+
+          <div className="space-y-4">
+            <h4 className="text-md font-medium text-gray-700">Leadership</h4>
+            <div>
+              <RichTextEditor
+                value={leadershipData.leadershipTitle}
+                onChange={(value) => setLeadershipData(prev => ({ ...prev, leadershipTitle: value }))}
+                placeholder="Enter leadership title"
+                label="Title"
+              />
+            </div>
+
+            <div className="space-y-3">
+              {(leadershipData.leadershipParagraphs || []).map((p, idx) => (
+                <div key={idx} className="space-y-2">
+                  <RichTextEditor
+                    value={p}
+                    onChange={(value) => updateListItem(setLeadershipData, idx, 'leadershipParagraphs', value)}
+                    placeholder={`Paragraph ${idx + 1}`}
+                    label={`Paragraph ${idx + 1}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeObjectListItem(setLeadershipData, 'leadershipParagraphs', idx)}
+                    className="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => addObjectListItem(setLeadershipData, 'leadershipParagraphs', '')}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+              >
+                Add paragraph
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -385,30 +382,20 @@ const AboutPageEditor = () => {
         
         <div className="space-y-4">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-              Title
-            </label>
-            <input
-              type="text"
-              id="title"
+            <RichTextEditor
               value={heroData.title}
-              onChange={(e) => setHeroData(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              onChange={(value) => setHeroData(prev => ({ ...prev, title: value }))}
               placeholder="Enter title"
+              label="Title"
             />
           </div>
 
           <div>
-            <label htmlFor="subtitle" className="block text-sm font-medium text-gray-700 mb-1">
-              Subtitle
-            </label>
-            <input
-              type="text"
-              id="subtitle"
+            <RichTextEditor
               value={heroData.subtitle}
-              onChange={(e) => setHeroData(prev => ({ ...prev, subtitle: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              onChange={(value) => setHeroData(prev => ({ ...prev, subtitle: value }))}
               placeholder="Enter subtitle"
+              label="Subtitle"
             />
           </div>
         </div>
@@ -423,31 +410,19 @@ const AboutPageEditor = () => {
           <div className="space-y-4">
             <h4 className="text-md font-medium text-gray-700">Mission</h4>
             <div>
-              <label htmlFor="missionTitle" className="block text-sm font-medium text-gray-700 mb-1">
-                Mission Title
-              </label>
-              <input
-                type="text"
-                id="missionTitle"
-                name="missionTitle"
+              <RichTextEditor
                 value={heroData.missionTitle}
-                onChange={(e) => setHeroData(prev => ({ ...prev, missionTitle: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(value) => setHeroData(prev => ({ ...prev, missionTitle: value }))}
                 placeholder="Enter mission title"
+                label="Mission Title"
               />
             </div>
             <div>
-              <label htmlFor="missionDesc" className="block text-sm font-medium text-gray-700 mb-1">
-                Mission Description
-              </label>
-              <textarea
-                id="missionDesc"
-                name="missionDesc"
-                rows={4}
+              <RichTextEditor
                 value={heroData.missionDesc}
-                onChange={(e) => setHeroData(prev => ({ ...prev, missionDesc: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(value) => setHeroData(prev => ({ ...prev, missionDesc: value }))}
                 placeholder="Enter mission description"
+                label="Mission Description"
               />
             </div>
           </div>
@@ -456,31 +431,19 @@ const AboutPageEditor = () => {
           <div className="space-y-4">
             <h4 className="text-md font-medium text-gray-700">Vision</h4>
             <div>
-              <label htmlFor="visionTitle" className="block text-sm font-medium text-gray-700 mb-1">
-                Vision Title
-              </label>
-              <input
-                type="text"
-                id="visionTitle"
-                name="visionTitle"
+              <RichTextEditor
                 value={heroData.visionTitle}
-                onChange={(e) => setHeroData(prev => ({ ...prev, visionTitle: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(value) => setHeroData(prev => ({ ...prev, visionTitle: value }))}
                 placeholder="Enter vision title"
+                label="Vision Title"
               />
             </div>
             <div>
-              <label htmlFor="visionDesc" className="block text-sm font-medium text-gray-700 mb-1">
-                Vision Description
-              </label>
-              <textarea
-                id="visionDesc"
-                name="visionDesc"
-                rows={4}
+              <RichTextEditor
                 value={heroData.visionDesc}
-                onChange={(e) => setHeroData(prev => ({ ...prev, visionDesc: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(value) => setHeroData(prev => ({ ...prev, visionDesc: value }))}
                 placeholder="Enter vision description"
+                label="Vision Description"
               />
             </div>
           </div>
@@ -491,24 +454,22 @@ const AboutPageEditor = () => {
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Company Story</h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-            <input
-              type="text"
+            <RichTextEditor
               value={storyData.title}
-              onChange={(e) => setStoryData(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              onChange={(value) => setStoryData(prev => ({ ...prev, title: value }))}
+              placeholder="Enter story title"
+              label="Title"
             />
           </div>
 
           <div className="space-y-3">
             {(storyData.paragraphs || []).map((p, idx) => (
-              <div key={idx} className="flex items-center gap-3">
-                <input
-                  type="text"
+              <div key={idx} className="space-y-2">
+                <RichTextEditor
                   value={p}
-                  onChange={(e) => updateListItem(setStoryData, idx, 'paragraphs', e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Paragraph"
+                  onChange={(value) => updateListItem(setStoryData, idx, 'paragraphs', value)}
+                  placeholder={`Paragraph ${idx + 1}`}
+                  label={`Paragraph ${idx + 1}`}
                 />
                 <button
                   type="button"
@@ -534,21 +495,19 @@ const AboutPageEditor = () => {
         <h3 className="text-lg font-semibold text-gray-800 mb-4">What Makes Us Different</h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-            <input
-              type="text"
+            <RichTextEditor
               value={differentData.title}
-              onChange={(e) => setDifferentData(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              onChange={(value) => setDifferentData(prev => ({ ...prev, title: value }))}
+              placeholder="Enter title"
+              label="Title"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
-            <input
-              type="text"
+            <RichTextEditor
               value={differentData.subtitle}
-              onChange={(e) => setDifferentData(prev => ({ ...prev, subtitle: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              onChange={(value) => setDifferentData(prev => ({ ...prev, subtitle: value }))}
+              placeholder="Enter subtitle"
+              label="Subtitle"
             />
           </div>
 
@@ -557,21 +516,19 @@ const AboutPageEditor = () => {
               <div key={idx} className="p-4 border border-gray-200 rounded-lg space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Item title</label>
-                    <input
-                      type="text"
+                    <RichTextEditor
                       value={item.title || ''}
-                      onChange={(e) => updateObjectListItem(setDifferentData, 'items', idx, 'title', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      onChange={(value) => updateObjectListItem(setDifferentData, 'items', idx, 'title', value)}
+                      placeholder="Item title"
+                      label="Item title"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Item description</label>
-                    <input
-                      type="text"
+                    <RichTextEditor
                       value={item.desc || ''}
-                      onChange={(e) => updateObjectListItem(setDifferentData, 'items', idx, 'desc', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      onChange={(value) => updateObjectListItem(setDifferentData, 'items', idx, 'desc', value)}
+                      placeholder="Item description"
+                      label="Item description"
                     />
                   </div>
                 </div>
@@ -602,21 +559,19 @@ const AboutPageEditor = () => {
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Culture & Values</h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-            <input
-              type="text"
+            <RichTextEditor
               value={cultureData.title}
-              onChange={(e) => setCultureData(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              onChange={(value) => setCultureData(prev => ({ ...prev, title: value }))}
+              placeholder="Enter title"
+              label="Title"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
-            <input
-              type="text"
+            <RichTextEditor
               value={cultureData.subtitle}
-              onChange={(e) => setCultureData(prev => ({ ...prev, subtitle: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              onChange={(value) => setCultureData(prev => ({ ...prev, subtitle: value }))}
+              placeholder="Enter subtitle"
+              label="Subtitle"
             />
           </div>
 
@@ -625,21 +580,19 @@ const AboutPageEditor = () => {
               <div key={idx} className="p-4 border border-gray-200 rounded-lg space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Item title</label>
-                    <input
-                      type="text"
+                    <RichTextEditor
                       value={item.title || ''}
-                      onChange={(e) => updateObjectListItem(setCultureData, 'items', idx, 'title', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      onChange={(value) => updateObjectListItem(setCultureData, 'items', idx, 'title', value)}
+                      placeholder="Item title"
+                      label="Item title"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Item description</label>
-                    <input
-                      type="text"
+                    <RichTextEditor
                       value={item.desc || ''}
-                      onChange={(e) => updateObjectListItem(setCultureData, 'items', idx, 'desc', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      onChange={(value) => updateObjectListItem(setCultureData, 'items', idx, 'desc', value)}
+                      placeholder="Item description"
+                      label="Item description"
                     />
                   </div>
                 </div>
@@ -670,21 +623,19 @@ const AboutPageEditor = () => {
         <h3 className="text-lg font-semibold text-gray-800 mb-4">CTA</h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-            <input
-              type="text"
+            <RichTextEditor
               value={ctaData.title}
-              onChange={(e) => setCtaData(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              onChange={(value) => setCtaData(prev => ({ ...prev, title: value }))}
+              placeholder="Enter title"
+              label="Title"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
-            <input
-              type="text"
+            <RichTextEditor
               value={ctaData.subtitle}
-              onChange={(e) => setCtaData(prev => ({ ...prev, subtitle: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              onChange={(value) => setCtaData(prev => ({ ...prev, subtitle: value }))}
+              placeholder="Enter subtitle"
+              label="Subtitle"
             />
           </div>
           <div className="grid md:grid-cols-2 gap-4">

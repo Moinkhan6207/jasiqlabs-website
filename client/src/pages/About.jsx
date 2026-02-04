@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import content from "../content/siteContent.json";
 import Seo from "../components/seo/Seo";
 import { pageContent } from "../services/api";
+import parse from 'html-react-parser';
+import { decodeHTMLEntities } from '../utils/htmlUtils';
 
 // Icons (You can replace these with your actual icons)
 const CultureIcon = ({ className }) => (
@@ -26,6 +28,18 @@ const VisionIcon = ({ className }) => (
 export default function About() {
   const c = content;
   const [isMounted, setIsMounted] = useState(false);
+
+  // Safe parse function that decodes HTML entities
+  const safeParse = (content) => {
+    if (!content || typeof content !== 'string') return content;
+    try {
+      const decoded = decodeHTMLEntities(content);
+      return parse(decoded);
+    } catch (error) {
+      console.error('Error parsing HTML:', error);
+      return content;
+    }
+  };
 
   // 🟢 Dynamic Hero State (Default: JSON Data)
   const [heroData, setHeroData] = useState({
@@ -64,10 +78,23 @@ export default function About() {
     title: c.about.cultureTitle,
     subtitle: "Our culture is built on a foundation of shared values that guide our decisions and actions every day.",
     items: (c.about.cultureItems || []).map((item) => {
-      const [t, d] = String(item).split(':');
+      if (typeof item === 'string') {
+        // Check if it's rich text or doesn't contain colon
+        if (item.includes('<') || item.includes('>') || !item.includes(':')) {
+          return {
+            title: item.trim(),
+            desc: 'We believe in the power of collaboration and innovation.',
+          };
+        }
+        const [t, d] = String(item).split(':');
+        return {
+          title: (t || '').trim(),
+          desc: (d || 'We believe in the power of collaboration and innovation.').trim(),
+        };
+      }
       return {
-        title: (t || '').trim(),
-        desc: (d || 'We believe in the power of collaboration and innovation.').trim(),
+        title: item?.title || '',
+        desc: item?.desc || 'We believe in the power of collaboration and innovation.',
       };
     }),
   });
@@ -96,6 +123,15 @@ export default function About() {
     setIsMounted(true);
     return () => setIsMounted(false);
   }, []);
+
+  // Debug: Log leadership data
+  useEffect(() => {
+    console.log('Leadership Data:', leadershipData);
+    console.log('Compliance Title:', leadershipData.complianceTitle);
+    console.log('Compliance Paragraphs:', leadershipData.complianceParagraphs);
+    console.log('Leadership Title:', leadershipData.leadershipTitle);
+    console.log('Leadership Paragraphs:', leadershipData.leadershipParagraphs);
+  }, [leadershipData]);
 
   // 🟢 Fetch Data from Database on Load
   useEffect(() => {
@@ -180,6 +216,14 @@ export default function About() {
           const items = Array.isArray(cultureContent.items) ? cultureContent.items : [];
           const normalizedItems = items.map((it) => {
             if (typeof it === 'string') {
+              // Try to split by colon first, but if it fails or if the string looks like rich text,
+              // treat it as a title with default description
+              if (it.includes('<') || it.includes('>') || !it.includes(':')) {
+                return {
+                  title: it.trim(),
+                  desc: 'We believe in the power of collaboration and innovation.',
+                };
+              }
               const [t, d] = String(it).split(':');
               return {
                 title: (t || '').trim(),
@@ -241,64 +285,88 @@ export default function About() {
       />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary-600 to-primary-800 text-white py-20 md:py-28">
+      <section className="relative bg-gradient-to-r from-primary-600 to-primary-800 text-white py-16 md:py-20">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className={`text-4xl md:text-5xl font-bold mb-6 ${isMounted ? fadeInUpActive : fadeInUp}`}>
+            <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${isMounted ? fadeInUpActive : fadeInUp}`}>
               {/* 🟢 Dynamic Hero Title */}
-              {heroData.title}
+              {safeParse(heroData.title)}
             </h1>
             <p className={`text-xl md:text-2xl text-primary-100 max-w-3xl mx-auto ${isMounted ? fadeInUpActive : fadeInUp}`} style={{ transitionDelay: '100ms' }}>
               {/* 🟢 Dynamic Hero Subtitle */}
-              {heroData.subtitle}
+              {safeParse(heroData.subtitle)}
             </p>
           </div>
         </div>
       </section>
 
-      {/* Mission & Vision */}
-      <section className="py-16 bg-white">
+      {/* Leadership & Compliance */}
+      <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Mission */}
-            <div className={`bg-white rounded-xl shadow-lg p-8 transform hover:scale-[1.02] transition-all duration-300 ${isMounted ? fadeInUpActive : fadeInUp}`} style={{ transitionDelay: '200ms' }}>
-              <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <MissionIcon className="w-8 h-8 text-primary-600" />
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{safeParse(leadershipData.complianceTitle)}</h3>
+              <div className="prose prose-sm max-w-none text-gray-600 space-y-3">
+                {(leadershipData.complianceParagraphs || []).map((p, idx) => (
+                  <div key={idx}>{safeParse(p)}</div>
+                ))}
               </div>
-              <h2 className="text-2xl font-bold text-center mb-4">{/* 🟢 Dynamic Mission Title */}{missionData.missionTitle}</h2>
-              <p className="text-gray-600 text-center">{/* 🟢 Dynamic Mission Description */}{missionData.missionDesc}</p>
+            </div>
+            
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">{safeParse(leadershipData.leadershipTitle)}</h2>
+              <div className="prose prose-sm max-w-none text-gray-600 space-y-3">
+                {(leadershipData.leadershipParagraphs || []).map((p, idx) => (
+                  <div key={idx}>{safeParse(p)}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mission & Vision */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            {/* Mission */}
+            <div className={`bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-6 transform hover:scale-[1.02] transition-all duration-300 ${isMounted ? fadeInUpActive : fadeInUp}`} style={{ transitionDelay: '200ms' }}>
+              <div className="bg-primary-600 w-12 h-12 rounded-full flex items-center justify-center mb-4">
+                <MissionIcon className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-center mb-3 text-primary-800">{safeParse(missionData.missionTitle)}</h2>
+              <div className="text-gray-700 text-center">{safeParse(missionData.missionDesc)}</div>
             </div>
 
             {/* Vision */}
-            <div className={`bg-white rounded-xl shadow-lg p-8 transform hover:scale-[1.02] transition-all duration-300 ${isMounted ? fadeInUpActive : fadeInUp}`} style={{ transitionDelay: '300ms' }}>
-              <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <VisionIcon className="w-8 h-8 text-primary-600" />
+            <div className={`bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 transform hover:scale-[1.02] transition-all duration-300 ${isMounted ? fadeInUpActive : fadeInUp}`} style={{ transitionDelay: '300ms' }}>
+              <div className="bg-blue-600 w-12 h-12 rounded-full flex items-center justify-center mb-4">
+                <VisionIcon className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-center mb-4">{/* 🟢 Dynamic Vision Title */}{missionData.visionTitle}</h2>
-              <p className="text-gray-600 text-center">
-                {/* 🟢 Dynamic Vision Description */}
-                {missionData.visionDesc}
-              </p>
+              <h2 className="text-2xl font-bold text-center mb-3 text-blue-800">{safeParse(missionData.visionTitle)}</h2>
+              <div className="text-gray-700 text-center">
+                {safeParse(missionData.visionDesc)}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Our Story */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">{storyData.title}</h2>
-            <div className="w-24 h-1 bg-primary-500 mx-auto"></div>
+          <div className="max-w-4xl mx-auto text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">{safeParse(storyData.title)}</h2>
+            <div className="w-16 h-1 bg-primary-500 mx-auto"></div>
           </div>
           
-          <div className="bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto">
-            <div className="prose max-w-none text-gray-600">
+          <div className="bg-white rounded-xl shadow-sm p-6 max-w-4xl mx-auto">
+            <div className="prose prose-lg max-w-none text-gray-600">
               {(storyData.paragraphs || []).map((p, idx) => (
-                <p key={idx} className={idx === 0 ? "text-lg mb-6" : "text-lg"}>
-                  {p}
-                </p>
+                <div key={idx} className={idx === 0 ? "mb-4" : "mb-4"}>
+                  {safeParse(p)}
+                </div>
               ))}
             </div>
           </div>
@@ -306,33 +374,33 @@ export default function About() {
       </section>
 
       {/* What Makes Us Different */}
-      <section className="py-16 bg-white">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">{differentData.title}</h2>
+          <div className="max-w-4xl mx-auto text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">{safeParse(differentData.title)}</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               {differentData.subtitle}
             </p>
-            <div className="w-24 h-1 bg-primary-500 mx-auto mt-4"></div>
+            <div className="w-16 h-1 bg-primary-500 mx-auto mt-3"></div>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {differentData.items.map((item, index) => (
               <div 
                 key={index} 
-                className="bg-gray-50 p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-300"
+                className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-300"
               >
-                <div className="flex items-center mb-4">
-                  <div className="bg-primary-100 p-2 rounded-full mr-4">
-                    <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center mb-3">
+                  <div className="bg-primary-100 p-2 rounded-full mr-3">
+                    <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{safeParse(item.title)}</h3>
                 </div>
-                <p className="text-gray-600 pl-10">
-                  {item.desc}
-                </p>
+                <div className="text-gray-600 pl-8 text-sm">
+                  {safeParse(item.desc)}
+                </div>
               </div>
             ))}
           </div>
@@ -340,70 +408,45 @@ export default function About() {
       </section>
 
       {/* Our Culture & Values */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">{cultureData.title}</h2>
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">{safeParse(cultureData.title)}</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              {cultureData.subtitle}
+              {safeParse(cultureData.subtitle)}
             </p>
-            <div className="w-24 h-1 bg-primary-500 mx-auto mt-4"></div>
+            <div className="w-16 h-1 bg-primary-500 mx-auto mt-3"></div>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             {cultureData.items.map((item, index) => (
               <div 
-                key={index} 
-                className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center"
+                key={`${index}-${item.title || 'item'}`} 
+                className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 text-center"
               >
-                <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CultureIcon className="w-8 h-8 text-primary-600" />
+                <div className="bg-primary-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <CultureIcon className="w-6 h-6 text-primary-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-gray-600">
-                  {item.desc}
-                </p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{safeParse(item.title || '')}</h3>
+                <div className="text-gray-600 text-sm">
+                  {safeParse(item.desc || '')}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Leadership & Compliance */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">{leadershipData.leadershipTitle}</h2>
-              <div className="prose max-w-none text-gray-600 space-y-4">
-                {(leadershipData.leadershipParagraphs || []).map((p, idx) => (
-                  <p key={idx}>{p}</p>
-                ))}
-              </div>
-            </div>
-            
-            <div className="bg-gray-50 p-8 rounded-xl">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">{leadershipData.complianceTitle}</h3>
-              <div className="prose max-w-none text-gray-600 space-y-4">
-                {(leadershipData.complianceParagraphs || []).map((p, idx) => (
-                  <p key={idx}>{p}</p>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
-      <section className="bg-primary-700 text-white py-16">
+      <section className="bg-primary-700 text-white py-12">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">{ctaData.title}</h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            {ctaData.subtitle}
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">{safeParse(ctaData.title)}</h2>
+          <p className="text-xl text-primary-100 mb-6 max-w-2xl mx-auto">
+            {safeParse(ctaData.subtitle)}
           </p>
           <a 
             href={ctaData.buttonLink} 
-            className="inline-block bg-white text-primary-700 font-semibold px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors duration-300"
+            className="inline-block bg-white text-primary-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors duration-300"
           >
             {ctaData.buttonText}
           </a>

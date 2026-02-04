@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Send, Loader2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Loader2, Facebook, Instagram, Linkedin } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Seo from "../components/seo/Seo";
 import api, { pageContent, publicApi } from '../services/api';
@@ -174,7 +174,7 @@ const ContactPage = () => {
                     </div>
                     <div className="ml-4">
                       <h3 className="text-lg font-medium">Email Us</h3>
-                      <p className="text-blue-100">contact@jasiqlabs.com</p>
+                      <p className="text-blue-100">support@jasiqlabs.com</p>
                     </div>
                   </div>
 
@@ -184,7 +184,7 @@ const ContactPage = () => {
                     </div>
                     <div className="ml-4">
                       <h3 className="text-lg font-medium">Call Us</h3>
-                      <p className="text-blue-100">+1 (123) 456-7890</p>
+                      <p className="text-blue-100">+91 91-7999109861</p>
                     </div>
                   </div>
 
@@ -194,8 +194,8 @@ const ContactPage = () => {
                     </div>
                     <div className="ml-4">
                       <h3 className="text-lg font-medium">Visit Us</h3>
-                      <p className="text-blue-100">123 Tech Park, Silicon Valley</p>
-                      <p className="text-blue-100">California, USA</p>
+                      <p className="text-blue-100">Sr. No. 222/1, BLD No. 8, Lower, Upper, Podium, 1st to 5th Floor, Raheja Woods, Kalyani Nagar, Pune (M Corp), Pune City, Maharashtra – 411006, India 🔗 Verify on MCA.gov.in</p>
+                      <p className="text-blue-100">Pune, India</p>
                     </div>
                   </div>
                 </div>
@@ -203,17 +203,33 @@ const ContactPage = () => {
                 <div className="mt-12">
                   <h3 className="text-lg font-medium mb-4">Follow Us</h3>
                   <div className="flex space-x-4">
-                    {['Twitter', 'LinkedIn', 'GitHub', 'Facebook'].map((social) => (
-                      <a
-                        key={social}
-                        href="#"
-                        className="bg-blue-700 hover:bg-blue-600 p-2 rounded-full transition-colors"
-                        aria-label={social}
-                      >
-                        <span className="sr-only">{social}</span>
-                        <div className="h-5 w-5" />
-                      </a>
-                    ))}
+                    <a
+                      href="https://www.linkedin.com/company/107946520/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-700 hover:bg-blue-600 p-3 rounded-full transition-colors"
+                      aria-label="Facebook"
+                    >
+                      <Facebook className="h-5 w-5" />
+                    </a>
+                    <a
+                      href="https://www.instagram.com/realworkstudioofficial/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-700 hover:bg-blue-600 p-3 rounded-full transition-colors"
+                      aria-label="Instagram"
+                    >
+                      <Instagram className="h-5 w-5" />
+                    </a>
+                    <a
+                      href="https://www.linkedin.com/company/107946520/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-700 hover:bg-blue-600 p-3 rounded-full transition-colors"
+                      aria-label="LinkedIn"
+                    >
+                      <Linkedin className="h-5 w-5" />
+                    </a>
                   </div>
                 </div>
               </div>

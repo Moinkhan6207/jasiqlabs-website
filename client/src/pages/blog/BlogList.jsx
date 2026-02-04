@@ -24,18 +24,31 @@ const BlogList = () => {
         const response = await publicApi.getBlogPosts();
         // Check both paths to be safe
         const dbPosts = response.data?.data?.posts || response.data?.posts || [];
-        const allPosts = [...dbPosts, ...blogDataJson];
-
-        const sortedPosts = allPosts.sort((a, b) => {
+        
+        console.log('All DB posts:', dbPosts);
+        console.log('Posts by Moin khan:', dbPosts.filter(post => post.author === 'Moin khan'));
+        
+        // Only use database posts, don't merge with blogDataJson
+        const sortedPosts = dbPosts.sort((a, b) => {
           const dateA = new Date(a.createdAt || a.date);
           const dateB = new Date(b.createdAt || b.date);
           return dateB - dateA; 
         });
 
-        setPosts(sortedPosts);
+        // Filter posts to show only those by "Moin khan" (admin dashboard posts)
+        const moinKhanPosts = sortedPosts.filter(post => 
+          post.author === 'Moin khan' || post.author === 'Moin Khan'
+        );
+
+        console.log('Final posts to display:', moinKhanPosts);
+        setPosts(moinKhanPosts);
       } catch (error) {
         console.error("Error fetching blogs:", error);
-        setPosts(blogDataJson);
+        // Filter blogDataJson to show only Moin khan posts in case of error
+        const moinKhanOnlyPosts = blogDataJson.filter(post => 
+          post.author === 'Moin khan' || post.author === 'Moin Khan'
+        );
+        setPosts(moinKhanOnlyPosts);
       } finally {
         setLoading(false);
       }

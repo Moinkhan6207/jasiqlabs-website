@@ -85,7 +85,7 @@ export default function ProductDetail() {
 
       {/* Product Header with Gradient */}
       <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white">
-        <div className="container mx-auto px-4 py-12">
+        <div className="container mx-auto px-4 pt-12 pb-8">
           <div className="max-w-3xl">
             <Link 
               to="/products/list" 
@@ -120,7 +120,7 @@ export default function ProductDetail() {
       </div>
 
       {/* Product Content */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 pt-12 pb-8">
         <div className="max-w-4xl mx-auto">
           {product.coverImage && (
             <div className="w-full overflow-hidden rounded-2xl border border-gray-100 shadow-sm mb-12">
