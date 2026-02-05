@@ -360,7 +360,7 @@ const Careers = () => {
             <p className="text-lg text-indigo-100 mb-6">{applyContent.text}</p>
             <a 
               href={`mailto:${applyContent.email}`} 
-              className="inline-block bg-white text-indigo-900 text-xl font-bold px-10 py-4 rounded-full hover:bg-indigo-50 transition-all shadow-xl hover:scale-105"
+              className="inline-block bg-white text-indigo-900 text-xl font-bold px-5 py-4 rounded-full hover:bg-indigo-50 transition-all shadow-xl hover:scale-105"
             >
               {applyContent.email}
             </a>

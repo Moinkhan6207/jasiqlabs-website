@@ -232,21 +232,21 @@ export default function Header() {
               {isDivisionsOpen && (
                 <div className="pl-4 mt-2 space-y-1">
                   <a
-                    href="/#realworkstudio"
+                    href="/realworkstudio"
                     className="block px-4 py-2 rounded-lg text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                     onClick={() => handleDivisionClick("realworkstudio")}
                   >
                     RealWorkStudio
                   </a>
                   <a
-                    href="/#techworksstudio"
+                    href="/techworksstudio"
                     className="block px-4 py-2 rounded-lg text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                     onClick={() => handleDivisionClick("techworksstudio")}
                   >
                     TechWorksStudio
                   </a>
                   <a
-                    href="/#products"
+                    href="/products"
                     className="block px-4 py-2 rounded-lg text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                     onClick={() => handleDivisionClick("products")}
                   >
