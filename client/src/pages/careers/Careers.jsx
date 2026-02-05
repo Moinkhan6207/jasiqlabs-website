@@ -5,7 +5,7 @@ import api, { pageContent } from '../../services/api';
 import Seo from '../../components/seo/Seo';
 import {
   Briefcase, Lightbulb, Users, MapPin, Clock, ArrowRight, CheckCircle2,
-  Sparkles, Mail, BookOpen, Sprout, Loader2, X
+  Sparkles, Mail, BookOpen, Sprout, Loader2, X, ChevronDown
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
@@ -306,7 +306,7 @@ const Careers = () => {
             {!loading && jobs.map((job) => (
               <div key={job.id} className="bg-white border border-gray-200 p-6 rounded-2xl hover:shadow-lg hover:border-indigo-300 transition-all group">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                  <div>
+                  <div className="flex-1">
                     <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
                       {job.title}
                     </h3>
@@ -322,17 +322,77 @@ const Careers = () => {
                           <Briefcase size={14} className="mr-2" /> {job.experience}
                         </span>
                       )}
+                      {job.salaryRange && (
+                        <span className="flex items-center bg-green-100 px-3 py-1 rounded-full text-green-700">
+                          💰 {job.salaryRange}
+                        </span>
+                      )}
                     </div>
-                    <div className="flex gap-2 flex-wrap">
-                      {job.requirements && job.requirements.slice(0, 3).map((req, tIdx) => (
+                    
+                    {/* Job Description Preview */}
+                    <div className="mb-4">
+                      <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
+                        {job.description}
+                      </p>
+                    </div>
+                    
+                    {/* Requirements/Key Skills */}
+                    <div className="flex gap-2 flex-wrap mb-4">
+                      {job.requirements && job.requirements.slice(0, 4).map((req, tIdx) => (
                         <span key={tIdx} className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded border border-indigo-100 truncate max-w-[150px]">
                           {req}
                         </span>
                       ))}
+                      {job.requirements && job.requirements.length > 4 && (
+                        <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                          +{job.requirements.length - 4} more
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Expandable Details Section */}
+                    <div className="mt-4 space-y-4">
+                      <details className="group">
+                        <summary className="cursor-pointer text-sm font-medium text-indigo-600 hover:text-indigo-800 list-none flex items-center gap-2 p-2 rounded hover:bg-indigo-50 transition-colors">
+                          <ChevronDown size={16} className="transition-transform group-open:rotate-180" />
+                          View Full Job Details
+                        </summary>
+                        <div className="mt-4 pl-6 space-y-4 border-l-2 border-indigo-200 animate-in slide-in-from-top-2 duration-200">
+                          {/* Description */}
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2">Description:</h4>
+                            <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{job.description}</p>
+                          </div>
+                          
+                          {/* Key Requirements */}
+                          {job.requirements && job.requirements.length > 0 && (
+                            <div>
+                              <h4 className="font-semibold text-gray-900 mb-2">Key Requirements:</h4>
+                              <ul className="list-disc list-inside text-gray-600 text-sm space-y-1">
+                                {job.requirements.map((req, idx) => (
+                                  <li key={idx}>{req}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          
+                          {/* Responsibilities */}
+                          {job.responsibilities && job.responsibilities.length > 0 && (
+                            <div>
+                              <h4 className="font-semibold text-gray-900 mb-2">Responsibilities:</h4>
+                              <ul className="list-disc list-inside text-gray-600 text-sm space-y-1">
+                                {job.responsibilities.map((resp, idx) => (
+                                  <li key={idx}>{resp}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </details>
                     </div>
                   </div>
                   
-                  {/* Apply Button - Logic Updated */}
+                  {/* Apply Button */}
                   <button 
                     onClick={() => handleApplyClick(job)}
                     disabled={!job.acceptingApplications}

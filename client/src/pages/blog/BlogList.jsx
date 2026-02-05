@@ -26,29 +26,21 @@ const BlogList = () => {
         const dbPosts = response.data?.data?.posts || response.data?.posts || [];
         
         console.log('All DB posts:', dbPosts);
-        console.log('Posts by Moin khan:', dbPosts.filter(post => post.author === 'Moin khan'));
         
         // Only use database posts, don't merge with blogDataJson
+        // The server now filters for published posts, so we just need to sort them
         const sortedPosts = dbPosts.sort((a, b) => {
           const dateA = new Date(a.createdAt || a.date);
           const dateB = new Date(b.createdAt || b.date);
           return dateB - dateA; 
         });
 
-        // Filter posts to show only those by "Moin khan" (admin dashboard posts)
-        const moinKhanPosts = sortedPosts.filter(post => 
-          post.author === 'Moin khan' || post.author === 'Moin Khan'
-        );
-
-        console.log('Final posts to display:', moinKhanPosts);
-        setPosts(moinKhanPosts);
+        console.log('Final posts to display:', sortedPosts);
+        setPosts(sortedPosts);
       } catch (error) {
         console.error("Error fetching blogs:", error);
-        // Filter blogDataJson to show only Moin khan posts in case of error
-        const moinKhanOnlyPosts = blogDataJson.filter(post => 
-          post.author === 'Moin khan' || post.author === 'Moin Khan'
-        );
-        setPosts(moinKhanOnlyPosts);
+        // Use blogDataJson as fallback in case of error
+        setPosts(blogDataJson);
       } finally {
         setLoading(false);
       }
