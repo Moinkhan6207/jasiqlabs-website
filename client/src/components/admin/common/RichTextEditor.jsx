@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -27,23 +27,20 @@ const RichTextEditor = ({
     'link', 'image'
   ];
 
-  // Clean the content to remove extra <p> tags
-  const handleChange = (content) => {
-    // Remove outer <p><p> tags and clean up content
-    const cleanContent = content
-      .replace(/^<p><p>/, '<p>')
-      .replace(/<\/p><\/p>$/, '</p>')
-      .replace(/<\/p><p>/g, '</p><p>')
-      .replace(/<p><br><\/p>/g, '<br>')
-      .replace(/<p>(.*?)<\/p>/g, (match, p1) => {
-        // If content is simple text without other HTML, return it without <p> tags
-        if (!p1.includes('<') && !p1.includes('>')) {
-          return p1;
-        }
-        return match;
-      });
-    
-    onChange(cleanContent);
+  const handleChange = (content, _delta, source) => {
+    try {
+      // Avoid feedback loops when the editor is updated programmatically.
+      if (source !== 'user') return;
+      if (typeof content !== 'string') {
+        onChange(String(content || ''));
+        return;
+      }
+      onChange(content);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('RichTextEditor handleChange error:', err);
+      onChange(String(content || ''));
+    }
   };
 
   return (
