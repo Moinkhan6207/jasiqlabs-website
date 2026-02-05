@@ -16,7 +16,6 @@ import { publicSeoRouter } from "./routes/publicSeo.routes.js";
 import publicPagesRouter from "./routes/publicPages.routes.js";
 import publicBlogRouter from "./routes/publicBlog.routes.js";
 import publicCareerRouter from "./routes/publicCareer.routes.js";
-import publicServicesRouter from "./routes/publicServices.routes.js";
 import publicRoutes from "./routes/public.routes.js";
 import leadRoutes from "./routes/leadRoutes.js";
 import adminRoutes from "./routes/admin.routes.js";
@@ -107,7 +106,6 @@ app.use("/api/public/pages", publicPagesRouter);
 app.use("/api/public/leads", leadRoutes);
 app.use("/api/public/blog", publicBlogRouter);
 app.use("/api/public/careers", publicCareerRouter);
-app.use("/api/public/services", publicServicesRouter);
 
 // Auth Routes
 app.use('/api/admin/auth', authRoutes);
