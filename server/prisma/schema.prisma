@@ -199,7 +199,7 @@ model DivisionContent {
   slug        String     @unique
   description String     @db.Text
   features    String[]
-  status      String     @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  status      String     @default("Research") // Research, MVP, Live
   coverImage  String?
   icon        String?
   order       Int        @default(0)

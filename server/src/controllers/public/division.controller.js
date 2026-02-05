@@ -13,7 +13,9 @@ export const getPrograms = catchAsync(async (req, res, next) => {
   const programs = await prisma.divisionContent.findMany({
     where: {
       type: 'PROGRAM',
-      status: 'Active'
+      status: {
+        in: ['MVP', 'Live']
+      }
     },
     orderBy: {
       order: 'asc'
@@ -53,7 +55,9 @@ export const getServices = catchAsync(async (req, res, next) => {
   const services = await prisma.divisionContent.findMany({
     where: {
       type: 'SERVICE',
-      status: 'Active'
+      status: {
+        in: ['MVP', 'Live']
+      }
     },
     orderBy: {
       order: 'asc'
@@ -94,7 +98,7 @@ export const getProducts = catchAsync(async (req, res, next) => {
     where: {
       type: 'PRODUCT',
       status: {
-        not: 'Research'
+        in: ['MVP', 'Live']
       }
     },
     orderBy: {
