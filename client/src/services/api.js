@@ -1,11 +1,12 @@
 import axios from 'axios';
 
 // Backend URL from environment variables
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-
+URL = import.meta.env.VITE_API_BASE_URL || 
+                 (import.meta.env.PROD ? 'https://jasiqlabs-website.onrender.com/api' : 'http://localhost:8080/api');
 // Create axios instance
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: BASE_URL, 
+  withCredentials: true, 
   headers: {
     'Content-Type': 'application/json',
   },
