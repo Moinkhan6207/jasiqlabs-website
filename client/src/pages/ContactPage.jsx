@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send, Loader2, Facebook, Instagram, Linkedin } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Seo from "../components/seo/Seo";
+// 👇 Import sahi hai
 import api, { pageContent, publicApi } from '../services/api';
 
 const ContactPage = () => {
@@ -33,9 +34,6 @@ const ContactPage = () => {
         console.log("🔍 Fetching Contact Page Content...");
         const response = await pageContent.get('contact', 'hero');
         
-        // 🛠️ FIX IS HERE: Simple Extraction
-        // Console log confirm karta hai ki 'response' ke andar hi 'data' hai.
-        // Hamein bas wahi chahiye.
         const backendData = response.data; 
 
         console.log("📂 Correctly Extracted Data:", backendData);
@@ -44,12 +42,10 @@ const ContactPage = () => {
         let newDesc = null;
 
         if (backendData) {
-            // Check 1: Nested 'content' object (Standard structure)
             if (backendData.content) {
                 newTitle = backendData.content.title;
                 newDesc = backendData.content.description || backendData.content.subtitle;
             } 
-            // Check 2: Flat structure (Fallback)
             else if (backendData.title) {
                 newTitle = backendData.title;
                 newDesc = backendData.description || backendData.subtitle;
@@ -107,19 +103,13 @@ const ContactPage = () => {
         message: formData.message ? formData.message.trim() : '',
       };
       
-      const response = await fetch('http://localhost:8080/api/public/leads', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(leadData),
-      });
-
-      const responseData = await response.json();
+      // 👇👇👇 FIX IS HERE 👇👇👇
+      // Purana 'fetch' code hata diya gaya hai.
+      // Ab hum 'publicApi' use kar rahe hain jo api.js se connect hai.
       
-      if (!response.ok) {
-        throw new Error(responseData.message || 'Failed to submit form.');
-      }
+      await publicApi.submitLead(leadData);
+
+      // Agar yahan tak code aaya, matlab success hai (Axios error fenk deta agar fail hota)
 
       setFormData({
         name: '',
@@ -135,7 +125,9 @@ const ContactPage = () => {
       
     } catch (error) {
       console.error('Error submitting form:', error);
-      toast.error(error.message || 'Failed to submit form. Please try again.');
+      // Axios error handling
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to submit form.';
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
