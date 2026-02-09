@@ -6,7 +6,7 @@ import xss from "xss-clean";
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
-import path from "path"; // 👈 NEW: Ye Import Zaroori hai
+import path from "path"; 
 import { PrismaClient } from "@prisma/client";
 import { env } from "./utils/env.js";
 
@@ -29,15 +29,11 @@ import adminTestimonialsRoutes from './routes/adminTestimonials.routes.js';
 // Utils Imports
 import AppError from "./utils/appError.js";
 import { protect } from "./middlewares/authMiddleware.js";
-
-// Global Error Handler & Logger
 import globalErrorHandler from './controllers/error.controller.js'; 
 import requestLogger from './middlewares/requestLogger.js';
 
-// Initialize Prisma Client
 const prisma = new PrismaClient();
 
-// Graceful shutdown
 const gracefulShutdown = async () => {
   console.log('Shutting down gracefully...');
   try {
@@ -55,22 +51,24 @@ const app = express();
 // ==========================================
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    // Allow localhost on any port during development
     if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
       return callback(null, true);
     }
     
-    // Check against allowed origins
-    if (env.CORS_ORIGINS.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      console.log('Allowed origins:', env.CORS_ORIGINS);
-      callback(new Error('Not allowed by CORS'));
+    // Live Render URL ke liye check (Zaroori hai)
+    if (env.CORS_ORIGINS && env.CORS_ORIGINS.includes(origin)) {
+      return callback(null, true);
+    } 
+    
+    // Fallback for safety (Development mode)
+    if (env.NODE_ENV === 'development') {
+        return callback(null, true);
     }
+
+    console.log('CORS blocked origin:', origin);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -80,12 +78,17 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
+// ==========================================
 // 2) GLOBAL MIDDLEWARES
-app.use(helmet());
+// ==========================================
+
+// 👇 FIX 1: Helmet ko Cross-Origin allow karne ke liye configure karein
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" } 
+}));
 
 // Logging
 if (env.NODE_ENV === 'development') {
-  // Dynamic import for morgan in dev only
   import('morgan').then((morgan) => {
      app.use(morgan.default('dev'));
   });
@@ -105,7 +108,8 @@ app.use(xss());
 app.use(hpp());
 app.use(compression());
 
-// 👇 FIX: Static Files (Images) Sahi tarike se serve karein
+// 👇 FIX 2: Static Files - Is line ko Routes se PEHLE rakhein (Jo aapne sahi kiya tha)
+// Ensure karein ki 'uploads' folder server folder ke root me ho.
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 app.use((req, res, next) => {
@@ -115,12 +119,11 @@ app.use((req, res, next) => {
 app.use(requestLogger);
 
 // ==========================================
-// 3) ROUTES (Order Matters!)
+// 3) ROUTES
 // ==========================================
 
 app.get("/health", (_req, res) => res.status(200).json({ status: 'OK' }));
 
-// A. Public Routes (No Login Required)
 app.use("/api/public", publicRoutes);
 app.use("/api/public/seo", publicSeoRouter);
 app.use("/api/public/pages", publicPagesRouter);
@@ -129,21 +132,16 @@ app.use("/api/public/blog", publicBlogRouter);
 app.use("/api/public/careers", publicCareerRouter);
 app.use("/api/public/testimonials", testimonialRoutes);
 
-// B. Authentication (Login) - MUST BE PUBLIC
-// 👈 YE LINE SAHI HAI (Yahan 'protect' nahi hona chahiye)
 app.use('/api/admin/auth', authRoutes);
 
-// C. Protected Routes (Login Required)
-// Iske andar jo bhi routes hain, unke liye token chahiye
+// Protected Routes
 app.use('/api/admin', protect, adminRoutes);
+// Note: Is route ka path '/api/admin/testimonials' banega.
 app.use('/api/admin/testimonials', protect, adminTestimonialsRoutes);
 
-// D. Mixed Routes (Check inside file for protection)
-app.use('/api/content', pageContentRoutes); // Make sure update routes are protected inside
+app.use('/api/content', pageContentRoutes); 
 app.use('/api/seo', seoRoutes);
-// ⚠️ Note: Testimonial routes are now properly mounted above for both public and admin
 
-// E. SEO Files
 app.use("/", robotsRouter);
 app.use("/", sitemapRouter);
 
@@ -151,18 +149,17 @@ app.use("/", sitemapRouter);
 // 4) ERROR HANDLING
 // ==========================================
 
-// 404 Handler
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-// Global Error Handler
 app.use(globalErrorHandler);
 
 // 5) START SERVER
 const port = env.PORT || 5000;
 const server = app.listen(port, () => {
   console.log(`✅ Server running on port ${port}`);
+  console.log(`📂 Static files served at: ${path.join(process.cwd(), 'uploads')}`);
 });
 
 process.on('SIGTERM', gracefulShutdown);

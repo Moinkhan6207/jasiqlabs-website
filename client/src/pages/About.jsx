@@ -273,7 +273,7 @@ export default function About() {
       />
 
       {/* Hero Section - Reduced bottom padding to bring next section closer */}
-      <section className="relative bg-gradient-to-r from-primary-600 to-primary-800 text-white pt-28 pb-8 md:pt-32 md:pb-10">
+      <section className="relative bg-gradient-to-r from-primary-600 to-primary-800 text-white pt-20 pb-8 md:pt-26 md:pb-10">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
