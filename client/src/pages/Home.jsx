@@ -5,8 +5,12 @@ import Seo from "../components/seo/Seo";
 import Button from "../components/ui/Button";
 import Field from "../components/ui/Field";
 import { trackEvent } from "../utils/analytics";
-import { submitLead } from "../utils/api";
-import { pageContent } from "../services/api";
+
+// ❌ Purana Import (Jo Localhost par ja raha tha)
+// import { submitLead } from "../utils/api"; 
+
+// ✅ New Import (Jo Sahi Service use karega)
+import { pageContent, publicApi } from "../services/api"; 
 
 export default function Home() {
   const c = content;
@@ -75,41 +79,42 @@ export default function Home() {
             buttons: heroContent.buttons || c.home.hero.buttons,
           });
         }
-
+        // ... (Baaki saare checks same rahenge) ...
         if (whatWeDoContent?.title || Array.isArray(whatWeDoContent?.items)) {
-          setHomeWhatWeDo({
-            title: whatWeDoContent.title || c.home.whatWeDo.title,
-            items: Array.isArray(whatWeDoContent.items) ? whatWeDoContent.items : c.home.whatWeDo.items,
-          });
-        }
+            setHomeWhatWeDo({
+              title: whatWeDoContent.title || c.home.whatWeDo.title,
+              items: Array.isArray(whatWeDoContent.items) ? whatWeDoContent.items : c.home.whatWeDo.items,
+            });
+          }
+  
+          if (divisionsContent?.title || Array.isArray(divisionsContent?.cards)) {
+            setHomeDivisions({
+              title: divisionsContent.title || c.home.divisions.title,
+              cards: Array.isArray(divisionsContent.cards) ? divisionsContent.cards : c.home.divisions.cards,
+            });
+          }
+  
+          if (whyContent?.title || Array.isArray(whyContent?.points)) {
+            setHomeWhy({
+              title: whyContent.title || c.home.why.title,
+              points: Array.isArray(whyContent.points) ? whyContent.points : c.home.why.points,
+            });
+          }
+  
+          if (whoWeWorkWithContent?.title || Array.isArray(whoWeWorkWithContent?.items)) {
+            setHomeWhoWeWorkWith({
+              title: whoWeWorkWithContent.title || c.home.whoWeWorkWith.title,
+              items: Array.isArray(whoWeWorkWithContent.items) ? whoWeWorkWithContent.items : c.home.whoWeWorkWith.items,
+            });
+          }
+  
+          if (leadCaptureContent?.title || leadCaptureContent?.supportingLine) {
+            setHomeLeadCapture({
+              title: leadCaptureContent.title || c.home.leadCapture.title,
+              supportingLine: leadCaptureContent.supportingLine || c.home.leadCapture.supportingLine,
+            });
+          }
 
-        if (divisionsContent?.title || Array.isArray(divisionsContent?.cards)) {
-          setHomeDivisions({
-            title: divisionsContent.title || c.home.divisions.title,
-            cards: Array.isArray(divisionsContent.cards) ? divisionsContent.cards : c.home.divisions.cards,
-          });
-        }
-
-        if (whyContent?.title || Array.isArray(whyContent?.points)) {
-          setHomeWhy({
-            title: whyContent.title || c.home.why.title,
-            points: Array.isArray(whyContent.points) ? whyContent.points : c.home.why.points,
-          });
-        }
-
-        if (whoWeWorkWithContent?.title || Array.isArray(whoWeWorkWithContent?.items)) {
-          setHomeWhoWeWorkWith({
-            title: whoWeWorkWithContent.title || c.home.whoWeWorkWith.title,
-            items: Array.isArray(whoWeWorkWithContent.items) ? whoWeWorkWithContent.items : c.home.whoWeWorkWith.items,
-          });
-        }
-
-        if (leadCaptureContent?.title || leadCaptureContent?.supportingLine) {
-          setHomeLeadCapture({
-            title: leadCaptureContent.title || c.home.leadCapture.title,
-            supportingLine: leadCaptureContent.supportingLine || c.home.leadCapture.supportingLine,
-          });
-        }
       } catch (error) {
         console.error("Failed to load content", error);
       }
@@ -124,16 +129,24 @@ export default function Home() {
 
     try {
       trackEvent("lead_submit_attempt", { page: "home", interestType: form.interestType });
-      await submitLead({ ...form, sourcePage: "home" });
+      
+      // 👇 FIX IS HERE: 'submitLead' ki jagah 'publicApi.submitLead' use karein
+      // Kyunki 'publicApi' hamare naye aur sahi 'services/api.js' se aa raha hai
+      
+      await publicApi.submitLead({ ...form, sourcePage: "home" });
+
       setStatus({ state: "success", message: "Thanks. Your details are received. We will contact you soon." });
       setForm({ name: "", email: "", phone: "", interestType: "STUDENT" });
       trackEvent("lead_submit_success", { page: "home" });
     } catch (err) {
-      setStatus({ state: "error", message: err?.response?.data?.error || err?.message || "Something went wrong. Please try again." });
+      // Error handling thoda behtar banaya
+      const errorMsg = err?.response?.data?.message || err?.message || "Something went wrong.";
+      setStatus({ state: "error", message: errorMsg });
       trackEvent("lead_submit_error", { page: "home" });
     }
   }
 
+  // ... (Baaki ka poora Return (...) code bilkul same rahega) ...
   return (
     <>
       <Seo 
@@ -177,7 +190,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ... Rest of the file remains exactly the same ... */}
       {/* What We Do */}
       <section className="py-7 bg-white">
         <div className="container mx-auto px-4">
