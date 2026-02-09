@@ -1,9 +1,14 @@
 import axios from 'axios';
 
 // Backend URL from environment variables
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 
-                 (import.meta.env.PROD ? 'https://jasiqlabs-website.onrender.com/api' : 'http://localhost:8080/api');
-// Create axios instance
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+const BASE_URL = isLocalhost 
+  ? 'http://localhost:8080/api' 
+  : 'https://jasiqlabs-website.onrender.com/api'; // 👈 Aapka Live Backend URL
+
+console.log("🌍 API connecting to:", BASE_URL); // Debugging ke liye
+
 const api = axios.create({
   baseURL: BASE_URL, 
   withCredentials: true, 

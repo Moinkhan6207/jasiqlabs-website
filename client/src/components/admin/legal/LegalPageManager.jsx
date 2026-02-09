@@ -22,21 +22,39 @@ const LegalPageManager = () => {
     <div className="space-y-6">
       {/* Tab Selector */}
       <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          {legalPages.map((page) => (
-            <button
-              key={page.key}
-              type="button"
-              onClick={() => setActiveTab(page.key)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === page.key
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {page.label}
-            </button>
-          ))}
+        {/* Mobile Dropdown */}
+        <div className="sm:hidden">
+          <select
+            value={activeTab}
+            onChange={(e) => setActiveTab(e.target.value)}
+            className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            {legalPages.map((page) => (
+              <option key={page.key} value={page.key}>
+                {page.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        {/* Desktop Tabs */}
+        <nav className="hidden sm:block -mb-px">
+          <div className="flex flex-wrap gap-2 sm:gap-8">
+            {legalPages.map((page) => (
+              <button
+                key={page.key}
+                type="button"
+                onClick={() => setActiveTab(page.key)}
+                className={`py-2 px-1 sm:px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
+                  activeTab === page.key
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                {page.label}
+              </button>
+            ))}
+          </div>
         </nav>
       </div>
 

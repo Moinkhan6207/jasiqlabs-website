@@ -70,7 +70,7 @@ const AdminLayout = () => {
         { name: 'Products', href: '/admin/page-content/products', icon: Package },
         { name: 'Careers', href: '/admin/page-content/careers', icon: UserCheck },
         { name: 'Legal', href: '/admin/page-content/legal', icon: Shield },
-        { name: 'System', href: '/admin/page-content/system', icon: AlertCircle },
+       // { name: 'System', href: '/admin/page-content/system', icon: AlertCircle },
       ]
     },
     { 
@@ -78,7 +78,7 @@ const AdminLayout = () => {
       icon: Settings, 
       current: location.pathname.startsWith('/admin/settings') || location.pathname === '/admin/seo-settings' || location.pathname === '/admin/system',
       children: [
-        { name: 'General', href: '/admin/settings', icon: Settings },
+        // { name: 'General', href: '/admin/settings', icon: Settings },
         { name: 'SEO Settings', href: '/admin/seo-settings', icon: FileText },
         { name: 'System Settings', href: '/admin/system', icon: Power },
       ]

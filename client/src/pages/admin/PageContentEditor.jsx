@@ -105,11 +105,11 @@ const PageContentEditor = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="container mx-auto px-4 py-8 sm:px-6">
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">{pageInfo.title}</h1>
-          <p className="text-gray-600">{pageInfo.description}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">{pageInfo.title}</h1>
+          <p className="text-sm sm:text-base text-gray-600">{pageInfo.description}</p>
         </div>
         
         {renderPageEditor()}

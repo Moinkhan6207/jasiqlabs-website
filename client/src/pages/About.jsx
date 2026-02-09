@@ -285,7 +285,7 @@ export default function About() {
       />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary-600 to-primary-800 text-white py-20 md:py-20">
+      <section className="relative bg-gradient-to-r from-primary-600 to-primary-800 text-white py-20 md:py-10">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
@@ -302,7 +302,7 @@ export default function About() {
       </section>
 
       {/* Leadership & Compliance */}
-      <section className="py-12 bg-gray-50">
+      <section className="py-2 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-white p-6 rounded-xl shadow-sm">
