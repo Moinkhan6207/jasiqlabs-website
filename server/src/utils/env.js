@@ -11,6 +11,7 @@ export const env = {
       .split(',')
       .map(origin => origin.trim().replace(/^"|"$/g, ''))
       .filter(Boolean)
+      .concat("http://localhost:5173", "http://localhost:5174") // Ensure both ports are included
   };
   
   if (!env.DATABASE_URL) {

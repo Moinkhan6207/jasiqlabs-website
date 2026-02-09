@@ -55,10 +55,20 @@ const app = express();
 // ==========================================
 const corsOptions = {
   origin: (origin, callback) => {
-    // Postman testing ke liye !origin allow kiya hai
-    if (!origin || env.CORS_ORIGINS.includes(origin)) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost on any port during development
+    if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      return callback(null, true);
+    }
+    
+    // Check against allowed origins
+    if (env.CORS_ORIGINS.includes(origin)) {
       callback(null, true);
     } else {
+      console.log('CORS blocked origin:', origin);
+      console.log('Allowed origins:', env.CORS_ORIGINS);
       callback(new Error('Not allowed by CORS'));
     }
   },

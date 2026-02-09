@@ -5,7 +5,7 @@ import { pageContent } from "../services/api";
 import parse from 'html-react-parser';
 import { decodeHTMLEntities } from '../utils/htmlUtils';
 
-// Icons (You can replace these with your actual icons)
+// Icons
 const CultureIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -29,7 +29,7 @@ export default function About() {
   const c = content;
   const [isMounted, setIsMounted] = useState(false);
 
-  // Safe parse function that decodes HTML entities
+  // Safe parse function
   const safeParse = (content) => {
     if (!content || typeof content !== 'string') return content;
     try {
@@ -41,13 +41,13 @@ export default function About() {
     }
   };
 
-  // 🟢 Dynamic Hero State (Default: JSON Data)
+  // 🟢 Dynamic Hero State
   const [heroData, setHeroData] = useState({
     title: c.about.h1,
     subtitle: "Empowering innovation through technology, training, and transformative solutions."
   });
 
-  // 🟢 Dynamic Mission State (Default: JSON Data)
+  // 🟢 Dynamic Mission State
   const [missionData, setMissionData] = useState({
     missionTitle: c.about.missionTitle,
     missionDesc: c.about.missionText,
@@ -79,7 +79,6 @@ export default function About() {
     subtitle: "Our culture is built on a foundation of shared values that guide our decisions and actions every day.",
     items: (c.about.cultureItems || []).map((item) => {
       if (typeof item === 'string') {
-        // Check if it's rich text or doesn't contain colon
         if (item.includes('<') || item.includes('>') || !item.includes(':')) {
           return {
             title: item.trim(),
@@ -123,15 +122,6 @@ export default function About() {
     setIsMounted(true);
     return () => setIsMounted(false);
   }, []);
-
-  // Debug: Log leadership data
-  useEffect(() => {
-    console.log('Leadership Data:', leadershipData);
-    console.log('Compliance Title:', leadershipData.complianceTitle);
-    console.log('Compliance Paragraphs:', leadershipData.complianceParagraphs);
-    console.log('Leadership Title:', leadershipData.leadershipTitle);
-    console.log('Leadership Paragraphs:', leadershipData.leadershipParagraphs);
-  }, [leadershipData]);
 
   // 🟢 Fetch Data from Database on Load
   useEffect(() => {
@@ -216,8 +206,6 @@ export default function About() {
           const items = Array.isArray(cultureContent.items) ? cultureContent.items : [];
           const normalizedItems = items.map((it) => {
             if (typeof it === 'string') {
-              // Try to split by colon first, but if it fails or if the string looks like rich text,
-              // treat it as a title with default description
               if (it.includes('<') || it.includes('>') || !it.includes(':')) {
                 return {
                   title: it.trim(),
@@ -272,7 +260,7 @@ export default function About() {
     fetchDynamicContent();
   }, []);
 
-  // Animation classes that will be applied when component mounts
+  // Animation classes
   const fadeInUp = 'transition-all duration-700 transform opacity-0 translate-y-4';
   const fadeInUpActive = 'opacity-100 translate-y-0';
 
@@ -284,27 +272,25 @@ export default function About() {
         pageName="about"
       />
 
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary-600 to-primary-800 text-white py-20 md:py-10">
+      {/* Hero Section - Reduced bottom padding to bring next section closer */}
+      <section className="relative bg-gradient-to-r from-primary-600 to-primary-800 text-white pt-28 pb-8 md:pt-32 md:pb-10">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${isMounted ? fadeInUpActive : fadeInUp}`}>
-              {/* 🟢 Dynamic Hero Title */}
+            <h1 className={`text-3xl md:text-4xl font-bold mb-4 ${isMounted ? fadeInUpActive : fadeInUp}`}>
               {safeParse(heroData.title)}
             </h1>
-            <p className={`text-xl md:text-2xl text-primary-100 max-w-3xl mx-auto ${isMounted ? fadeInUpActive : fadeInUp}`} style={{ transitionDelay: '100ms' }}>
-              {/* 🟢 Dynamic Hero Subtitle */}
+            <p className={`text-lg md:text-xl text-primary-100 max-w-3xl mx-auto ${isMounted ? fadeInUpActive : fadeInUp}`} style={{ transitionDelay: '100ms' }}>
               {safeParse(heroData.subtitle)}
             </p>
           </div>
         </div>
       </section>
 
-      {/* Leadership & Compliance */}
-      <section className="py-2 bg-gray-50">
+      {/* Leadership & Compliance - REDUCED PADDING (py-5) */}
+      <section className="py-5 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-xl shadow-sm">
               <h3 className="text-2xl font-bold text-gray-900 mb-3">{safeParse(leadershipData.complianceTitle)}</h3>
               <div className="prose prose-sm max-w-none text-gray-600 space-y-3">
@@ -314,8 +300,8 @@ export default function About() {
               </div>
             </div>
             
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">{safeParse(leadershipData.leadershipTitle)}</h2>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">{safeParse(leadershipData.leadershipTitle)}</h2>
               <div className="prose prose-sm max-w-none text-gray-600 space-y-3">
                 {(leadershipData.leadershipParagraphs || []).map((p, idx) => (
                   <div key={idx}>{safeParse(p)}</div>
@@ -326,17 +312,17 @@ export default function About() {
         </div>
       </section>
 
-      {/* Mission & Vision */}
-      <section className="py-12 bg-white">
+      {/* Mission & Vision - REDUCED PADDING (py-5) */}
+      <section className="py-5 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="grid md:grid-cols-2 gap-6 items-stretch">
             {/* Mission */}
             <div className={`bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-6 transform hover:scale-[1.02] transition-all duration-300 ${isMounted ? fadeInUpActive : fadeInUp}`} style={{ transitionDelay: '200ms' }}>
               <div className="bg-primary-600 w-12 h-12 rounded-full flex items-center justify-center mb-4">
                 <MissionIcon className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-center mb-3 text-primary-800">{safeParse(missionData.missionTitle)}</h2>
-              <div className="text-gray-700 text-center">{safeParse(missionData.missionDesc)}</div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">{safeParse(missionData.missionTitle)}</h2>
+              <div className="text-gray-700">{safeParse(missionData.missionDesc)}</div>
             </div>
 
             {/* Vision */}
@@ -344,8 +330,8 @@ export default function About() {
               <div className="bg-blue-600 w-12 h-12 rounded-full flex items-center justify-center mb-4">
                 <VisionIcon className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-center mb-3 text-blue-800">{safeParse(missionData.visionTitle)}</h2>
-              <div className="text-gray-700 text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">{safeParse(missionData.visionTitle)}</h2>
+              <div className="text-gray-700">
                 {safeParse(missionData.visionDesc)}
               </div>
             </div>
@@ -353,18 +339,18 @@ export default function About() {
         </div>
       </section>
 
-      {/* Our Story */}
-      <section className="py-12 bg-gray-50">
+      {/* Our Story - REDUCED PADDING (py-5) */}
+      <section className="py-5 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">{safeParse(storyData.title)}</h2>
+          <div className="max-w-4xl mx-auto text-center mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">{safeParse(storyData.title)}</h2>
             <div className="w-16 h-1 bg-primary-500 mx-auto"></div>
           </div>
           
           <div className="bg-white rounded-xl shadow-sm p-6 max-w-4xl mx-auto">
             <div className="prose prose-lg max-w-none text-gray-600">
               {(storyData.paragraphs || []).map((p, idx) => (
-                <div key={idx} className={idx === 0 ? "mb-4" : "mb-4"}>
+                <div key={idx} className={idx === storyData.paragraphs.length - 1 ? "" : "mb-3"}>
                   {safeParse(p)}
                 </div>
               ))}
@@ -373,22 +359,22 @@ export default function About() {
         </div>
       </section>
 
-      {/* What Makes Us Different */}
-      <section className="py-12 bg-white">
+      {/* What Makes Us Different - REDUCED PADDING (py-5) */}
+      <section className="py-5 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">{safeParse(differentData.title)}</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">{safeParse(differentData.title)}</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               {differentData.subtitle}
             </p>
             <div className="w-16 h-1 bg-primary-500 mx-auto mt-3"></div>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {differentData.items.map((item, index) => (
               <div 
                 key={index} 
-                className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-300"
+                className="bg-gray-50 p-5 rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-300"
               >
                 <div className="flex items-center mb-3">
                   <div className="bg-primary-100 p-2 rounded-full mr-3">
@@ -398,7 +384,7 @@ export default function About() {
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">{safeParse(item.title)}</h3>
                 </div>
-                <div className="text-gray-600 pl-8 text-sm">
+                <div className="text-gray-600 pl-10 text-sm leading-relaxed">
                   {safeParse(item.desc)}
                 </div>
               </div>
@@ -407,28 +393,28 @@ export default function About() {
         </div>
       </section>
 
-      {/* Our Culture & Values */}
-      <section className="py-12 bg-gray-50">
+      {/* Our Culture & Values - REDUCED PADDING (py-5) */}
+      <section className="py-5 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">{safeParse(cultureData.title)}</h2>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">{safeParse(cultureData.title)}</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               {safeParse(cultureData.subtitle)}
             </p>
             <div className="w-16 h-1 bg-primary-500 mx-auto mt-3"></div>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             {cultureData.items.map((item, index) => (
               <div 
                 key={`${index}-${item.title || 'item'}`} 
-                className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 text-center"
+                className="bg-white p-5 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 text-center"
               >
                 <div className="bg-primary-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                   <CultureIcon className="w-6 h-6 text-primary-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{safeParse(item.title || '')}</h3>
-                <div className="text-gray-600 text-sm">
+                <div className="text-gray-600 text-sm leading-relaxed">
                   {safeParse(item.desc || '')}
                 </div>
               </div>
@@ -437,16 +423,16 @@ export default function About() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-primary-700 text-white py-12">
+      {/* CTA Section - Reduced Padding (py-8) */}
+      <section className="bg-primary-700 text-white py-8">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">{safeParse(ctaData.title)}</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-3">{safeParse(ctaData.title)}</h2>
           <p className="text-xl text-primary-100 mb-6 max-w-2xl mx-auto">
             {safeParse(ctaData.subtitle)}
           </p>
           <a 
             href={ctaData.buttonLink} 
-            className="inline-block bg-white text-primary-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors duration-300"
+            className="inline-block bg-white text-primary-700 font-semibold px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors duration-300 shadow-md"
           >
             {ctaData.buttonText}
           </a>
@@ -455,15 +441,3 @@ export default function About() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
