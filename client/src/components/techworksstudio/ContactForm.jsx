@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { submitLead } from "../../utils/api";
+// 👇 FIX: Import publicApi from services
+import { publicApi } from "../../services/api";
 import Field from "../ui/Field";
 import Button from "../ui/Button";
 
@@ -19,27 +20,18 @@ export default function ContactForm({ successMessage }) {
     setStatus({ state: "loading", message: "" });
 
     try {
-      // ✅ FIX 1: Company ko Name ke saath jod rahe hain taaki Dashboard par saamne dikhe
-      // Example: "Sahil (Kisan Pure Milk)"
       const nameWithCompany = `${form.name} (${form.company})`;
-
-      // ✅ FIX 2: Project details ko message banaya
       const fullMessage = `Company: ${form.company} | Requirements: ${form.projectDetails}`;
 
-      await submitLead({
-        name: nameWithCompany, // Name + Company combined
+      // 👇 FIX: Use publicApi.submitLead instead of submitLead
+      await publicApi.submitLead({
+        name: nameWithCompany,
         email: form.email,
         phone: form.phone,
-        
         interestType: "CLIENT",
-        
-        // ✅ FIX 3: Division ko 'TWS' bhejein (Database screenshot ke hisab se RWS/TWS use ho raha hai)
-        division: "TWS", 
-        
-        // ✅ FIX 4: Sabse Important - 'sourcePage' key use karein (Database column yehi hai)
+        division: "TWS", // TechWorks ke liye TWS sahi hai
         sourcePage: "techworksstudio",
-        source: "techworksstudio", // Backup ke liye dono bhej rahe hain
-        
+        source: "techworksstudio",
         message: fullMessage 
       });
 
@@ -52,7 +44,7 @@ export default function ContactForm({ successMessage }) {
       console.error(err);
       setStatus({
         state: "error",
-        message: err?.message || "Failed to submit request. Please try again.",
+        message: err?.response?.data?.message || err?.message || "Failed to submit request.",
       });
     }
   }
