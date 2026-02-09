@@ -33,6 +33,11 @@ enum LeadStatus {
   REJECTED
 }
 
+enum TestimonialStatus {
+  ACTIVE
+  INACTIVE
+}
+
 enum JobType {
   INTERNSHIP
   FULLTIME
@@ -245,6 +250,32 @@ model JobApplication {
   job         JobOpening @relation(fields: [jobId], references: [id], onDelete: Cascade)
   
   createdAt   DateTime   @default(now())
+}
+
+// Testimonial System Models
+model Testimonial {
+  id        String            @id @default(cuid())
+  name      String
+  role      String
+  company   String?
+  content   String            @db.Text
+  image     String?
+  rating    Int
+  status    TestimonialStatus @default(ACTIVE)
+  order     Int               @default(0)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([status, order])
+}
+
+model TestimonialPageContent {
+  id        String   @id @default(cuid())
+  pageName  String   @unique
+  title     String?
+  subtitle  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Indexes are defined inline with their respective models

@@ -23,6 +23,7 @@ const ProgramsPage = lazy(() => import('../pages/admin/ProgramsPage'));
 const ServicesPage = lazy(() => import('../pages/admin/ServicesPage'));
 const ProductsPage = lazy(() => import('../pages/admin/ProductsPage'));
 const SystemPage = lazy(() => import('../pages/admin/SystemPage'));
+const TestimonialsManager = lazy(() => import('../pages/admin/TestimonialsManager'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 const ThankYou = lazy(() => import('../pages/ThankYou'));
 
@@ -60,6 +61,7 @@ import AiResearch from "../pages/products/AiResearch";
 import Careers from "../pages/careers/Careers";
 import BlogList from "../pages/blog/BlogList";
 import BlogPost from "../pages/blog/BlogPost";
+import TestimonialsPage from "../pages/public/TestimonialsPage";
 
 
 // Loading component for Suspense fallback
@@ -124,6 +126,7 @@ export const router = createBrowserRouter([
           { path: "careers", element: <Careers /> },
           { path: "blog", element: <BlogList /> },
           { path: "blog/:id", element: <BlogPost /> },
+          { path: "testimonials", element: <TestimonialsPage /> },
           { path: "thank-you", element: <ThankYou /> },
 
           // --- Legal Pages ---
@@ -206,6 +209,7 @@ export const router = createBrowserRouter([
               { path: "programs", element: <ProgramsPage /> },
               { path: "services", element: <ServicesPage /> },
               { path: "products", element: <ProductsPage /> },
+              { path: "testimonials", element: <TestimonialsManager /> },
               { path: "system", element: <SystemPage /> },
               { index: true, element: <Navigate to="dashboard" replace /> },
             ]

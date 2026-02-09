@@ -18,6 +18,7 @@ import {
   Shield,
   AlertCircle,
   MonitorPlay, // RealWork Studio icon
+  MessageSquare, // Testimonials icon
   // 👇 New Icons Import kiye hain
   GraduationCap, // Programs ke liye
   Wrench,        // Services ke liye
@@ -41,6 +42,7 @@ const AdminLayout = () => {
     { name: 'Leads Management', href: '/admin/leads', icon: Users, current: location.pathname === '/admin/leads' },
     { name: 'Blog Posts', href: '/admin/blog', icon: FileText, current: location.pathname === '/admin/blog' },
     { name: 'Careers', href: '/admin/careers', icon: Briefcase, current: location.pathname === '/admin/careers' },
+    { name: 'Testimonials', href: '/admin/testimonials', icon: MessageSquare, current: location.pathname === '/admin/testimonials' },
     
     // 👇 NAYA SECTION ADD KIYA HAI: Business Modules
     { 

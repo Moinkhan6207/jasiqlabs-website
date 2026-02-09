@@ -135,6 +135,19 @@ export default function Header() {
               Careers
             </Link>
 
+            {/* Testimonials */}
+            <Link
+              to="/testimonials"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive("/testimonials")
+                  ? "text-primary-600 border-b-2 border-primary-600"
+                  : "text-gray-700 hover:text-primary-600"
+              }`}
+              onClick={() => trackEvent("nav_testimonials_click")}
+            >
+              Testimonials
+            </Link>
+
             {/* Contact Button */}
             <Link
               to="/contact"
@@ -286,6 +299,22 @@ export default function Header() {
               }}
             >
               Careers
+            </Link>
+
+            {/* Testimonials Link - Mobile */}
+            <Link
+              to="/testimonials"
+              className={`block px-4 py-2 rounded-lg transition-colors ${
+                isActive("/testimonials")
+                  ? "bg-primary-50 text-primary-600 font-medium"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+              onClick={() => {
+                trackEvent("nav_testimonials_click");
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              Testimonials
             </Link>
             
             <Link

@@ -151,6 +151,25 @@ export const systemSettings = {
   update: (settings) => api.put('/admin/system-settings', settings),
 };
 
+// 👇 NEW: TESTIMONIALS ENDPOINTS (Admin)
+export const testimonials = {
+  getAll: () => api.get('/admin/testimonials'),
+  getById: (id) => api.get(`/admin/testimonials/${id}`),
+  create: (formData) => api.post('/admin/testimonials', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  update: (id, formData) => api.patch(`/admin/testimonials/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  delete: (id) => api.delete(`/admin/testimonials/${id}`),
+  getSettings: () => api.get('/admin/testimonials/settings'),
+  updatePageSettings: (data) => api.put('/admin/testimonials/settings', data),
+};
+
 // 11. PUBLIC ENDPOINTS (User Side)
 export const publicApi = {
   // Contact Form
@@ -174,6 +193,10 @@ export const publicApi = {
   getServices: () => api.get('/public/services'),
   getProducts: () => api.get('/public/products'),
   getProductById: (id) => api.get(`/public/products/${id}`),
+
+  // 👇 NEW: Testimonials Public Endpoints
+  getTestimonials: () => api.get('/public/testimonials'),
+  getTestimonialSettings: () => api.get('/public/testimonials/settings'),
 };
 
 // Export the raw api instance for direct use
@@ -190,6 +213,7 @@ const apiService = {
   seo,
   divisionContent,
   systemSettings,
+  testimonials, // 👇 NEW: Add testimonials
   public: publicApi, 
 };
 

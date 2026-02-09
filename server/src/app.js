@@ -6,6 +6,7 @@ import xss from "xss-clean";
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
+import path from "path"; // 👈 NEW: Ye Import Zaroori hai
 import { PrismaClient } from "@prisma/client";
 import { env } from "./utils/env.js";
 
@@ -22,19 +23,21 @@ import adminRoutes from "./routes/admin.routes.js";
 import authRoutes from './routes/auth.routes.js';
 import pageContentRoutes from './routes/pageContent.routes.js';
 import seoRoutes from './routes/seo.routes.js';
+import testimonialRoutes from './routes/testimonial.routes.js';
+import adminTestimonialsRoutes from './routes/adminTestimonials.routes.js';
 
 // Utils Imports
 import AppError from "./utils/appError.js";
 import { protect } from "./middlewares/authMiddleware.js";
 
-// 👇 NEW: Global Error Handler Import kiya
+// Global Error Handler & Logger
 import globalErrorHandler from './controllers/error.controller.js'; 
 import requestLogger from './middlewares/requestLogger.js';
 
 // Initialize Prisma Client
 const prisma = new PrismaClient();
 
-// Graceful shutdown function
+// Graceful shutdown
 const gracefulShutdown = async () => {
   console.log('Shutting down gracefully...');
   try {
@@ -52,6 +55,7 @@ const app = express();
 // ==========================================
 const corsOptions = {
   origin: (origin, callback) => {
+    // Postman testing ke liye !origin allow kiya hai
     if (!origin || env.CORS_ORIGINS.includes(origin)) {
       callback(null, true);
     } else {
@@ -66,14 +70,15 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-
 // 2) GLOBAL MIDDLEWARES
 app.use(helmet());
 
-// Development Logging (Morgan) - Ise rehne de sakte hain ya hata sakte hain
+// Logging
 if (env.NODE_ENV === 'development') {
-  const morgan = await import('morgan');
-  app.use(morgan.default('dev'));
+  // Dynamic import for morgan in dev only
+  import('morgan').then((morgan) => {
+     app.use(morgan.default('dev'));
+  });
 }
 
 const limiter = rateLimit({
@@ -90,50 +95,59 @@ app.use(xss());
 app.use(hpp());
 app.use(compression());
 
+// 👇 FIX: Static Files (Images) Sahi tarike se serve karein
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
 app.use((req, res, next) => {
   req.prisma = prisma;
   next();
 });
 app.use(requestLogger);
 
-// 3) ROUTES
+// ==========================================
+// 3) ROUTES (Order Matters!)
+// ==========================================
+
 app.get("/health", (_req, res) => res.status(200).json({ status: 'OK' }));
 
-// Public routes
+// A. Public Routes (No Login Required)
 app.use("/api/public", publicRoutes);
 app.use("/api/public/seo", publicSeoRouter);
 app.use("/api/public/pages", publicPagesRouter);
 app.use("/api/public/leads", leadRoutes);
 app.use("/api/public/blog", publicBlogRouter);
 app.use("/api/public/careers", publicCareerRouter);
+app.use("/api/public/testimonials", testimonialRoutes);
 
-// Auth Routes
+// B. Authentication (Login) - MUST BE PUBLIC
+// 👈 YE LINE SAHI HAI (Yahan 'protect' nahi hona chahiye)
 app.use('/api/admin/auth', authRoutes);
 
-// Protected routes
+// C. Protected Routes (Login Required)
+// Iske andar jo bhi routes hain, unke liye token chahiye
 app.use('/api/admin', protect, adminRoutes);
+app.use('/api/admin/testimonials', protect, adminTestimonialsRoutes);
 
-// Page Content Routes
-app.use('/api/content', pageContentRoutes);
-
-// SEO Management Routes
+// D. Mixed Routes (Check inside file for protection)
+app.use('/api/content', pageContentRoutes); // Make sure update routes are protected inside
 app.use('/api/seo', seoRoutes);
+// ⚠️ Note: Testimonial routes are now properly mounted above for both public and admin
 
-// SEO Public Routes
+// E. SEO Files
 app.use("/", robotsRouter);
 app.use("/", sitemapRouter);
 
+// ==========================================
 // 4) ERROR HANDLING
+// ==========================================
 
-// A. 404 Handler (Agar route na mile)
+// 404 Handler
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-// B. Global Error Handler (Hamesha last me aana chahiye)
-// 👇 NEW: Purana code hata kar ye lagaya
+// Global Error Handler
 app.use(globalErrorHandler);
-
 
 // 5) START SERVER
 const port = env.PORT || 5000;
